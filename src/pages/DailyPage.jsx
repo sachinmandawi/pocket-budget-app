@@ -1,5 +1,6 @@
 import React from 'react';
 import DailyGauge from '../components/DailyGauge';
+import AllowanceCountdownWidget from '../components/AllowanceCountdownWidget';
 import { DEFAULT_CATEGORIES, formatDateReadable } from '../utils/storage';
 
 export default function DailyPage({ stats, onOpenQuickAdd, transactions = [] }) {
@@ -17,6 +18,9 @@ export default function DailyPage({ stats, onOpenQuickAdd, transactions = [] }) 
         stats={stats} 
         onOpenQuickAdd={onOpenQuickAdd} 
       />
+
+      {/* ⏳ Feature #25: Animated Allowance Credit Countdown Widget */}
+      <AllowanceCountdownWidget stats={stats} />
 
       {/* Minimal Recent Today Spends Card */}
       {todayTx.length > 0 && (
