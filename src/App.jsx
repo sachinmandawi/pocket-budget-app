@@ -457,6 +457,7 @@ export default function App() {
           <DailyPage 
             stats={stats} 
             transactions={stats.currentCycleTx || []}
+            budgetData={data}
             onOpenQuickAdd={() => setIsQuickAddOpen(true)} 
           />
         )}

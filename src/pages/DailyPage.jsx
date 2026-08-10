@@ -1,9 +1,10 @@
 import React from 'react';
 import DailyGauge from '../components/DailyGauge';
 import AllowanceCountdownWidget from '../components/AllowanceCountdownWidget';
+import PiggyBankCard from '../components/PiggyBankCard';
 import { DEFAULT_CATEGORIES, formatDateReadable } from '../utils/storage';
 
-export default function DailyPage({ stats, onOpenQuickAdd, transactions = [] }) {
+export default function DailyPage({ stats, onOpenQuickAdd, transactions = [], budgetData }) {
   const todayStr = new Date().toISOString().substring(0, 10);
   const todayTx = transactions.filter(tx => tx.date === todayStr);
 
@@ -21,6 +22,9 @@ export default function DailyPage({ stats, onOpenQuickAdd, transactions = [] }) 
 
       {/* ⏳ Feature #25: Animated Allowance Credit Countdown Widget */}
       <AllowanceCountdownWidget stats={stats} />
+
+      {/* 🐷 Feature: Piggy Bank Savings Vault & Daily History */}
+      <PiggyBankCard budgetData={budgetData} />
 
       {/* Minimal Recent Today Spends Card */}
       {todayTx.length > 0 && (
