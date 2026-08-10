@@ -58,7 +58,7 @@ export default function AllowanceCountdownWidget({ stats }) {
               Allowance Credit Countdown
             </h4>
             <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-              Time until next month ₹{stats?.budgetLimit || 1500} credit
+              Time until next cycle allowance credit
             </span>
           </div>
         </div>
