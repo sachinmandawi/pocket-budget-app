@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, CheckCircle2, Calendar as CalendarIcon, AlertCircle } from 'lucide-react';
-import { DEFAULT_CATEGORIES, formatDateReadable, calculatePiggyBankSavings } from '../utils/storage';
+import { DEFAULT_CATEGORIES, formatDateReadable, calculatePiggyBankSavings, calculateBudgetStats } from '../utils/storage';
 import CustomDropdown from './CustomDropdown';
 import InteractiveCalendar from './InteractiveCalendar';
 
@@ -12,7 +12,11 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
   const [spendSource, setSpendSource] = useState('allowance');
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  const stats = calculateBudgetStats(budgetData);
   const { totalSaved: availablePiggyBalance } = calculatePiggyBankSavings(budgetData);
+
+  const availableAllowanceCash = Math.max(0, stats.remainingTotalInHand || 0);
+  const todaysSafe = Math.max(0, stats.todaysSafeRemaining || 0);
 
   const categoryOptions = categories.map(cat => ({
     value: cat.id,
@@ -28,12 +32,16 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
   };
 
   const isPiggyInsufficient = spendSource === 'piggy_bank' && Number(amount || 0) > availablePiggyBalance;
+  const isAllowanceInsufficient = spendSource === 'allowance' && (Number(amount || 0) > availableAllowanceCash || availableAllowanceCash <= 0);
+  const isAllowanceOverDailySafe = spendSource === 'allowance' && !isAllowanceInsufficient && Number(amount || 0) > todaysSafe && todaysSafe > 0;
+  const isInsufficient = spendSource === 'piggy_bank' ? isPiggyInsufficient : isAllowanceInsufficient;
 
   const handleSubmitCustom = (e) => {
     e.preventDefault();
     if (!amount || Number(amount) <= 0) return;
-    if (isPiggyInsufficient) {
-      alert(`Insufficient Piggy Vault balance! You only have ₹${availablePiggyBalance} in your Vault.`);
+    if (isInsufficient) {
+      const maxVal = spendSource === 'piggy_bank' ? availablePiggyBalance : availableAllowanceCash;
+      alert(`Insufficient balance! Max available: ₹${maxVal}`);
       return;
     }
 
@@ -123,10 +131,20 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
               </button>
             </div>
 
-            {/* Small Compact Insufficient Piggy Vault Balance Warning */}
+            {/* Small Compact Warnings for Insufficient Balance / Daily Over Limit */}
             {isPiggyInsufficient && (
               <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ios-red)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
                 ⚠️ Insufficient Vault balance (Max ₹{availablePiggyBalance})
+              </span>
+            )}
+            {isAllowanceInsufficient && (
+              <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ios-red)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
+                ⚠️ Insufficient Allowance balance (Max ₹{availableAllowanceCash})
+              </span>
+            )}
+            {isAllowanceOverDailySafe && (
+              <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ios-orange)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
+                ⚠️ Exceeds daily safe limit (Safe Today: ₹{todaysSafe})
               </span>
             )}
           </div>
@@ -238,16 +256,16 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
           {/* Primary Save Button */}
           <button 
             type="submit" 
-            disabled={isPiggyInsufficient}
+            disabled={isInsufficient}
             className="btn btn-primary" 
             style={{ 
               width: '100%', 
               padding: '10px 16px', 
               fontSize: '13px', 
               fontWeight: 700,
-              boxShadow: isPiggyInsufficient ? 'none' : '0 3px 10px rgba(37, 99, 235, 0.25)',
-              opacity: isPiggyInsufficient ? 0.5 : 1,
-              cursor: isPiggyInsufficient ? 'not-allowed' : 'pointer'
+              boxShadow: isInsufficient ? 'none' : '0 3px 10px rgba(37, 99, 235, 0.25)',
+              opacity: isInsufficient ? 0.5 : 1,
+              cursor: isInsufficient ? 'not-allowed' : 'pointer'
             }}
           >
             <CheckCircle2 size={16} /> Save Expense
