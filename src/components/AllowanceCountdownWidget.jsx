@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Sparkles, Calendar, TrendingUp } from 'lucide-react';
 
-export default function AllowanceCountdownWidget({ stats }) {
+export default function AllowanceCountdownWidget({ stats, onClick }) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
@@ -33,12 +33,17 @@ export default function AllowanceCountdownWidget({ stats }) {
   const cycleProgress = Math.min(100, Math.max(0, (currentDayNumber / totalDaysInMonth) * 100));
 
   return (
-    <div className="ios-card" style={{
-      padding: '16px 18px',
-      marginBottom: '16px',
-      background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-subtle) 100%)',
-      border: '1px solid var(--border-subtle)'
-    }}>
+    <div 
+      onClick={onClick}
+      className="ios-card" 
+      style={{
+        padding: '16px 18px',
+        marginBottom: '16px',
+        background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-subtle) 100%)',
+        border: '1px solid var(--border-subtle)',
+        cursor: onClick ? 'pointer' : 'default'
+      }}
+    >
       {/* Header Row */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

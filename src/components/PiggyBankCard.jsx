@@ -2,17 +2,22 @@ import React, { useState } from 'react';
 import { Sparkles, ChevronDown, ChevronUp, Trophy, ArrowUpRight, History } from 'lucide-react';
 import { calculatePiggyBankSavings, formatDateReadable } from '../utils/storage';
 
-export default function PiggyBankCard({ budgetData }) {
+export default function PiggyBankCard({ budgetData, onClick }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { totalSaved, history } = calculatePiggyBankSavings(budgetData);
 
   return (
-    <div className="ios-card" style={{
-      padding: '16px 18px',
-      marginBottom: '16px',
-      background: 'linear-gradient(135deg, rgba(52, 199, 89, 0.08) 0%, rgba(52, 199, 89, 0.02) 100%)',
-      border: '1px solid rgba(52, 199, 89, 0.2)'
-    }}>
+    <div 
+      onClick={onClick}
+      className="ios-card" 
+      style={{
+        padding: '16px 18px',
+        marginBottom: '16px',
+        background: 'linear-gradient(135deg, rgba(52, 199, 89, 0.08) 0%, rgba(52, 199, 89, 0.02) 100%)',
+        border: '1px solid rgba(52, 199, 89, 0.2)',
+        cursor: onClick ? 'pointer' : 'default'
+      }}
+    >
       {/* Header Row */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

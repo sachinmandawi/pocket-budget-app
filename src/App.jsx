@@ -15,6 +15,8 @@ import AppearanceSettingsPage from './pages/settings/AppearanceSettingsPage';
 import DataResetSettingsPage from './pages/settings/DataResetSettingsPage';
 import GithubSyncSettingsPage from './pages/settings/GithubSyncSettingsPage';
 import ReminderSettingsPage from './pages/settings/ReminderSettingsPage';
+import AllowanceCountdownPage from './pages/AllowanceCountdownPage';
+import PiggyBankVaultPage from './pages/PiggyBankVaultPage';
 
 import { getInitialData, saveData, calculateBudgetStats } from './utils/storage';
 import { pushToGitHub, pullFromGitHub, getGitHubConfig, mergeBudgetData } from './utils/githubSync';
@@ -452,12 +454,28 @@ export default function App() {
           />
         )}
 
+        {/* DEDICATED SEPARATE PAGES */}
+        {activeSettingPage === 'allowance_countdown' && (
+          <AllowanceCountdownPage 
+            stats={stats}
+            onBack={() => setActiveSettingPage(null)}
+          />
+        )}
+
+        {activeSettingPage === 'piggy_bank' && (
+          <PiggyBankVaultPage 
+            budgetData={data}
+            onBack={() => setActiveSettingPage(null)}
+          />
+        )}
+
         {/* MAIN APP BOTTOM TAB PAGES */}
         {!activeSettingPage && activeTab === 'daily' && (
           <DailyPage 
             stats={stats} 
             transactions={stats.currentCycleTx || []}
             budgetData={data}
+            onNavigateToPage={setActiveSettingPage}
             onOpenQuickAdd={() => setIsQuickAddOpen(true)} 
           />
         )}
