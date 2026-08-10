@@ -12,7 +12,9 @@ import {
   Palette, 
   RefreshCw, 
   ShieldCheck,
-  ChevronRight
+  ChevronRight,
+  Wallet,
+  Tag
 } from 'lucide-react';
 
 export default function Sidebar({ 
@@ -77,6 +79,22 @@ export default function Sidebar({
   ];
 
   const settingsNavItems = [
+    {
+      id: 'page_allowance',
+      type: 'page',
+      target: 'settings_allowance',
+      label: 'Allowance & Payday Date',
+      subtitle: 'Monthly allowance & payday calendar',
+      icon: <Wallet size={20} color="var(--ios-blue)" />
+    },
+    {
+      id: 'page_categories',
+      type: 'page',
+      target: 'settings_categories',
+      label: 'Category Manager',
+      subtitle: 'Edit custom expense categories',
+      icon: <Tag size={20} color="var(--ios-purple)" />
+    },
     {
       id: 'page_github',
       type: 'page',
