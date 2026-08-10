@@ -72,7 +72,7 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
         <div className="modal-grab-handle" />
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
+          <h3 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
             Log Expense
           </h3>
           <button 
