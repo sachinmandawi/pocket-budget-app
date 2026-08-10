@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './components/Navbar';
 import QuickAddExpense from './components/QuickAddExpense';
 import SplashScreen from './components/SplashScreen';
@@ -17,7 +17,7 @@ import GithubSyncSettingsPage from './pages/settings/GithubSyncSettingsPage';
 
 import { getInitialData, saveData, calculateBudgetStats } from './utils/storage';
 import { pushToGitHub, pullFromGitHub, getGitHubConfig } from './utils/githubSync';
-import { LayoutDashboard, ReceiptText, Clock, BarChart3 } from 'lucide-react';
+import { LayoutDashboard, ReceiptText, Clock, BarChart3, LogOut } from 'lucide-react';
 
 export default function App() {
   const [data, setData] = useState(() => getInitialData());
@@ -30,6 +30,10 @@ export default function App() {
   const [activeSettingPage, setActiveSettingPage] = useState(null);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Double Back To Exit State
+  const [showExitToast, setShowExitToast] = useState(false);
+  const lastBackPressRef = useRef(0);
 
   // Native APK Hardware & Browser Back Button Handler
   useEffect(() => {
@@ -49,6 +53,22 @@ export default function App() {
       if (activeTab !== 'daily') {
         setActiveTab('daily');
         return;
+      }
+
+      // Home Daily Tab: Double Back to Exit
+      const now = Date.now();
+      if (now - lastBackPressRef.current < 2000) {
+        setShowExitToast(false);
+        try {
+          window.close();
+        } catch (err) {}
+      } else {
+        lastBackPressRef.current = now;
+        setShowExitToast(true);
+        window.history.pushState({ page: 'home' }, '');
+        setTimeout(() => {
+          setShowExitToast(false);
+        }, 2000);
       }
     };
 
@@ -189,6 +209,33 @@ export default function App() {
     <div className="app-shell">
       {/* App Opening Splash Screen */}
       {showSplash && <SplashScreen fadeOut={splashFadeOut} />}
+
+      {/* Double Back to Exit Native Android Toast Notification */}
+      {showExitToast && (
+        <div style={{
+          position: 'fixed',
+          bottom: '85px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 9999,
+          background: 'rgba(15, 23, 42, 0.92)',
+          color: '#ffffff',
+          padding: '10px 20px',
+          borderRadius: 'var(--radius-full)',
+          fontSize: '13px',
+          fontWeight: 700,
+          boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+          backdropFilter: 'blur(8px)',
+          animation: 'fadeIn 0.2s ease-out',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          whiteSpace: 'nowrap'
+        }}>
+          <LogOut size={14} color="var(--ios-orange)" />
+          <span>Press back again to exit</span>
+        </div>
+      )}
 
       {/* iOS Minimalist Navbar */}
       <Navbar 
