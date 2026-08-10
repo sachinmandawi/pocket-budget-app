@@ -2,8 +2,12 @@
 
   <img src="./public/app-icon.png" alt="Pocket Budget Logo" width="100" height="100" style="border-radius: 24px; box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);" />
 
-  # 📱 Pocket Budget
-  ### *Smart, Self-Healing Daily Expense Tracker & Allowance Manager*
+  <p align="center">
+    <a href="https://github.com/sachinmandawi/pocket-budget-app">
+      <img src="https://readme-typing-svg.demolab.com?font=Outfit&weight=800&size=38&pause=1000&color=2563EB&center=true&vCenter=true&width=600&height=60&lines=%F0%9F%93%B1+Pocket+Budget;Smart+Daily+Safe+Spend+Gauge;Piggy+Bank+Vault+%26+Countdown" alt="Pocket Budget Animated Title" />
+    </a>
+  </p>
+  <h3>*Smart, Self-Healing Daily Expense Tracker & Allowance Manager*</h3>
 
   <p align="center">
     <a href="https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.0.0">
