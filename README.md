@@ -10,8 +10,8 @@
   <h3>*Smart, Self-Healing Daily Expense Tracker & Allowance Manager*</h3>
 
   <p align="center">
-    <a href="https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.0.1">
-      <img src="https://img.shields.io/badge/Release-v1.0.1--Official-blueviolet?style=for-the-badge&logo=android&logoColor=white" alt="Release Version" />
+    <a href="https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.0.0">
+      <img src="https://img.shields.io/badge/Release-v1.0.0--Official-blueviolet?style=for-the-badge&logo=android&logoColor=white" alt="Release Version" />
     </a>
     <a href="https://github.com/sachinmandawi/pocket-budget-app/actions">
       <img src="https://img.shields.io/badge/Build-Passing-34d399?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
@@ -29,8 +29,8 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/sachinmandawi/pocket-budget-app/releases/download/v1.0.1/PocketBudget-v1.0.1.apk">
-      <img src="https://img.shields.io/badge/📲_Download_APK-v1.0.1-2563eb?style=for-the-badge" alt="Download APK" />
+    <a href="https://github.com/sachinmandawi/pocket-budget-app/releases/download/v1.0.0/PocketBudget-v1.0.0.apk">
+      <img src="https://img.shields.io/badge/📲_Download_APK-v1.0.0-2563eb?style=for-the-badge" alt="Download APK" />
     </a>
   </p>
 
@@ -110,7 +110,7 @@
 ---
 
 ## 📲 Android APK Installation
-Download **`PocketBudget-v1.0.1.apk`** from [GitHub Releases](https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.0.1) and tap to install on your Android device!
+Download **`PocketBudget-v1.0.0.apk`** from [GitHub Releases](https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.0.0) and tap to install on your Android device!
 
 ### 💻 Local Development Setup
 ```bash
