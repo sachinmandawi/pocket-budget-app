@@ -55,6 +55,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Delete Extra Release v1.0.1 if exists
+        run: |
+          gh release delete v1.0.1 --yes --cleanup-tag || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Update Repository About Description & Homepage
         run: |
           curl -X PATCH \
