@@ -49,6 +49,36 @@ export const fetchGitHubUser = async (token) => {
   return null;
 };
 
+// Smart 2-Way Merge Helper (Combines offline local entries + cloud entries seamlessly)
+export const mergeBudgetData = (localData, cloudData) => {
+  if (!cloudData) return localData;
+  if (!localData) return cloudData;
+
+  const localTx = localData.transactions || [];
+  const cloudTx = cloudData.transactions || [];
+
+  // Map transactions by unique ID to prevent duplicates
+  const txMap = new Map();
+  cloudTx.forEach(tx => { if (tx && tx.id) txMap.set(tx.id, tx); });
+  localTx.forEach(tx => { if (tx && tx.id) txMap.set(tx.id, tx); });
+
+  const mergedTransactions = Array.from(txMap.values()).sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+  // Merge categories
+  const catMap = new Map();
+  (cloudData.categories || []).forEach(c => { if (c && c.id) catMap.set(c.id, c); });
+  (localData.categories || []).forEach(c => { if (c && c.id) catMap.set(c.id, c); });
+
+  return {
+    ...cloudData,
+    ...localData,
+    budgetLimit: localData.budgetLimit || cloudData.budgetLimit || 1500,
+    cycleType: localData.cycleType || cloudData.cycleType || 'monthly',
+    categories: Array.from(catMap.values()),
+    transactions: mergedTransactions
+  };
+};
+
 // Helper: Safely encode UTF-8 text to Base64 (handles emojis & special characters)
 const utf8ToBase64 = (str) => {
   return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {

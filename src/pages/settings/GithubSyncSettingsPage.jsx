@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, ExternalLink, LogOut } from 'lucide-react';
-import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub, fetchGitHubUser } from '../../utils/githubSync';
+import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub, fetchGitHubUser, mergeBudgetData } from '../../utils/githubSync';
 
 export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData }) {
   const [config, setConfig] = useState(getGitHubConfig);
@@ -32,13 +32,15 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
               setConfig(newConfig);
               window.history.replaceState(null, null, window.location.pathname);
 
-              // AUTOMATIC DATA PULL & RESTORE ON INITIAL CONNECTION!
-              setSyncStatusMsg({ type: 'info', text: '📥 Automatically loading your cloud database...' });
+              // AUTOMATIC SMART MERGE (OFFLINE + CLOUD DATA COMBINED) ON INITIAL CONNECTION!
+              setSyncStatusMsg({ type: 'info', text: '📥 Merging offline and cloud databases...' });
               pullFromGitHub(newConfig).then(res => {
                 setIsSyncing(false);
                 if (res.success && res.data) {
-                  onUpdateBudgetData(res.data);
-                  setSyncStatusMsg({ type: 'success', text: `✅ Connected as @${username} & Cloud Database Loaded!` });
+                  const mergedData = mergeBudgetData(budgetData, res.data);
+                  onUpdateBudgetData(mergedData);
+                  pushToGitHub(mergedData, newConfig);
+                  setSyncStatusMsg({ type: 'success', text: `✅ Connected as @${username} & Smart Merged (Offline + Cloud Data Synced)!` });
                 } else {
                   // If fresh repo, back up initial local database
                   pushToGitHub(budgetData, newConfig).then(() => {
