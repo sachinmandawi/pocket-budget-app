@@ -115,15 +115,26 @@ export default function App() {
     }
   }, [isQuickAddOpen, activeSettingPage, activeTab]);
 
-  // Splash Screen 2-second timer
+  // Splash Screen 2-second timer & Instant App Notification Permission Prompt
   useEffect(() => {
+    const initNotificationPermissions = async () => {
+      try {
+        await LocalNotifications.requestPermissions();
+      } catch (e) {
+        if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+          Notification.requestPermission().catch(() => {});
+        }
+      }
+    };
+
     const fadeTimer = setTimeout(() => {
       setSplashFadeOut(true);
     }, 1600);
 
     const hideTimer = setTimeout(() => {
       setShowSplash(false);
-    }, 2000);
+      initNotificationPermissions();
+    }, 2100);
 
     return () => {
       clearTimeout(fadeTimer);
