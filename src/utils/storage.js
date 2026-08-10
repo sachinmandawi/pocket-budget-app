@@ -227,8 +227,15 @@ export const calculatePiggyBankSavings = (data) => {
   const startDate = new Date(startDateStr);
   const todayDate = new Date(todayStr);
 
+  const formatLocalYMD = (d) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
+
   for (let d = new Date(startDate); d < todayDate; d.setDate(d.getDate() + 1)) {
-    const dStr = d.toISOString().substring(0, 10);
+    const dStr = formatLocalYMD(d);
     const spentOnDay = datesMap.get(dStr) || 0;
     const savedAmount = Math.max(0, baseDailyTarget - spentOnDay);
 
