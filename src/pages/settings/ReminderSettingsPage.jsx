@@ -65,7 +65,7 @@ export default function ReminderSettingsPage({ reminderSettings = { enabled: tru
           notifications: [
             {
               title: 'PocketBudget Evening Reminder 🔔',
-              body: 'Aaj ka expense log kiya? Tap to record your spends today!',
+              body: 'Did you log today\'s expenses? Tap to record your spends now!',
               id: 101,
               schedule: { at: new Date(Date.now() + 1000) }
             }
@@ -75,14 +75,14 @@ export default function ReminderSettingsPage({ reminderSettings = { enabled: tru
     } catch (e) {
       if ('Notification' in window && Notification.permission === 'granted') {
         new Notification('PocketBudget Evening Reminder 🔔', {
-          body: 'Aaj ka expense log kiya? Tap to record your spends today!',
+          body: 'Did you log today\'s expenses? Tap to record your spends now!',
           icon: '/app-icon.png'
         });
       } else if ('Notification' in window && Notification.permission !== 'denied') {
         Notification.requestPermission().then(permission => {
           if (permission === 'granted') {
             new Notification('PocketBudget Evening Reminder 🔔', {
-              body: 'Aaj ka expense log kiya? Tap to record your spends today!',
+              body: 'Did you log today\'s expenses? Tap to record your spends now!',
               icon: '/app-icon.png'
             });
           }
