@@ -224,6 +224,18 @@ export default function TransactionsList({
                       }}>
                         {cat.name}
                       </span>
+                      {tx.spendSource === 'piggy_bank' && (
+                        <span style={{
+                          fontSize: '9px',
+                          fontWeight: 800,
+                          color: 'var(--ios-green)',
+                          background: 'var(--ios-green-bg)',
+                          padding: '1px 6px',
+                          borderRadius: 'var(--radius-full)'
+                        }}>
+                          🐷 Vault
+                        </span>
+                      )}
                       <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
                         {formatDateReadable(tx.date)} {tx.time ? `• ${tx.time}` : ''}
                       </span>

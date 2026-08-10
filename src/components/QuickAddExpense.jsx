@@ -9,6 +9,7 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
   const [category, setCategory] = useState(categories[0]?.id || 'chai_snacks');
   const [note, setNote] = useState('');
   const [date, setDate] = useState(new Date().toISOString().substring(0, 10));
+  const [spendSource, setSpendSource] = useState('allowance');
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const categoryOptions = categories.map(cat => ({
@@ -33,11 +34,13 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
       category,
       note: note || categories.find(c => c.id === category)?.name || 'Expense',
       date,
+      spendSource,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     });
 
     setAmount('');
     setNote('');
+    setSpendSource('allowance');
     setShowDatePicker(false);
     if (onClose) onClose();
   };
@@ -58,11 +61,60 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
             className="btn btn-secondary btn-sm"
             style={{ width: '32px', height: '32px', padding: 0, borderRadius: '50%' }}
           >
-            <X size={16} />
+            <X size={18} />
           </button>
         </div>
 
         <form onSubmit={handleSubmitCustom}>
+          {/* Spend Source Selector (Main Allowance vs Piggy Bank Vault) */}
+          <div className="form-group" style={{ marginBottom: '16px' }}>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
+              Deduct From (Spend Source)
+            </span>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={() => setSpendSource('allowance')}
+                style={{
+                  padding: '10px 8px',
+                  borderRadius: 'var(--radius-md)',
+                  border: spendSource === 'allowance' ? '2px solid var(--ios-blue)' : '1px solid var(--border-subtle)',
+                  background: spendSource === 'allowance' ? 'var(--ios-blue-bg)' : 'var(--bg-card-subtle)',
+                  color: spendSource === 'allowance' ? 'var(--ios-blue)' : 'var(--text-secondary)',
+                  fontWeight: 800,
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px'
+                }}
+              >
+                👛 Main Allowance
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSpendSource('piggy_bank')}
+                style={{
+                  padding: '10px 8px',
+                  borderRadius: 'var(--radius-md)',
+                  border: spendSource === 'piggy_bank' ? '2px solid var(--ios-green)' : '1px solid var(--border-subtle)',
+                  background: spendSource === 'piggy_bank' ? 'var(--ios-green-bg)' : 'var(--bg-card-subtle)',
+                  color: spendSource === 'piggy_bank' ? 'var(--ios-green)' : 'var(--text-secondary)',
+                  fontWeight: 800,
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '4px'
+                }}
+              >
+                🐷 Piggy Bank Vault
+              </button>
+            </div>
+          </div>
           {/* Hero Amount Input Box */}
           <div className="form-group" style={{ marginBottom: '16px' }}>
             <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>

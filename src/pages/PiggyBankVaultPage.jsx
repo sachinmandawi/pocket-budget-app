@@ -71,55 +71,70 @@ export default function PiggyBankVaultPage({ budgetData, onBack }) {
       {/* Date-by-Date Timeline Log List */}
       {history.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {history.map((item, index) => (
-            <div
-              key={index}
-              className="ios-card"
-              style={{
-                padding: '14px 16px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}
-            >
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                  <strong style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>
-                    {formatDateReadable(item.date)}
-                  </strong>
-                  {item.isZeroSpend && (
-                    <span style={{
-                      fontSize: '9px',
-                      fontWeight: 800,
-                      background: 'var(--ios-orange-bg)',
-                      color: 'var(--ios-orange)',
-                      padding: '2px 6px',
-                      borderRadius: 'var(--radius-full)',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '2px'
-                    }}>
-                      <Trophy size={10} /> Zero Spend Hero!
-                    </span>
-                  )}
+          {history.map((item, index) => {
+            const isWithdrawal = item.type === 'withdrawal';
+            return (
+              <div
+                key={index}
+                className="ios-card"
+                style={{
+                  padding: '14px 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  borderLeft: isWithdrawal ? '4px solid var(--ios-red)' : '4px solid var(--ios-green)'
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                    <strong style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>
+                      {formatDateReadable(item.date)}
+                    </strong>
+                    {isWithdrawal ? (
+                      <span style={{
+                        fontSize: '9px',
+                        fontWeight: 800,
+                        background: 'var(--ios-red-bg)',
+                        color: 'var(--ios-red)',
+                        padding: '2px 6px',
+                        borderRadius: 'var(--radius-full)'
+                      }}>
+                        Vault Expense
+                      </span>
+                    ) : item.isZeroSpend && (
+                      <span style={{
+                        fontSize: '9px',
+                        fontWeight: 800,
+                        background: 'var(--ios-orange-bg)',
+                        color: 'var(--ios-orange)',
+                        padding: '2px 6px',
+                        borderRadius: 'var(--radius-full)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '2px'
+                      }}>
+                        <Trophy size={10} /> Zero Spend Hero!
+                      </span>
+                    )}
+                  </div>
+                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                    {isWithdrawal ? item.note : `Spent ₹${item.spent} of ₹${item.limit} daily limit`}
+                  </span>
                 </div>
-                <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                  Spent ₹{item.spent} of ₹{item.limit} daily limit
+
+                <span style={{
+                  fontSize: '15px',
+                  fontWeight: 800,
+                  color: isWithdrawal ? 'var(--ios-red)' : 'var(--ios-green)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '2px'
+                }}>
+                  {isWithdrawal ? `-₹${item.spent}` : <><ArrowUpRight size={16} /> +₹{item.savedAmount}</>}
                 </span>
               </div>
-
-              <span style={{
-                fontSize: '16px',
-                fontWeight: 800,
-                color: 'var(--ios-green)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '2px'
-              }}>
-                <ArrowUpRight size={16} /> +₹{item.savedAmount}
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="ios-card" style={{ padding: '24px 18px', textAlign: 'center' }}>

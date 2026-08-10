@@ -127,15 +127,17 @@ export const calculateBudgetStats = (rawInput) => {
     return tx && tx.date && tx.date >= cycleStartStr && tx.date <= cycleEndStr;
   });
 
-  const spentToday = currentCycleTx
+  const allowanceTx = currentCycleTx.filter(tx => tx.spendSource !== 'piggy_bank');
+
+  const spentToday = allowanceTx
     .filter(tx => tx.date === todayStr)
     .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
 
-  const spentPastDays = currentCycleTx
+  const spentPastDays = allowanceTx
     .filter(tx => tx.date < todayStr)
     .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
 
-  const totalSpentThisMonth = currentCycleTx.reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
+  const totalSpentThisMonth = allowanceTx.reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
   const remainingTotalInHand = Number(data.monthlyAllowance || 0) - totalFixedDeductions - totalSpentThisMonth - effectiveReserve;
 
   const remainingUsablePool = Math.max(0, totalUsablePool - spentPastDays);
@@ -194,7 +196,7 @@ export const calculateBudgetStats = (rawInput) => {
 
 // 🐷 Feature: Piggy Bank Vault & Daily Savings History (Local Engine)
 export const calculatePiggyBankSavings = (data) => {
-  if (!data) return { totalSaved: 0, history: [] };
+  if (!data) return { totalSaved: 0, accumulatedSaved: 0, totalPiggySpent: 0, history: [] };
   
   const stats = calculateBudgetStats(data);
   const cycleStartStr = stats.cycleStartStr;
@@ -203,16 +205,21 @@ export const calculatePiggyBankSavings = (data) => {
 
   const transactions = data.transactions || [];
   const datesMap = new Map();
+  let totalPiggySpent = 0;
 
   transactions.forEach(tx => {
-    if (tx && tx.date && tx.date >= cycleStartStr && tx.date < todayStr) {
-      const current = datesMap.get(tx.date) || 0;
-      datesMap.set(tx.date, current + Number(tx.amount || 0));
+    if (tx && tx.date && tx.date >= cycleStartStr) {
+      if (tx.spendSource === 'piggy_bank') {
+        totalPiggySpent += Number(tx.amount || 0);
+      } else if (tx.date < todayStr) {
+        const current = datesMap.get(tx.date) || 0;
+        datesMap.set(tx.date, current + Number(tx.amount || 0));
+      }
     }
   });
 
   const history = [];
-  let totalSaved = 0;
+  let accumulatedSaved = 0;
 
   const startDate = new Date(cycleStartStr);
   const todayDate = new Date(todayStr);
@@ -223,8 +230,9 @@ export const calculatePiggyBankSavings = (data) => {
     const savedAmount = Math.max(0, baseDailyTarget - spentOnDay);
 
     if (savedAmount > 0) {
-      totalSaved += savedAmount;
+      accumulatedSaved += savedAmount;
       history.push({
+        type: 'deposit',
         date: dStr,
         spent: spentOnDay,
         limit: baseDailyTarget,
@@ -234,10 +242,27 @@ export const calculatePiggyBankSavings = (data) => {
     }
   }
 
+  // Include direct Piggy Bank spend transactions in history
+  transactions.forEach(tx => {
+    if (tx && tx.spendSource === 'piggy_bank') {
+      history.push({
+        type: 'withdrawal',
+        date: tx.date,
+        spent: Number(tx.amount || 0),
+        note: tx.note || 'Vault Expense',
+        savedAmount: -Number(tx.amount || 0)
+      });
+    }
+  });
+
   history.sort((a, b) => new Date(b.date) - new Date(a.date));
 
+  const totalSaved = Math.max(0, Math.round(accumulatedSaved - totalPiggySpent));
+
   return {
-    totalSaved: Math.round(totalSaved),
+    totalSaved,
+    accumulatedSaved: Math.round(accumulatedSaved),
+    totalPiggySpent: Math.round(totalPiggySpent),
     history
   };
 };
