@@ -71,13 +71,6 @@ jobs:
             - 🎛️ **Compact & Sleek Design**: Modern iOS typography, compact action buttons, dark mode support, and smooth micro-animations.
             - 🔄 **Native Hardware Back Navigation**: Smooth Android hardware back button support with double-back to exit.
             - ☁️ **Private GitHub Auto-Sync**: Keep your budget data synchronized across devices securely.
-
-            ---
-
-            ### 📲 Installation Instructions:
-
-            1. **Android APK**: Download `PocketBudget-v1.0.0.apk` from the **Assets** section below, tap to install on your Android device!
-            2. **PWA (Web)**: Open https://github.com/sachinmandawi/pocket-budget-app on your mobile browser and tap **Add to Home Screen**!
           files: release-assets/PocketBudget-v1.0.0.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
