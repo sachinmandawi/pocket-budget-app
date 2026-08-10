@@ -34,7 +34,7 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
       {/* Header Status Bar - Crisp Left & Right Alignment */}
       <div style={{ 
         display: 'flex', 
-        justify: 'space-between', 
+        justifyContent: 'space-between', 
         alignItems: 'center', 
         gap: '4px', 
         marginBottom: '16px' 
