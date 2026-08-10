@@ -121,9 +121,12 @@ export default function Sidebar({
         animation: 'slideInLeft 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
         borderRight: '1px solid var(--border-subtle)'
       }}>
-        {/* Drawer Header Branding */}
+        {/* Drawer Header Branding with Native Android Status Bar Safe Area Padding */}
         <div style={{
-          padding: '20px 18px 16px',
+          paddingTop: 'calc(max(28px, env(safe-area-inset-top)) + 12px)',
+          paddingBottom: '16px',
+          paddingLeft: '18px',
+          paddingRight: '18px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
