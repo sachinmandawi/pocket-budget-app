@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Sparkles, Calendar, ArrowLeft, ShieldCheck, Zap } from 'lucide-react';
+import { Clock, Sparkles, Calendar, ShieldCheck, Zap } from 'lucide-react';
 
 export default function AllowanceCountdownPage({ stats, onBack }) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -35,26 +35,8 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
       {/* Page Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-        <button
-          onClick={onBack}
-          style={{
-            background: 'var(--bg-card-subtle)',
-            border: '1px solid var(--border-subtle)',
-            color: 'var(--text-primary)',
-            padding: '8px 12px',
-            borderRadius: 'var(--radius-full)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            fontSize: '13px',
-            fontWeight: 700
-          }}
-        >
-          <ArrowLeft size={16} /> Back
-        </button>
-        <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
+      <div style={{ marginBottom: '16px' }}>
+        <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
           Allowance Countdown
         </h2>
       </div>

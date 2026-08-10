@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Settings, Menu } from 'lucide-react';
+import { Settings, Menu } from 'lucide-react';
 
 export default function Navbar({ activeSettingPage, onOpenSettings, onOpenSettingsPage, onBackToApp, onToggleSidebar }) {
   const getHeaderTitle = () => {
@@ -41,23 +41,12 @@ export default function Navbar({ activeSettingPage, onOpenSettings, onOpenSettin
             <Menu size={18} color="var(--ios-blue)" />
           </button>
 
-          {activeSettingPage ? (
-            <button 
-              onClick={onBackToApp} 
-              className="btn btn-secondary btn-sm" 
-              style={{ width: '36px', height: '36px', padding: 0 }}
-              title="Back"
-            >
-              <ArrowLeft size={18} />
-            </button>
-          ) : (
-            <img 
-              src="./app-icon.png" 
-              alt="PocketBudget" 
-              onClick={handleSettingsClick}
-              style={{ width: '34px', height: '34px', borderRadius: '10px', objectFit: 'contain', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', cursor: 'pointer' }} 
-            />
-          )}
+          <img 
+            src="./app-icon.png" 
+            alt="PocketBudget" 
+            onClick={handleSettingsClick}
+            style={{ width: '34px', height: '34px', borderRadius: '10px', objectFit: 'contain', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', cursor: 'pointer' }} 
+          />
 
           <h1 
             onClick={activeSettingPage ? null : handleSettingsClick}
