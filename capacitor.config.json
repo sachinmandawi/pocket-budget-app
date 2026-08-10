@@ -1,0 +1,8 @@
+{
+  "appId": "com.sachinmandawi.pocketbudget",
+  "appName": "PocketBudget",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}
