@@ -19,6 +19,7 @@ import ReminderSettingsPage from './pages/settings/ReminderSettingsPage';
 import { getInitialData, saveData, calculateBudgetStats } from './utils/storage';
 import { pushToGitHub, pullFromGitHub, getGitHubConfig, mergeBudgetData } from './utils/githubSync';
 import { App as CapApp } from '@capacitor/app';
+import { LocalNotifications } from '@capacitor/local-notifications';
 import { LayoutDashboard, ReceiptText, Clock, BarChart3, LogOut, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
