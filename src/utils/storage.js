@@ -199,8 +199,12 @@ export const calculatePiggyBankSavings = (data) => {
   if (!data) return { totalSaved: 0, accumulatedSaved: 0, totalPiggySpent: 0, history: [] };
   
   const stats = calculateBudgetStats(data);
+  if (!stats || !stats.baseDailyTarget || stats.baseDailyTarget <= 0 || stats.monthlyAllowance <= 0) {
+    return { totalSaved: 0, accumulatedSaved: 0, totalPiggySpent: 0, history: [] };
+  }
+
   const todayStr = new Date().toISOString().substring(0, 10);
-  const baseDailyTarget = stats.baseDailyTarget || 50;
+  const baseDailyTarget = stats.baseDailyTarget;
 
   const transactions = data.transactions || [];
   const datesMap = new Map();
