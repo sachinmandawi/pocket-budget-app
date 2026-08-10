@@ -25,15 +25,15 @@ export default function ExpensesPage({
 
         <button 
           onClick={onOpenQuickAdd} 
-          className="btn btn-primary"
+          className="btn btn-primary btn-sm"
           style={{
-            padding: '10px 18px',
-            fontSize: '13px',
+            padding: '6px 13px',
+            fontSize: '12px',
             borderRadius: 'var(--radius-full)',
-            boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)'
+            boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)'
           }}
         >
-          <PlusCircle size={16} /> Log Spend
+          <PlusCircle size={14} /> Log Spend
         </button>
       </div>
 

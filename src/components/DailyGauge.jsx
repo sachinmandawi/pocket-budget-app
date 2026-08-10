@@ -148,14 +148,14 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
         className="btn btn-primary"
         style={{ 
           width: '100%', 
-          padding: '14px', 
-          fontSize: '15px', 
-          fontWeight: 800,
+          padding: '10px 16px', 
+          fontSize: '13px', 
+          fontWeight: 700,
           borderRadius: 'var(--radius-full)',
-          boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)'
+          boxShadow: '0 3px 10px rgba(37, 99, 235, 0.25)'
         }}
       >
-        <Plus size={18} /> Log Expense
+        <Plus size={16} /> Log Spend
       </button>
     </div>
   );

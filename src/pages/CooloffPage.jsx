@@ -17,15 +17,15 @@ export default function CooloffPage({ wishlist, onAddWishItem, onDeleteWishItem 
 
         <button 
           onClick={() => setShowAddForm(!showAddForm)} 
-          className="btn btn-primary"
+          className="btn btn-primary btn-sm"
           style={{
-            padding: '10px 18px',
-            fontSize: '13px',
+            padding: '6px 13px',
+            fontSize: '12px',
             borderRadius: 'var(--radius-full)',
-            boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)'
+            boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)'
           }}
         >
-          <PlusCircle size={16} /> Add Wish
+          <PlusCircle size={14} /> Add Wish
         </button>
       </div>
 

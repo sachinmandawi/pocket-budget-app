@@ -242,15 +242,15 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
             className="btn btn-primary" 
             style={{ 
               width: '100%', 
-              padding: '14px', 
-              fontSize: '15px', 
-              fontWeight: 800,
-              boxShadow: isPiggyInsufficient ? 'none' : '0 4px 14px rgba(37, 99, 235, 0.3)',
+              padding: '10px 16px', 
+              fontSize: '13px', 
+              fontWeight: 700,
+              boxShadow: isPiggyInsufficient ? 'none' : '0 3px 10px rgba(37, 99, 235, 0.25)',
               opacity: isPiggyInsufficient ? 0.5 : 1,
               cursor: isPiggyInsufficient ? 'not-allowed' : 'pointer'
             }}
           >
-            <CheckCircle2 size={18} /> Save Expense
+            <CheckCircle2 size={16} /> Save Expense
           </button>
         </form>
       </div>
