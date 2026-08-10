@@ -59,6 +59,7 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
   };
 
   const handleDisconnect = () => {
+    localStorage.removeItem('pocket_budget_github_config');
     const emptyConfig = {
       token: '',
       owner: '',
@@ -69,6 +70,7 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
     };
     saveGitHubConfig(emptyConfig);
     setConfig(emptyConfig);
+    setTokenInput('');
     setSyncStatusMsg({ type: 'info', text: 'Disconnected GitHub Sync' });
   };
 

@@ -23,7 +23,11 @@ export const getGitHubConfig = () => {
 
 export const saveGitHubConfig = (config) => {
   try {
-    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+    if (!config || !config.token) {
+      localStorage.removeItem(CONFIG_KEY);
+    } else {
+      localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+    }
   } catch (e) {}
 };
 
