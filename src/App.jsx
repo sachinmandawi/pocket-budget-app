@@ -528,43 +528,6 @@ export default function App() {
         )}
       </main>
 
-      {/* 100% Full-Bleed Fixed Bottom Navigation Dock Wrapper */}
-      <div className="bottom-nav-wrapper">
-        <nav className="bottom-nav">
-          <button 
-            className={`nav-item ${!activeSettingPage && activeTab === 'daily' ? 'active' : ''}`}
-            onClick={() => { setActiveSettingPage(null); setActiveTab('daily'); }}
-          >
-            <LayoutDashboard size={20} />
-            <span>Daily</span>
-          </button>
-
-          <button 
-            className={`nav-item ${!activeSettingPage && activeTab === 'expenses' ? 'active' : ''}`}
-            onClick={() => { setActiveSettingPage(null); setActiveTab('expenses'); }}
-          >
-            <ReceiptText size={20} />
-            <span>Expenses</span>
-          </button>
-
-          <button 
-            className={`nav-item ${!activeSettingPage && activeTab === 'cooloff' ? 'active' : ''}`}
-            onClick={() => { setActiveSettingPage(null); setActiveTab('cooloff'); }}
-          >
-            <Clock size={20} />
-            <span>Cool-Off</span>
-          </button>
-
-          <button 
-            className={`nav-item ${!activeSettingPage && activeTab === 'analytics' ? 'active' : ''}`}
-            onClick={() => { setActiveSettingPage(null); setActiveTab('analytics'); }}
-          >
-            <BarChart3 size={20} />
-            <span>Analytics</span>
-          </button>
-        </nav>
-      </div>
-
       {/* Quick Add Modal */}
       <QuickAddExpense 
         categories={data.categories}
@@ -576,7 +539,7 @@ export default function App() {
       {syncToastMsg && (
         <div style={{
           position: 'fixed',
-          bottom: '82px',
+          bottom: '24px',
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 9999,
