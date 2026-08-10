@@ -26,48 +26,42 @@ export default function Sidebar({
       type: 'tab',
       target: 'daily',
       label: 'Daily Dashboard',
-      subtitle: 'Safe daily spend gauge & status',
-      icon: <LayoutDashboard size={20} color="var(--ios-blue)" />
+      icon: <LayoutDashboard size={19} color="var(--ios-blue)" />
     },
     {
       id: 'tab_expenses',
       type: 'tab',
       target: 'expenses',
       label: 'Expenses Log',
-      subtitle: 'Date-wise transaction history',
-      icon: <ReceiptText size={20} color="var(--ios-blue)" />
+      icon: <ReceiptText size={19} color="var(--ios-blue)" />
     },
     {
       id: 'page_allowance_countdown',
       type: 'page',
       target: 'allowance_countdown',
       label: 'Allowance Countdown',
-      subtitle: 'Digital clock & month cycle stats',
-      icon: <Clock size={20} color="var(--ios-blue)" />
+      icon: <Clock size={19} color="var(--ios-blue)" />
     },
     {
       id: 'page_piggy_bank',
       type: 'page',
       target: 'piggy_bank',
       label: 'Piggy Bank Vault',
-      subtitle: 'Date-by-date leftover savings log',
-      icon: <span style={{ fontSize: '18px' }}>🐷</span>
+      icon: <span style={{ fontSize: '17px' }}>🐷</span>
     },
     {
       id: 'tab_cooloff',
       type: 'tab',
       target: 'cooloff',
       label: 'Cool-Off Wishlist',
-      subtitle: 'Impulse spend 24h delay list',
-      icon: <Flame size={20} color="var(--ios-orange)" />
+      icon: <Flame size={19} color="var(--ios-orange)" />
     },
     {
       id: 'tab_analytics',
       type: 'tab',
       target: 'analytics',
       label: 'Analytics & Insights',
-      subtitle: 'Category graphs & health score',
-      icon: <BarChart3 size={20} color="var(--ios-green)" />
+      icon: <BarChart3 size={19} color="var(--ios-green)" />
     }
   ];
 
@@ -77,8 +71,7 @@ export default function Sidebar({
       type: 'page',
       target: 'settings_main',
       label: 'Settings',
-      subtitle: 'Allowance, Sync, Reminder, Categories, Theme',
-      icon: <Settings size={20} color="var(--ios-blue)" />
+      icon: <Settings size={19} color="var(--ios-blue)" />
     }
   ];
 
@@ -106,22 +99,22 @@ export default function Sidebar({
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'rgba(15, 23, 42, 0.65)',
+          background: 'rgba(15, 23, 42, 0.6)',
           backdropFilter: 'blur(4px)',
           animation: 'fadeIn 0.2s ease-out'
         }}
       />
 
-      {/* Sliding Glassmorphic Left Drawer Content */}
+      {/* Sliding Minimalist Left Drawer */}
       <aside style={{
         position: 'absolute',
         top: 0,
         left: 0,
         bottom: 0,
-        width: '300px',
-        maxWidth: '85vw',
+        width: '280px',
+        maxWidth: '82vw',
         background: 'var(--bg-card)',
-        boxShadow: '4px 0 24px rgba(0, 0, 0, 0.3)',
+        boxShadow: '4px 0 24px rgba(0, 0, 0, 0.25)',
         display: 'flex',
         flexDirection: 'column',
         zIndex: 10001,
@@ -141,13 +134,13 @@ export default function Sidebar({
             <img 
               src="./app-icon.png" 
               alt="Pocket Budget Logo" 
-              style={{ width: '38px', height: '38px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
+              style={{ width: '36px', height: '36px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
             />
             <div>
               <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
                 Pocket Budget
               </h3>
-              <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>
+              <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', margin: 0, fontWeight: 600 }}>
                 Smart Expense Tracker
               </p>
             </div>
@@ -159,8 +152,8 @@ export default function Sidebar({
               background: 'var(--bg-card-subtle)',
               border: '1px solid var(--border-subtle)',
               color: 'var(--text-secondary)',
-              width: '32px',
-              height: '32px',
+              width: '30px',
+              height: '30px',
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
@@ -168,27 +161,14 @@ export default function Sidebar({
               cursor: 'pointer'
             }}
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
         {/* Navigation Items Scroll Container */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '14px 12px' }}>
-          {/* Main Navigation Section */}
-          <span style={{
-            fontSize: '10px',
-            fontWeight: 800,
-            color: 'var(--text-tertiary)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            padding: '0 8px',
-            marginBottom: '8px',
-            display: 'block'
-          }}>
-            Main Navigation
-          </span>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '20px' }}>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '12px 10px' }}>
+          {/* Main Navigation */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '14px' }}>
             {mainNavItems.map(item => {
               const active = isItemActive(item);
               return (
@@ -199,7 +179,7 @@ export default function Sidebar({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '10px 12px',
+                    padding: '11px 12px',
                     borderRadius: 'var(--radius-md)',
                     background: active ? 'var(--ios-blue-bg)' : 'transparent',
                     border: active ? '1px solid var(--ios-blue)' : '1px solid transparent',
@@ -209,29 +189,24 @@ export default function Sidebar({
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{
-                      width: '34px',
-                      height: '34px',
-                      borderRadius: '10px',
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '8px',
                       background: active ? '#ffffff' : 'var(--bg-card-subtle)',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      flexShrink: 0
                     }}>
                       {item.icon}
                     </div>
-                    <div>
-                      <p style={{
-                        fontSize: '14px',
-                        fontWeight: active ? 800 : 700,
-                        color: active ? 'var(--ios-blue)' : 'var(--text-primary)',
-                        margin: 0
-                      }}>
-                        {item.label}
-                      </p>
-                      <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', margin: 0 }}>
-                        {item.subtitle}
-                      </p>
-                    </div>
+                    <span style={{
+                      fontSize: '14px',
+                      fontWeight: active ? 800 : 700,
+                      color: active ? 'var(--ios-blue)' : 'var(--text-primary)'
+                    }}>
+                      {item.label}
+                    </span>
                   </div>
 
                   <ChevronRight size={16} color={active ? 'var(--ios-blue)' : 'var(--text-tertiary)'} />
@@ -240,21 +215,10 @@ export default function Sidebar({
             })}
           </div>
 
-          {/* Settings & Control Section */}
-          <span style={{
-            fontSize: '10px',
-            fontWeight: 800,
-            color: 'var(--text-tertiary)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            padding: '0 8px',
-            marginBottom: '8px',
-            display: 'block'
-          }}>
-            Settings & Controls
-          </span>
+          <div style={{ height: '1px', background: 'var(--border-subtle)', margin: '8px 6px 12px' }} />
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          {/* Settings Nav Item */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
             {settingsNavItems.map(item => {
               const active = isItemActive(item);
               return (
@@ -265,7 +229,7 @@ export default function Sidebar({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '10px 12px',
+                    padding: '11px 12px',
                     borderRadius: 'var(--radius-md)',
                     background: active ? 'var(--ios-blue-bg)' : 'transparent',
                     border: active ? '1px solid var(--ios-blue)' : '1px solid transparent',
@@ -275,29 +239,24 @@ export default function Sidebar({
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{
-                      width: '34px',
-                      height: '34px',
-                      borderRadius: '10px',
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '8px',
                       background: active ? '#ffffff' : 'var(--bg-card-subtle)',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      flexShrink: 0
                     }}>
                       {item.icon}
                     </div>
-                    <div>
-                      <p style={{
-                        fontSize: '14px',
-                        fontWeight: active ? 800 : 700,
-                        color: active ? 'var(--ios-blue)' : 'var(--text-primary)',
-                        margin: 0
-                      }}>
-                        {item.label}
-                      </p>
-                      <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', margin: 0 }}>
-                        {item.subtitle}
-                      </p>
-                    </div>
+                    <span style={{
+                      fontSize: '14px',
+                      fontWeight: active ? 800 : 700,
+                      color: active ? 'var(--ios-blue)' : 'var(--text-primary)'
+                    }}>
+                      {item.label}
+                    </span>
                   </div>
 
                   <ChevronRight size={16} color={active ? 'var(--ios-blue)' : 'var(--text-tertiary)'} />
@@ -309,7 +268,7 @@ export default function Sidebar({
 
         {/* Drawer Footer Status */}
         <div style={{
-          padding: '14px 18px',
+          padding: '12px 16px',
           borderTop: '1px solid var(--border-subtle)',
           background: 'var(--bg-card-subtle)',
           display: 'flex',
