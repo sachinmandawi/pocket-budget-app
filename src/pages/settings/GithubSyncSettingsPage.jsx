@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, ExternalLink, LogOut } from 'lucide-react';
-import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub } from '../../utils/githubSync';
+import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub, fetchGitHubUser } from '../../utils/githubSync';
 
 export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData }) {
   const [config, setConfig] = useState(getGitHubConfig);
@@ -8,6 +8,38 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
   const [syncStatusMsg, setSyncStatusMsg] = useState(null);
 
   const isConfigured = Boolean(config.owner && config.repo && config.token);
+
+  // Catch OAuth Token from URL Hash on redirect
+  useEffect(() => {
+    if (window.location.hash && window.location.hash.includes('oauth_token=')) {
+      try {
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const token = hashParams.get('oauth_token');
+        if (token && token.length > 15) {
+          setIsSyncing(true);
+          setSyncStatusMsg({ type: 'info', text: 'Syncing GitHub Profile...' });
+
+          fetchGitHubUser(token).then(username => {
+            setIsSyncing(false);
+            if (username) {
+              const newConfig = {
+                ...getGitHubConfig(),
+                token: token.trim(),
+                owner: username,
+                repo: 'pocket-budget-db'
+              };
+              saveGitHubConfig(newConfig);
+              setConfig(newConfig);
+              setSyncStatusMsg({ type: 'success', text: `✅ Successfully Connected as @${username}!` });
+              window.history.replaceState(null, null, window.location.pathname);
+            } else {
+              setSyncStatusMsg({ type: 'error', text: '❌ Invalid token or API fetch failed' });
+            }
+          });
+        }
+      } catch (e) {}
+    }
+  }, []);
 
   // 1-Click Cloudflare Worker GitHub OAuth Flow (PocketBudget Gatekeeper Engine)
   const handleGithubSignIn = () => {
@@ -97,7 +129,7 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
             gap: '4px'
           }}>
             {isConfigured ? <ShieldCheck size={13} /> : <AlertCircle size={13} />}
-            {isConfigured ? 'Connected' : 'Not Connected'}
+            {isConfigured ? 'Connected' : 'Not Configured'}
           </span>
         </div>
 
