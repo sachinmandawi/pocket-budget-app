@@ -8,48 +8,48 @@ export default function PiggyBankVaultPage({ budgetData, onBack }) {
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
       {/* Page Header */}
-      <div style={{ marginBottom: '16px' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
+      <div style={{ marginBottom: '14px' }}>
+        <h2 style={{ fontSize: '17px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
           Piggy Bank Vault
         </h2>
       </div>
 
       {/* Hero Savings Card */}
       <div className="ios-card" style={{
-        padding: '24px 20px',
-        marginBottom: '16px',
+        padding: '20px 16px',
+        marginBottom: '14px',
         textAlign: 'center',
         background: 'linear-gradient(135deg, rgba(52, 199, 89, 0.12) 0%, rgba(52, 199, 89, 0.03) 100%)',
         border: '1px solid rgba(52, 199, 89, 0.25)'
       }}>
         <div style={{
-          width: '60px',
-          height: '60px',
-          borderRadius: '20px',
+          width: '46px',
+          height: '46px',
+          borderRadius: '14px',
           background: 'var(--ios-green-bg)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '0 auto 12px',
-          fontSize: '32px'
+          margin: '0 auto 10px',
+          fontSize: '24px'
         }}>
           🐷
         </div>
 
-        <h3 style={{ fontSize: '22px', fontWeight: 800, margin: '0 0 4px', color: 'var(--text-primary)' }}>
+        <h3 style={{ fontSize: '17px', fontWeight: 800, margin: '0 0 2px', color: 'var(--text-primary)' }}>
           Piggy Savings Vault
         </h3>
-        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '0 0 16px' }}>
+        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '0 0 12px' }}>
           Total leftover money saved under daily spending limits
         </p>
 
         <div style={{
-          fontSize: '44px',
+          fontSize: '28px',
           fontWeight: 800,
           color: 'var(--ios-green)',
-          letterSpacing: '-1.5px',
+          letterSpacing: '-1px',
           lineHeight: 1,
-          marginBottom: '6px'
+          marginBottom: '4px'
         }}>
           +₹{totalSaved}
         </div>

@@ -35,28 +35,28 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
       {/* Page Header */}
-      <div style={{ marginBottom: '16px' }}>
-        <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
+      <div style={{ marginBottom: '14px' }}>
+        <h2 style={{ fontSize: '17px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
           Allowance Countdown
         </h2>
       </div>
 
       {/* Main Countdown Hero Card */}
-      <div className="ios-card" style={{ padding: '24px 20px', marginBottom: '16px', textAlign: 'center' }}>
+      <div className="ios-card" style={{ padding: '20px 16px', marginBottom: '14px', textAlign: 'center' }}>
         <div style={{
-          width: '56px',
-          height: '56px',
-          borderRadius: '18px',
+          width: '46px',
+          height: '46px',
+          borderRadius: '14px',
           background: 'var(--ios-blue-bg)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '0 auto 14px'
+          margin: '0 auto 10px'
         }}>
-          <Clock size={28} color="var(--ios-blue)" />
+          <Clock size={22} color="var(--ios-blue)" />
         </div>
 
-        <h3 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 4px', color: 'var(--text-primary)' }}>
+        <h3 style={{ fontSize: '16px', fontWeight: 800, margin: '0 0 2px', color: 'var(--text-primary)' }}>
           Next Allowance Credit
         </h3>
         <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '0 0 20px' }}>
@@ -76,7 +76,7 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
             borderRadius: 'var(--radius-lg)',
             border: '1px solid var(--border-subtle)'
           }}>
-            <span style={{ fontSize: '28px', fontWeight: 800, color: 'var(--ios-blue)', display: 'block', lineHeight: 1 }}>
+            <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--ios-blue)', display: 'block', lineHeight: 1 }}>
               {String(timeLeft.days).padStart(2, '0')}
             </span>
             <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '4px', display: 'block' }}>
@@ -90,7 +90,7 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
             borderRadius: 'var(--radius-lg)',
             border: '1px solid var(--border-subtle)'
           }}>
-            <span style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)', display: 'block', lineHeight: 1 }}>
+            <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', display: 'block', lineHeight: 1 }}>
               {String(timeLeft.hours).padStart(2, '0')}
             </span>
             <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '4px', display: 'block' }}>
@@ -104,7 +104,7 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
             borderRadius: 'var(--radius-lg)',
             border: '1px solid var(--border-subtle)'
           }}>
-            <span style={{ fontSize: '28px', fontWeight: 800, color: 'var(--text-primary)', display: 'block', lineHeight: 1 }}>
+            <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', display: 'block', lineHeight: 1 }}>
               {String(timeLeft.minutes).padStart(2, '0')}
             </span>
             <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '4px', display: 'block' }}>
@@ -118,7 +118,7 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
             borderRadius: 'var(--radius-lg)',
             border: '1px solid var(--border-subtle)'
           }}>
-            <span style={{ fontSize: '28px', fontWeight: 800, color: 'var(--ios-green)', display: 'block', lineHeight: 1 }}>
+            <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--ios-green)', display: 'block', lineHeight: 1 }}>
               {String(timeLeft.seconds).padStart(2, '0')}
             </span>
             <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '4px', display: 'block' }}>

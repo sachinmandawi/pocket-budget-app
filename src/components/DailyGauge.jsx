@@ -78,10 +78,10 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
           Safe Allowance Today
         </p>
         <div style={{ 
-          fontSize: '48px', 
+          fontSize: '36px', 
           fontWeight: 800, 
           color: themeColor, 
-          letterSpacing: '-1.5px', 
+          letterSpacing: '-1px', 
           lineHeight: 1 
         }}>
           ₹{Math.abs(todaysSafeRemaining)}
