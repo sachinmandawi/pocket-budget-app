@@ -47,23 +47,25 @@ jobs:
       - name: Copy Built APK Asset
         run: |
           mkdir -p release-assets
+          cp android/app/build/outputs/apk/debug/app-debug.apk release-assets/PocketBudget-v1.0.1.apk
+
       - name: Update Repository About Description & Homepage
         run: |
           curl -X PATCH \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/${{ github.repository }} \
-            -d '{"description":"📱 Smart, Self-Healing Daily Expense Tracker & Allowance Manager with Piggy Bank Vault & Private Cloud Sync", "homepage":"https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.0.0"}'
+            -d '{"description":"📱 Smart, Self-Healing Daily Expense Tracker & Allowance Manager with Piggy Bank Vault & Private Cloud Sync", "homepage":"https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.0.1"}'
 
-      - name: Upload APK to GitHub Release v1.0.0
+      - name: Upload APK to GitHub Release v1.0.1
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0
-          name: "Pocket Budget v1.0.0 — Official Release 📱✨"
+          tag_name: v1.0.1
+          name: "Pocket Budget v1.0.1 — Official Release 📱✨"
           body: |
-            # 📱 Pocket Budget v1.0.0 — Official Release 🚀
+            # 📱 Pocket Budget v1.0.1 — Official Release 🚀
 
-            Welcome to **Pocket Budget**, your smart, self-healing daily expense tracker & allowance manager built with modern iOS glassmorphism design!
+            Welcome to **Pocket Budget v1.0.1**, your smart, self-healing daily expense tracker & allowance manager built with modern iOS glassmorphism design!
 
             ---
 
@@ -71,11 +73,12 @@ jobs:
 
             - 👛 **Spend Source Selection**: Choose whether an expense is deducted from your **Main Daily Allowance** or your **Piggy Bank Vault**.
             - 🐷 **Piggy Bank Vault (Lifetime Savings)**: Leftover daily allowance builds up in your Piggy Bank Vault indefinitely across months — save for big goals!
-            - 🛡️ **Smart Insufficient Balance Alert**: Real-time balance validation prevents over-drawing from your Vault with clear warnings.
+            - 🛡️ **Smart Insufficient Balance Alert**: Real-time balance validation prevents over-drawing with clear warnings when typing an amount.
             - ⏱️ **Allowance Countdown**: Dedicated digital clock countdown tracking days, hours, minutes, and seconds until your next payday credit.
             - 📱 **Ultra-Clean Left Sidebar**: 100% clutter-free navigation drawer with native Android status bar notch safe-area compatibility.
             - 🎛️ **Compact & Sleek Design**: Modern iOS typography, compact action buttons, dark mode support, and smooth micro-animations.
             - 🔄 **Native Hardware Back Navigation**: Smooth Android hardware back button support with double-back to exit.
+            - 🔴 **iOS Glassmorphism Confirmation Modal**: Custom iOS confirmation modal for Data Reset to ₹0 state.
 
             ---
 
@@ -84,6 +87,6 @@ jobs:
             - 🔒 **100% Private Data Ownership**: All transactions, piggy vault savings, and settings sync directly into your private GitHub repository (`pocket-budget-db`). No 3rd-party servers ever touch your financial data!
             - ⚡ **Multi-Device Real-Time Auto-Sync**: Seamlessly log spends and sync budget stats across multiple phones, tablets, or web browsers instantly.
             - 🔑 **1-Click Cloudflare OAuth Login**: Instant secure GitHub login integration without typing manual tokens!
-          files: release-assets/PocketBudget-v1.0.0.apk
+          files: release-assets/PocketBudget-v1.0.1.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
