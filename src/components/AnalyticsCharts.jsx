@@ -11,12 +11,12 @@ export default function AnalyticsCharts({ categories = DEFAULT_CATEGORIES, stats
 
   return (
     <div className="ios-card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-        <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <PieChart size={18} color="var(--ios-blue)" />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+        <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <PieChart size={16} color="var(--ios-blue)" />
           Category Breakdown
         </span>
-        <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--ios-blue)', background: 'var(--ios-blue-bg)', padding: '3px 10px', borderRadius: 'var(--radius-full)' }}>
+        <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--ios-blue)', background: 'var(--ios-blue-bg)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
           Total: ₹{totalSpentThisMonth}
         </span>
       </div>
