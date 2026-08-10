@@ -253,16 +253,19 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
           {/* Primary Save Button */}
           <button 
             type="submit" 
+            disabled={isPiggyInsufficient}
             className="btn btn-primary" 
             style={{ 
               width: '100%', 
               padding: '14px', 
               fontSize: '15px', 
               fontWeight: 800,
-              boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)'
+              boxShadow: isPiggyInsufficient ? 'none' : '0 4px 14px rgba(37, 99, 235, 0.3)',
+              opacity: isPiggyInsufficient ? 0.5 : 1,
+              cursor: isPiggyInsufficient ? 'not-allowed' : 'pointer'
             }}
           >
-            <CheckCircle2 size={18} /> Save Expense
+            <CheckCircle2 size={18} /> {isPiggyInsufficient ? `Insufficient Piggy Balance (Available: ₹${availablePiggyBalance})` : 'Save Expense'}
           </button>
         </form>
       </div>
