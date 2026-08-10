@@ -31,6 +31,38 @@ export default function App() {
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
+  // Native APK Hardware & Browser Back Button Handler
+  useEffect(() => {
+    const handlePopState = (e) => {
+      if (isQuickAddOpen) {
+        setIsQuickAddOpen(false);
+        return;
+      }
+      if (activeSettingPage) {
+        if (activeSettingPage !== 'settings_main') {
+          setActiveSettingPage('settings_main');
+        } else {
+          setActiveSettingPage(null);
+        }
+        return;
+      }
+      if (activeTab !== 'daily') {
+        setActiveTab('daily');
+        return;
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isQuickAddOpen, activeSettingPage, activeTab]);
+
+  // Push state to history stack on sub-view open
+  useEffect(() => {
+    if (isQuickAddOpen || activeSettingPage || activeTab !== 'daily') {
+      window.history.pushState({ isModal: isQuickAddOpen, page: activeSettingPage, tab: activeTab }, '');
+    }
+  }, [isQuickAddOpen, activeSettingPage, activeTab]);
+
   // Splash Screen 2-second timer
   useEffect(() => {
     const fadeTimer = setTimeout(() => {
