@@ -57,10 +57,10 @@ export default function App() {
         return;
       }
       if (activeSettingPage) {
-        if (activeSettingPage !== 'settings_main') {
-          setActiveSettingPage('settings_main');
-        } else {
+        if (['allowance_countdown', 'piggy_bank', 'settings_main'].includes(activeSettingPage)) {
           setActiveSettingPage(null);
+        } else {
+          setActiveSettingPage('settings_main');
         }
         return;
       }
@@ -113,16 +113,16 @@ export default function App() {
         capListenerHandle.remove();
       }
     };
-  }, [isQuickAddOpen, activeSettingPage, activeTab]);
+  }, [isSidebarOpen, isQuickAddOpen, activeSettingPage, activeTab]);
 
   // Push state to history stack on sub-view open
   useEffect(() => {
-    if (isQuickAddOpen || activeSettingPage || activeTab !== 'daily') {
+    if (isSidebarOpen || isQuickAddOpen || activeSettingPage || activeTab !== 'daily') {
       try {
-        window.history.pushState({ isModal: isQuickAddOpen, page: activeSettingPage, tab: activeTab }, '');
+        window.history.pushState({ sidebar: isSidebarOpen, isModal: isQuickAddOpen, page: activeSettingPage, tab: activeTab }, '');
       } catch (e) {}
     }
-  }, [isQuickAddOpen, activeSettingPage, activeTab]);
+  }, [isSidebarOpen, isQuickAddOpen, activeSettingPage, activeTab]);
 
   // Cloudflare Worker 1-Click GitHub OAuth Hash Listener
   useEffect(() => {
