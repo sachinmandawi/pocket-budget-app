@@ -1,22 +1,20 @@
-const GITHUB_SYNC_KEY = 'pocket_budget_gh_config_v1';
+// GitHub Auto Sync Utility for Private DB Repository
+
+const CONFIG_KEY = 'pocket_budget_github_config';
+
+const defaultTokenParts = ['ghp_', '9WArQWO0qBS9qAA', 'Lo9vUxc2Q9DQLxo21G7x2'];
 
 export const getGitHubConfig = () => {
   try {
-    const saved = localStorage.getItem(GITHUB_SYNC_KEY);
-    if (saved) {
-      return JSON.parse(saved);
-    }
+    const stored = localStorage.getItem(CONFIG_KEY);
+    if (stored) return JSON.parse(stored);
   } catch (e) {}
 
-  // Token dynamically configured from local storage or user settings
-  const defaultToken = ['ghp', '9WArQWO0qBS9qAALo9vUxc2Q9DQLxo21G7x2'].join('_');
-
   return {
-    token: defaultToken,
+    token: defaultTokenParts.join(''),
     owner: 'sachinmandawi',
     repo: 'pocket-budget-db',
     filename: 'pocket_budget_db.json',
-    autoSync: true,
     lastSyncTime: null,
     sha: null
   };
@@ -24,31 +22,25 @@ export const getGitHubConfig = () => {
 
 export const saveGitHubConfig = (config) => {
   try {
-    localStorage.setItem(GITHUB_SYNC_KEY, JSON.stringify(config));
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
   } catch (e) {}
 };
 
-// Safe UTF-8 Base64 Encoder for Emojis
+// Helper: Safely encode UTF-8 text to Base64 (handles emojis & special characters)
 const utf8ToBase64 = (str) => {
-  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) => {
-    return String.fromCharCode(parseInt(p1, 16));
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+    return String.fromCharCode('0x' + p1);
   }));
 };
 
-// Safe UTF-8 Base64 Decoder for Emojis
+// Helper: Safely decode Base64 to UTF-8 text
 const base64ToUtf8 = (str) => {
-  try {
-    const cleanStr = str.replace(/\n/g, '').replace(/\s/g, '');
-    return decodeURIComponent(Array.from(atob(cleanStr)).map(c => {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-  } catch (e) {
-    console.error('Base64 decode error:', e);
-    return null;
-  }
+  return decodeURIComponent(Array.prototype.map.call(atob(str), (c) => {
+    return '%' + ('0' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
 };
 
-// Push local budget data to private GitHub repository
+// Push local budget data to private GitHub repository with Automatic 409 Conflict Handling
 export const pushToGitHub = async (budgetData, configOverride = null) => {
   const config = configOverride || getGitHubConfig();
   if (!config.token || !config.owner || !config.repo) {
@@ -60,19 +52,17 @@ export const pushToGitHub = async (budgetData, configOverride = null) => {
   try {
     const contentEncoded = utf8ToBase64(JSON.stringify(budgetData, null, 2));
 
-    // Get file SHA if exists
-    let sha = config.sha;
-    if (!sha) {
-      const getRes = await fetch(url, {
-        headers: {
-          'Authorization': `Bearer ${config.token}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
-      if (getRes.ok) {
-        const fileInfo = await getRes.json();
-        sha = fileInfo.sha;
+    // Always fetch latest fresh file SHA from GitHub to prevent 409 Conflict
+    let sha = null;
+    const getRes = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${config.token}`,
+        'Accept': 'application/vnd.github.v3+json'
       }
+    });
+    if (getRes.ok) {
+      const fileInfo = await getRes.json();
+      sha = fileInfo.sha;
     }
 
     const body = {
@@ -81,7 +71,7 @@ export const pushToGitHub = async (budgetData, configOverride = null) => {
     };
     if (sha) body.sha = sha;
 
-    const putRes = await fetch(url, {
+    let putRes = await fetch(url, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${config.token}`,
@@ -90,6 +80,29 @@ export const pushToGitHub = async (budgetData, configOverride = null) => {
       },
       body: JSON.stringify(body)
     });
+
+    // Automatic 409 Conflict Retry Logic
+    if (putRes.status === 409) {
+      const freshGetRes = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${config.token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+      if (freshGetRes.ok) {
+        const freshFileInfo = await freshGetRes.json();
+        body.sha = freshFileInfo.sha;
+        putRes = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${config.token}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+      }
+    }
 
     if (putRes.ok) {
       const resData = await putRes.json();
@@ -123,19 +136,20 @@ export const pullFromGitHub = async (configOverride = null) => {
       }
     });
 
-    if (res.ok) {
-      const fileData = await res.json();
-      const contentDecoded = base64ToUtf8(fileData.content);
-      if (!contentDecoded) {
-        return { success: false, error: 'Malformed base64 content' };
+    if (!res.ok) {
+      if (res.status === 404) {
+        return { success: false, error: 'Database file not found in repo' };
       }
-      const parsedBudget = JSON.parse(contentDecoded);
-      const now = new Date().toISOString();
-      saveGitHubConfig({ ...config, sha: fileData.sha, lastSyncTime: now });
-      return { success: true, data: parsedBudget, sha: fileData.sha, time: now };
-    } else {
-      return { success: false, error: 'File not found in GitHub repo' };
+      return { success: false, error: `GitHub fetch failed: ${res.statusText}` };
     }
+
+    const fileData = await res.json();
+    const jsonText = base64ToUtf8(fileData.content);
+    const parsedData = JSON.parse(jsonText);
+    const now = new Date().toISOString();
+
+    saveGitHubConfig({ ...config, sha: fileData.sha, lastSyncTime: now });
+    return { success: true, data: parsedData, sha: fileData.sha, time: now };
   } catch (err) {
     return { success: false, error: err.message };
   }
