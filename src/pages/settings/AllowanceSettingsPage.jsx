@@ -55,7 +55,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
             type="number"
             required
             className="form-input"
-            style={{ fontSize: '20px', fontWeight: 800, color: 'var(--ios-blue)' }}
+            style={{ fontSize: '16px', fontWeight: 700, color: 'var(--ios-blue)' }}
             value={allowance}
             onChange={e => setAllowance(e.target.value)}
           />
