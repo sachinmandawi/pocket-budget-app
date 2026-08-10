@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, RefreshCw, AlertTriangle } from 'lucide-react';
+import { RefreshCw, AlertTriangle } from 'lucide-react';
 
 export default function DataResetSettingsPage({ onResetDemo, onBack }) {
   return (
@@ -7,30 +7,58 @@ export default function DataResetSettingsPage({ onResetDemo, onBack }) {
       <div className="ios-card">
         <div style={{
           background: 'var(--ios-red-bg)',
-          borderRadius: 'var(--radius-md)',
+          borderRadius: 'var(--radius-lg)',
           padding: '16px',
           marginBottom: '20px',
+          border: '1px solid rgba(239, 68, 68, 0.15)',
           display: 'flex',
           gap: '12px',
-          alignItems: 'flex-start'
+          alignItems: 'center'
         }}>
-          <AlertTriangle size={22} color="var(--ios-red)" style={{ shrink: 0, marginTop: '2px' }} />
+          <div style={{
+            width: '42px',
+            height: '42px',
+            borderRadius: '12px',
+            background: '#ffffff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            boxShadow: '0 2px 8px rgba(239, 68, 68, 0.12)'
+          }}>
+            <AlertTriangle size={22} color="var(--ios-red)" />
+          </div>
+
           <div>
-            <h4 style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-red)', marginBottom: '4px' }}>
-              Reset Budget Data
+            <h4 style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-red)', margin: 0, lineHeight: 1.2 }}>
+              Reset Database to 0
             </h4>
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-              Yeh action sabhi recorded expenses, wishlist cool-offs aur custom settings ko clear kar dega aur app ko fresh ₹1,500 state me restore kar dega.
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', margin: 0 }}>
+              Wipes all expenses, wishlist items & resets to ₹0 state.
             </p>
           </div>
         </div>
 
         <button 
           onClick={() => { onResetDemo(); onBack(); }}
-          className="btn btn-primary"
-          style={{ width: '100%', padding: '15px', backgroundColor: 'var(--ios-red)' }}
+          className="btn"
+          style={{
+            width: '100%',
+            padding: '14px',
+            fontSize: '14px',
+            fontWeight: 800,
+            color: '#ffffff',
+            background: 'var(--ios-red)',
+            borderRadius: 'var(--radius-md)',
+            boxShadow: '0 4px 14px rgba(239, 68, 68, 0.35)',
+            border: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}
         >
-          <RefreshCw size={18} /> Reset All Data Now
+          <RefreshCw size={16} /> Reset All Data Now
         </button>
       </div>
     </div>
