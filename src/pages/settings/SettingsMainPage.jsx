@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wallet, Tag, Palette, RefreshCw, ChevronRight, Github, Bell } from 'lucide-react';
+import { Wallet, Tag, Palette, RefreshCw, ChevronRight, Github, Bell, Clock } from 'lucide-react';
 
 export default function SettingsMainPage({ onNavigateSubPage }) {
   const menuItems = [
@@ -14,6 +14,18 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
       title: 'Allowance & Payday Date',
       subtitle: 'Monthly amount & payday calendar',
       icon: <Wallet size={20} color="var(--ios-blue)" />
+    },
+    {
+      id: 'allowance_countdown',
+      title: 'Allowance Credit Countdown',
+      subtitle: 'Ticking digital clock & cycle stats',
+      icon: <Clock size={20} color="var(--ios-blue)" />
+    },
+    {
+      id: 'piggy_bank',
+      title: 'Piggy Bank Savings Vault',
+      subtitle: 'Date-by-date leftover savings history',
+      icon: <span style={{ fontSize: '18px' }}>🐷</span>
     },
     {
       id: 'settings_reminder',
