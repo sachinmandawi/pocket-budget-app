@@ -53,6 +53,31 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.0
+          name: "Pocket Budget v1.0.0 — Official Release 📱✨"
+          body: |
+            # 📱 Pocket Budget v1.0.0 — Official Release 🚀
+
+            Welcome to **Pocket Budget**, your smart, self-healing daily expense tracker & allowance manager built with modern iOS glassmorphism design!
+
+            ---
+
+            ### ✨ Key Features & User Highlights:
+
+            - 👛 **Spend Source Selection**: Choose whether an expense is deducted from your **Main Daily Allowance** or your **Piggy Bank Vault**.
+            - 🐷 **Piggy Bank Vault (Lifetime Savings)**: Leftover daily allowance builds up in your Piggy Bank Vault indefinitely across months — save for big goals!
+            - 🛡️ **Smart Insufficient Balance Alert**: Real-time balance validation prevents over-drawing from your Vault with clear warnings.
+            - ⏱️ **Allowance Countdown**: Dedicated digital clock countdown tracking days, hours, minutes, and seconds until your next payday credit.
+            - 📱 **Ultra-Clean Left Sidebar**: 100% clutter-free navigation drawer with native Android status bar notch safe-area compatibility.
+            - 🎛️ **Compact & Sleek Design**: Modern iOS typography, compact action buttons, dark mode support, and smooth micro-animations.
+            - 🔄 **Native Hardware Back Navigation**: Smooth Android hardware back button support with double-back to exit.
+            - ☁️ **Private GitHub Auto-Sync**: Keep your budget data synchronized across devices securely.
+
+            ---
+
+            ### 📲 Installation Instructions:
+
+            1. **Android APK**: Download `PocketBudget-v1.0.0.apk` from the **Assets** section below, tap to install on your Android device!
+            2. **PWA (Web)**: Open https://github.com/sachinmandawi/pocket-budget-app on your mobile browser and tap **Add to Home Screen**!
           files: release-assets/PocketBudget-v1.0.0.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
