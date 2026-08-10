@@ -119,30 +119,15 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                   gap: '4px'
                 }}
               >
-                🐷 Piggy Bank (₹{availablePiggyBalance})
+                🐷 Piggy Bank
               </button>
             </div>
 
-            {/* Insufficient Piggy Vault Balance Alert Banner */}
+            {/* Small Compact Insufficient Piggy Vault Balance Warning */}
             {isPiggyInsufficient && (
-              <div style={{
-                marginTop: '10px',
-                padding: '10px 12px',
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--ios-red-bg)',
-                border: '1px solid var(--ios-red)',
-                color: 'var(--ios-red)',
-                fontSize: '12px',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                <AlertCircle size={16} style={{ flexShrink: 0 }} />
-                <span>
-                  Insufficient Vault balance! Available: <strong>₹{availablePiggyBalance}</strong>. Switch to Main Allowance or lower amount.
-                </span>
-              </div>
+              <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ios-red)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
+                ⚠️ Insufficient Vault balance (Max ₹{availablePiggyBalance})
+              </span>
             )}
           </div>
           {/* Hero Amount Input Box */}
@@ -265,7 +250,7 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
               cursor: isPiggyInsufficient ? 'not-allowed' : 'pointer'
             }}
           >
-            <CheckCircle2 size={18} /> {isPiggyInsufficient ? `Insufficient Piggy Balance (Available: ₹${availablePiggyBalance})` : 'Save Expense'}
+            <CheckCircle2 size={18} /> Save Expense
           </button>
         </form>
       </div>
