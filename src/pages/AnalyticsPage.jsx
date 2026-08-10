@@ -6,13 +6,11 @@ import AnalyticsCharts from '../components/AnalyticsCharts';
 export default function AnalyticsPage({ stats, categories, reserveAmount, isEmergencyUnlocked, onToggleEmergencyLock }) {
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
+      {/* Clean Page Title */}
       <div style={{ marginBottom: '16px' }}>
         <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
           Budget Analytics
         </h2>
-        <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-          Survival HP, Emergency Fund & Spend Projections
-        </p>
       </div>
 
       {/* Survival HP Bar & Badges */}
