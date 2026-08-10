@@ -300,22 +300,20 @@ export default function App() {
   };
 
   const handleResetDemo = () => {
-    if (window.confirm('Reset app database to 0 state?')) {
-      const freshData = {
-        monthlyAllowance: 0,
-        paydayAnchorDate: 1,
-        emergencyReserve: 0,
-        isEmergencyUnlocked: false,
-        fixedDeductions: [],
-        categories: data.categories,
-        archivedCycles: [],
-        transactions: [],
-        wishlist: []
-      };
-      saveData(freshData);
-      setData(freshData);
-      pushToGitHub(freshData).catch(() => {});
-    }
+    const freshData = {
+      monthlyAllowance: 0,
+      paydayAnchorDate: 1,
+      emergencyReserve: 0,
+      isEmergencyUnlocked: false,
+      fixedDeductions: [],
+      categories: data.categories,
+      archivedCycles: [],
+      transactions: [],
+      wishlist: []
+    };
+    saveData(freshData);
+    setData(freshData);
+    pushToGitHub(freshData).catch(() => {});
   };
 
   // Full Screen Exit Overlay for Web Browser Mode
