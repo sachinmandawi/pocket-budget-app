@@ -1,0 +1,133 @@
+<div align="center">
+
+  <img src="./public/app-icon.png" alt="Pocket Budget Logo" width="100" height="100" style="border-radius: 24px; box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);" />
+
+  # 📱 Pocket Budget
+  ### *Smart, Self-Healing Daily Expense Tracker & Allowance Manager*
+
+  <p align="center">
+    <a href="https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.0.0">
+      <img src="https://img.shields.io/badge/Release-v1.0.0--Official-blueviolet?style=for-the-badge&logo=android&logoColor=white" alt="Release Version" />
+    </a>
+    <a href="https://github.com/sachinmandawi/pocket-budget-app/actions">
+      <img src="https://img.shields.io/badge/Build-Passing-34d399?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
+    </a>
+    <a href="https://github.com/sachinmandawi/pocket-budget-app">
+      <img src="https://img.shields.io/badge/Platform-Android%20%7C%20PWA-3b82f6?style=for-the-badge&logo=pwa&logoColor=white" alt="Platform Support" />
+    </a>
+    <a href="https://github.com/sachinmandawi/pocket-budget-app">
+      <img src="https://img.shields.io/badge/Design-iOS%20Glassmorphism-ec4899?style=for-the-badge&logo=apple&logoColor=white" alt="Design Theme" />
+    </a>
+  </p>
+
+  <p align="center">
+    <b>Never run out of money before payday! 💸 Self-healing daily safe budget algorithm with Piggy Bank Vault & Allowance Countdown clock.</b>
+  </p>
+
+  <p align="center">
+    <a href="https://github.com/sachinmandawi/pocket-budget-app/releases/download/v1.0.0/PocketBudget-v1.0.0.apk">
+      <img src="https://img.shields.io/badge/📲_Download_APK-v1.0.0-2563eb?style=for-the-badge" alt="Download APK" />
+    </a>
+  </p>
+
+</div>
+
+---
+
+## 🌟 Key Features
+
+<table align="center">
+  <tr>
+    <td width="50%" valign="top">
+      <h3>👛 Spend Source Selection</h3>
+      <p>Log expenses from your <b>Main Daily Allowance</b> or your <b>Piggy Bank Vault</b>. Vault expenses directly deduct from your saved funds without harming your daily allowance!</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>🐷 Piggy Bank Vault (Option 1)</h3>
+      <p>Leftover daily allowance automatically builds up into your <b>Lifetime Piggy Vault</b>. It never resets on payday so you can save for big goals!</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>⏱️ Allowance Countdown Clock</h3>
+      <p>Dedicated digital clock tracking <b>Days, Hours, Minutes, and Seconds</b> remaining until your next monthly payday credit.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>🛡️ Smart Over-Draw Protection</h3>
+      <p>Real-time balance validation alerts you if your Piggy Vault has insufficient funds and prevents invalid negative balance entries.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>📱 Ultra-Clean Minimalist Sidebar</h3>
+      <p>100% clutter-free left drawer drawer with dynamic <b>Android Status Bar Safe Area Padding</b> (notch & punch-hole compatible).</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>🔄 Native Hardware Back Handler</h3>
+      <p>Seamless Android hardware back button support: closes modals/drawers first, steps back to main dashboard, and double-back to exit app safely.</p>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 🎨 Tech Stack & Frameworks
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-18.3.1-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/Vite-6.4.3-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Capacitor-6.2.0-1192FF?style=for-the-badge&logo=capacitor&logoColor=white" alt="Capacitor" />
+  <img src="https://img.shields.io/badge/Lucide-Icons-F59E0B?style=for-the-badge&logo=lucide&logoColor=white" alt="Lucide Icons" />
+  <img src="https://img.shields.io/badge/CSS3-Vanilla%20Glassmorphism-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
+</p>
+
+---
+
+## 🛠️ App Architecture & Navigation Flow
+
+```
+           ┌─────────────────────────────────────────┐
+           │        📱 Pocket Budget App Top         │
+           │  (Header Bar + Android Status Bar Pad)  │
+           └────────────────────┬────────────────────┘
+                                │
+             ┌──────────────────┴──────────────────┐
+             ▼                                     ▼
+   [👈 Left Sidebar Drawer]               [➕ Log Spend Modal]
+   ├─ 📊 Daily Dashboard                  ├─ 👛 Main Allowance
+   ├─ 🧾 Expenses Log                     ├─ 🐷 Piggy Bank Vault
+   ├─ ⏱️ Allowance Countdown              ├─ ⚠️ Real-time Validation
+   ├─ 🐷 Piggy Bank Vault                 └─ 💾 Save Expense
+   ├─ ❄️ Cool-Off Wishlist
+   ├─ 📈 Analytics & Insights
+   └─ ⚙️ Settings
+```
+
+---
+
+## 📲 How to Install & Run
+
+### 1. Android APK Installation
+1. Download **`PocketBudget-v1.0.0.apk`** from [GitHub Releases](https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.0.0).
+2. Tap the downloaded file on your Android device to install and launch!
+
+### 2. Local Development Setup
+```bash
+# Clone the repository
+git clone https://github.com/sachinmandawi/pocket-budget-app.git
+
+# Navigate into project directory
+cd pocket-budget-app
+
+# Install dependencies
+npm install
+
+# Run dev server
+npm run dev
+```
+
+---
+
+<div align="center">
+  <p>Built with ❤️ by Sachin Mandawi • Pocket Budget © 2026</p>
+</div>
