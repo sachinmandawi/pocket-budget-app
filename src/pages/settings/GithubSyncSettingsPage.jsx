@@ -1,21 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, ExternalLink, LogOut, Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, LogOut, KeyRound, Sparkles } from 'lucide-react';
 import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub, fetchGitHubUser, mergeBudgetData } from '../../utils/githubSync';
 
 export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData }) {
   const [config, setConfig] = useState(getGitHubConfig);
+  const [tokenInput, setTokenInput] = useState('');
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncStatusMsg, setSyncStatusMsg] = useState(null);
 
   const isConfigured = Boolean(config.owner && config.repo && config.token);
 
-  // Helper to connect token, fetch user, and smart-merge
-  const connectWithToken = async (rawToken) => {
-    if (!rawToken || rawToken.trim().length < 10) return;
-    const tokenVal = rawToken.trim();
+  // Connect via Manual / Pasted Token Input
+  const handleConnectToken = async (e) => {
+    e?.preventDefault();
+    if (!tokenInput || tokenInput.trim().length < 10) {
+      setSyncStatusMsg({ type: 'error', text: 'Please enter a valid GitHub Access Token' });
+      return;
+    }
 
+    const tokenVal = tokenInput.trim();
     setIsSyncing(true);
-    setSyncStatusMsg({ type: 'info', text: 'Syncing GitHub Profile...' });
+    setSyncStatusMsg({ type: 'info', text: 'Validating Token & GitHub Profile...' });
 
     const username = await fetchGitHubUser(tokenVal);
     if (username) {
@@ -27,6 +32,7 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
       };
       saveGitHubConfig(newConfig);
       setConfig(newConfig);
+      setTokenInput('');
 
       setSyncStatusMsg({ type: 'info', text: '📥 Merging offline and cloud databases...' });
       const res = await pullFromGitHub(newConfig);
@@ -39,51 +45,11 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
         setSyncStatusMsg({ type: 'success', text: `✅ Connected as @${username} & Smart Merged!` });
       } else {
         pushToGitHub(budgetData, newConfig);
-        setSyncStatusMsg({ type: 'success', text: `✅ Connected as @${username} & Initial Data Backed Up!` });
+        setSyncStatusMsg({ type: 'success', text: `✅ Connected as @${username} & Database Initialized!` });
       }
     } else {
       setIsSyncing(false);
-      setSyncStatusMsg({ type: 'error', text: '❌ Invalid Token or API Fetch Failed' });
-    }
-  };
-
-  // Catch OAuth Token from URL Hash on redirect (Mobile APK & Web)
-  useEffect(() => {
-    if (window.location.hash && window.location.hash.includes('oauth_token=')) {
-      try {
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        const token = hashParams.get('oauth_token');
-        if (token && token.length > 15) {
-          connectWithToken(token);
-          window.history.replaceState(null, null, window.location.pathname);
-        }
-      } catch (e) {}
-    }
-  }, []);
-
-  // 1-Click Cloudflare Worker GitHub OAuth Flow with Dynamic App Origin Handoff
-  const handleGithubSignIn = () => {
-    const currentOrigin = window.location.origin;
-    window.location.href = `https://pocketbudget-gatekeeper.smandavi2003.workers.dev/auth/login?redirect_uri=${encodeURIComponent(currentOrigin)}`;
-  };
-
-  // Fallback 1-Click Auto-Connect from Clipboard
-  const handleClipboardAutoConnect = async () => {
-    try {
-      let clipText = '';
-      if (navigator.clipboard && navigator.clipboard.readText) {
-        clipText = await navigator.clipboard.readText();
-      }
-      if (!clipText || clipText.trim().length < 10) {
-        const input = window.prompt('Paste your GitHub Auth Token here:');
-        clipText = input || '';
-      }
-      if (clipText) {
-        await connectWithToken(clipText);
-      }
-    } catch (e) {
-      const input = window.prompt('Paste your GitHub Auth Token here:');
-      if (input) await connectWithToken(input);
+      setSyncStatusMsg({ type: 'error', text: '❌ Invalid Token. Please check and try again.' });
     }
   };
 
@@ -174,7 +140,7 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
           </span>
         </div>
 
-        {/* Connected State vs 1-Click Sign In Button */}
+        {/* Connected State vs Clean Token Input Form */}
         {isConfigured ? (
           <div style={{
             background: 'var(--bg-card-subtle)',
@@ -214,53 +180,57 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
             </button>
           </div>
         ) : (
-          <div style={{ marginBottom: '16px' }}>
-            {/* Direct 1-Click GitHub OAuth Authorization Button */}
+          <form onSubmit={handleConnectToken} style={{ marginBottom: '16px' }}>
+            <div style={{ marginBottom: '10px' }}>
+              <label style={{
+                fontSize: '11px',
+                fontWeight: 800,
+                color: 'var(--text-tertiary)',
+                textTransform: 'uppercase',
+                marginBottom: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}>
+                <KeyRound size={12} /> GitHub Personal Access Token
+              </label>
+              <input
+                type="password"
+                placeholder="Paste token (e.g. ghp_xxxxxxxxxxxx)"
+                value={tokenInput}
+                onChange={(e) => setTokenInput(e.target.value)}
+                className="ios-input"
+                style={{
+                  width: '100%',
+                  padding: '12px 14px',
+                  fontSize: '13px',
+                  fontWeight: 600
+                }}
+              />
+            </div>
+
             <button
-              type="button"
-              onClick={handleGithubSignIn}
+              type="submit"
+              disabled={isSyncing || !tokenInput.trim()}
               className="btn btn-primary"
               style={{
                 width: '100%',
-                padding: '14px 16px',
-                fontSize: '14px',
+                padding: '12px 16px',
+                fontSize: '13px',
                 fontWeight: 800,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '8px',
-                marginBottom: '10px'
+                opacity: !tokenInput.trim() ? 0.5 : 1
               }}
             >
-              <Github size={18} /> Sign in with GitHub Auth <ExternalLink size={14} style={{ opacity: 0.8 }} />
+              <Sparkles size={16} /> Connect & Sync GitHub
             </button>
-
-            {/* Quick Auto-Connect / Token Paste Option */}
-            <button
-              type="button"
-              onClick={handleClipboardAutoConnect}
-              style={{
-                width: '100%',
-                padding: '10px 14px',
-                borderRadius: 'var(--radius-md)',
-                background: 'var(--bg-card-subtle)',
-                border: '1px solid var(--border-subtle)',
-                color: 'var(--text-secondary)',
-                fontSize: '12px',
-                fontWeight: 700,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                cursor: 'pointer'
-              }}
-            >
-              <Sparkles size={14} color="var(--ios-blue)" /> Auto-Connect / Token Input Option
-            </button>
-          </div>
+          </form>
         )}
 
-        {/* Dual Action Buttons */}
+        {/* Dual Manual Action Buttons */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           <button 
             onClick={handlePushNow}
