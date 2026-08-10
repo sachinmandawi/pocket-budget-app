@@ -1,0 +1,17 @@
+{
+  "short_name": "PocketBudget",
+  "name": "₹1500 Pocket Money Expense Tracker",
+  "icons": [
+    {
+      "src": "/app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#f8fafc",
+  "theme_color": "#f8fafc",
+  "display": "standalone",
+  "orientation": "portrait"
+}
