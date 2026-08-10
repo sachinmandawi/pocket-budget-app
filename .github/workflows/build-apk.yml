@@ -47,7 +47,13 @@ jobs:
       - name: Copy Built APK Asset
         run: |
           mkdir -p release-assets
-          cp android/app/build/outputs/apk/debug/app-debug.apk release-assets/PocketBudget-v1.0.0.apk
+      - name: Update Repository About Description & Homepage
+        run: |
+          curl -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            https://api.github.com/repos/${{ github.repository }} \
+            -d '{"description":"📱 Smart, Self-Healing Daily Expense Tracker & Allowance Manager with Piggy Bank Vault & Private Cloud Sync", "homepage":"https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.0.0"}'
 
       - name: Upload APK to GitHub Release v1.0.0
         uses: softprops/action-gh-release@v2
