@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
-import { Bell, Save, CheckCircle2, Clock } from 'lucide-react';
+import { Bell, Save, CheckCircle2, Clock, Plus, Minus } from 'lucide-react';
 
 export default function ReminderSettingsPage({ reminderSettings = { enabled: true, time: '20:00' }, onSaveReminder, onBack }) {
   const [enabled, setEnabled] = useState(reminderSettings.enabled !== undefined ? reminderSettings.enabled : true);
   const [time, setTime] = useState(reminderSettings.time || '20:00');
   const [testSent, setTestSent] = useState(false);
+
+  // Parse HH:MM to hours and minutes
+  const [hour24, minStr] = time.split(':');
+  let currentHour = parseInt(hour24 || '20', 10);
+  let currentMin = parseInt(minStr || '0', 10);
 
   const presetTimes = [
     { id: '19:00', label: '🌇 7:00 PM' },
@@ -12,6 +17,26 @@ export default function ReminderSettingsPage({ reminderSettings = { enabled: tru
     { id: '21:00', label: '🌌 9:00 PM' },
     { id: '22:00', label: '🌃 10:00 PM' }
   ];
+
+  const handleHourChange = (delta) => {
+    let newH = (currentHour + delta + 24) % 24;
+    const hFormatted = String(newH).padStart(2, '0');
+    const mFormatted = String(currentMin).padStart(2, '0');
+    setTime(`${hFormatted}:${mFormatted}`);
+  };
+
+  const handleMinChange = (delta) => {
+    let newM = (currentMin + delta + 60) % 60;
+    const hFormatted = String(currentHour).padStart(2, '0');
+    const mFormatted = String(newM).padStart(2, '0');
+    setTime(`${hFormatted}:${mFormatted}`);
+  };
+
+  // Convert 24h to 12h display
+  const display12Hour = currentHour % 12 === 0 ? 12 : currentHour % 12;
+  const isPm = currentHour >= 12;
+  const display12Formatted = String(display12Hour).padStart(2, '0');
+  const displayMinFormatted = String(currentMin).padStart(2, '0');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -115,15 +140,15 @@ export default function ReminderSettingsPage({ reminderSettings = { enabled: tru
           </button>
         </div>
 
-        {/* Preset Time Chip Cards & Custom Time Input */}
+        {/* Preset Time Chip Cards & Pure Custom Stepper Card */}
         {enabled && (
           <div className="form-group" style={{ marginBottom: '18px', animation: 'fadeIn 0.15s ease-out' }}>
-            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-              <Clock size={15} color="var(--ios-blue)" /> Select Reminder Time
+            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
+              <Clock size={15} color="var(--ios-blue)" /> Quick Evening Time Slots
             </label>
 
-            {/* Quick Preset Time Chips */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px' }}>
+            {/* 4 Preset Time Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '14px' }}>
               {presetTimes.map(pt => (
                 <button
                   key={pt.id}
@@ -146,17 +171,84 @@ export default function ReminderSettingsPage({ reminderSettings = { enabled: tru
               ))}
             </div>
 
-            {/* Custom Input Time */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '12px', color: 'var(--text-tertiary)', fontWeight: 600 }}>Custom Time:</span>
-              <input
-                type="time"
-                required
-                className="form-input"
-                style={{ flex: 1, fontSize: '15px', fontWeight: 700, padding: '8px 12px' }}
-                value={time}
-                onChange={e => setTime(e.target.value)}
-              />
+            {/* Custom Interactive Time Stepper (Zero Browser Native Popups!) */}
+            <div style={{
+              background: 'var(--bg-card-subtle)',
+              padding: '14px 16px',
+              borderRadius: 'var(--radius-lg)',
+              border: '1px solid var(--border-subtle)'
+            }}>
+              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-tertiary)', textTransform: 'uppercase', display: 'block', marginBottom: '10px' }}>
+                Custom Time Control
+              </span>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                {/* Hours Stepper */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleHourChange(-1)}
+                    className="btn btn-secondary btn-sm"
+                    style={{ width: '32px', height: '32px', padding: 0 }}
+                  >
+                    <Minus size={14} />
+                  </button>
+                  <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', width: '28px', textAlign: 'center' }}>
+                    {display12Formatted}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleHourChange(1)}
+                    className="btn btn-secondary btn-sm"
+                    style={{ width: '32px', height: '32px', padding: 0 }}
+                  >
+                    <Plus size={14} />
+                  </button>
+                </div>
+
+                <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--ios-blue)' }}>:</span>
+
+                {/* Minutes Stepper */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleMinChange(-15)}
+                    className="btn btn-secondary btn-sm"
+                    style={{ width: '32px', height: '32px', padding: 0 }}
+                  >
+                    <Minus size={14} />
+                  </button>
+                  <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', width: '28px', textAlign: 'center' }}>
+                    {displayMinFormatted}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleMinChange(15)}
+                    className="btn btn-secondary btn-sm"
+                    style={{ width: '32px', height: '32px', padding: 0 }}
+                  >
+                    <Plus size={14} />
+                  </button>
+                </div>
+
+                {/* AM / PM Toggle Pill */}
+                <button
+                  type="button"
+                  onClick={() => handleHourChange(12)}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: 'var(--radius-full)',
+                    background: 'var(--ios-blue-bg)',
+                    color: 'var(--ios-blue)',
+                    fontSize: '13px',
+                    fontWeight: 800,
+                    border: '1px solid var(--ios-blue)',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {isPm ? 'PM' : 'AM'}
+                </button>
+              </div>
             </div>
           </div>
         )}
