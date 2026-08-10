@@ -30,9 +30,24 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
               };
               saveGitHubConfig(newConfig);
               setConfig(newConfig);
-              setSyncStatusMsg({ type: 'success', text: `✅ Successfully Connected as @${username}!` });
               window.history.replaceState(null, null, window.location.pathname);
+
+              // AUTOMATIC DATA PULL & RESTORE ON INITIAL CONNECTION!
+              setSyncStatusMsg({ type: 'info', text: '📥 Automatically loading your cloud database...' });
+              pullFromGitHub(newConfig).then(res => {
+                setIsSyncing(false);
+                if (res.success && res.data) {
+                  onUpdateBudgetData(res.data);
+                  setSyncStatusMsg({ type: 'success', text: `✅ Connected as @${username} & Cloud Database Loaded!` });
+                } else {
+                  // If fresh repo, back up initial local database
+                  pushToGitHub(budgetData, newConfig).then(() => {
+                    setSyncStatusMsg({ type: 'success', text: `✅ Connected as @${username} & Initial Data Backed Up!` });
+                  });
+                }
+              });
             } else {
+              setIsSyncing(false);
               setSyncStatusMsg({ type: 'error', text: '❌ Invalid token or API fetch failed' });
             }
           });

@@ -175,25 +175,39 @@ export default function App() {
     }
   }, [isDarkMode]);
 
-  // Save to localStorage & Auto Sync to GitHub Private Repo
+  // Floating Auto-Sync Toast State
+  const [syncToastMsg, setSyncToastMsg] = useState(null);
+
+  const triggerSyncToast = (msg) => {
+    setSyncToastMsg(msg);
+    setTimeout(() => {
+      setSyncToastMsg(null);
+    }, 3000);
+  };
+
+  // Save to localStorage & Automatic Background Push to GitHub Private Repo
   useEffect(() => {
     saveData(data);
     const config = getGitHubConfig();
-    if (config.autoSync && config.token && config.repo) {
-      const timer = setTimeout(() => {
-        pushToGitHub(data).catch(() => {});
+    if (config.token && config.owner && config.repo) {
+      const timer = setTimeout(async () => {
+        const res = await pushToGitHub(data);
+        if (res.success) {
+          triggerSyncToast('☁️ Auto-synced to GitHub Cloud!');
+        }
       }, 1500);
       return () => clearTimeout(timer);
     }
   }, [data]);
 
-  // On App Mount, Pull latest data from GitHub if available
+  // On App Mount, Pull latest data from GitHub if connected
   useEffect(() => {
     const config = getGitHubConfig();
-    if (config.token && config.repo) {
+    if (config.token && config.owner && config.repo) {
       pullFromGitHub().then(res => {
         if (res.success && res.data) {
           setData(res.data);
+          triggerSyncToast('✅ GitHub Cloud Data Loaded!');
         }
       }).catch(() => {});
     }
@@ -499,6 +513,30 @@ export default function App() {
         isOpen={isQuickAddOpen}
         onClose={() => setIsQuickAddOpen(false)}
       />
+      {/* Floating Auto-Sync Toast Banner */}
+      {syncToastMsg && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 9999,
+          background: 'rgba(24, 24, 27, 0.92)',
+          color: '#ffffff',
+          padding: '10px 18px',
+          borderRadius: 'var(--radius-full)',
+          fontSize: '13px',
+          fontWeight: 800,
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+          backdropFilter: 'blur(8px)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          animation: 'fadeIn 0.2s ease-out'
+        }}>
+          {syncToastMsg}
+        </div>
+      )}
     </div>
   );
 }
