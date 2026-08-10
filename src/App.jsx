@@ -313,7 +313,8 @@ export default function App() {
 
       {/* iOS Minimalist Navbar */}
       <Navbar 
-        onOpenSettingsPage={handleOpenSettingsPage}
+        onOpenSettings={() => handleOpenSettingsPage('settings_main')}
+        onOpenSettingsPage={() => handleOpenSettingsPage('settings_main')}
         onResetDemo={handleResetDemo}
         isFastBurn={stats.isFastBurn}
         isDarkMode={isDarkMode}

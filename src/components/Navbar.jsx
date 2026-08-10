@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowLeft, Settings } from 'lucide-react';
 
-export default function Navbar({ activeSettingPage, onOpenSettings, onBackToApp }) {
+export default function Navbar({ activeSettingPage, onOpenSettings, onOpenSettingsPage, onBackToApp }) {
   const getHeaderTitle = () => {
     switch (activeSettingPage) {
       case 'settings_main': return 'Settings';
@@ -11,6 +11,14 @@ export default function Navbar({ activeSettingPage, onOpenSettings, onBackToApp 
       case 'settings_appearance': return 'Appearance';
       case 'settings_reset': return 'Data Reset';
       default: return 'PocketBudget';
+    }
+  };
+
+  const handleSettingsClick = () => {
+    if (onOpenSettings) {
+      onOpenSettings('settings_main');
+    } else if (onOpenSettingsPage) {
+      onOpenSettingsPage('settings_main');
     }
   };
 
@@ -32,18 +40,23 @@ export default function Navbar({ activeSettingPage, onOpenSettings, onBackToApp 
             <img 
               src="/app-icon.png" 
               alt="PocketBudget" 
-              style={{ width: '34px', height: '34px', borderRadius: '10px', objectFit: 'contain', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }} 
+              onClick={handleSettingsClick}
+              style={{ width: '34px', height: '34px', borderRadius: '10px', objectFit: 'contain', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', cursor: 'pointer' }} 
             />
           )}
 
-          <h1 style={{ 
-            fontSize: '18px', 
-            fontWeight: 800, 
-            color: 'var(--text-primary)', 
-            letterSpacing: '-0.5px',
-            margin: 0,
-            lineHeight: 1
-          }}>
+          <h1 
+            onClick={activeSettingPage ? null : handleSettingsClick}
+            style={{ 
+              fontSize: '18px', 
+              fontWeight: 800, 
+              color: 'var(--text-primary)', 
+              letterSpacing: '-0.5px',
+              margin: 0,
+              lineHeight: 1,
+              cursor: activeSettingPage ? 'default' : 'pointer'
+            }}
+          >
             {getHeaderTitle()}
           </h1>
         </div>
@@ -52,9 +65,10 @@ export default function Navbar({ activeSettingPage, onOpenSettings, onBackToApp 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {!activeSettingPage && (
             <button
-              onClick={onOpenSettings}
+              type="button"
+              onClick={handleSettingsClick}
               className="btn btn-secondary btn-sm"
-              style={{ width: '36px', height: '36px', padding: 0 }}
+              style={{ width: '36px', height: '36px', padding: 0, cursor: 'pointer' }}
               title="Settings"
             >
               <Settings size={18} color="var(--text-secondary)" />
