@@ -70,7 +70,14 @@ jobs:
             - 📱 **Ultra-Clean Left Sidebar**: 100% clutter-free navigation drawer with native Android status bar notch safe-area compatibility.
             - 🎛️ **Compact & Sleek Design**: Modern iOS typography, compact action buttons, dark mode support, and smooth micro-animations.
             - 🔄 **Native Hardware Back Navigation**: Smooth Android hardware back button support with double-back to exit.
-            - ☁️ **Private GitHub Auto-Sync**: Keep your budget data synchronized across devices securely.
+
+            ---
+
+            ### ☁️ Private GitHub Cloud Sync Database (`pocket-budget-db`):
+
+            - 🔒 **100% Private Data Ownership**: All transactions, piggy vault savings, and settings sync directly into your private GitHub repository (`pocket-budget-db`). No 3rd-party servers ever touch your financial data!
+            - ⚡ **Multi-Device Real-Time Auto-Sync**: Seamlessly log spends and sync budget stats across multiple phones, tablets, or web browsers instantly.
+            - 🔑 **1-Click Cloudflare OAuth Login**: Instant secure GitHub login integration without typing manual tokens!
           files: release-assets/PocketBudget-v1.0.0.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

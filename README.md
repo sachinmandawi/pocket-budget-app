@@ -63,8 +63,8 @@
       <p>100% clutter-free left drawer drawer with dynamic <b>Android Status Bar Safe Area Padding</b> (notch & punch-hole compatible).</p>
     </td>
     <td width="50%" valign="top">
-      <h3>🔄 Native Hardware Back Handler</h3>
-      <p>Seamless Android hardware back button support: closes modals/drawers first, steps back to main dashboard, and double-back to exit app safely.</p>
+      <h3>☁️ Private GitHub Cloud Database</h3>
+      <p>All data syncs directly into your private GitHub repository (<b><code>pocket-budget-db</code></b>). 100% private data ownership with zero 3rd-party servers!</p>
     </td>
   </tr>
 </table>
