@@ -105,13 +105,10 @@
 
 ---
 
-## 📲 How to Install & Run
+## 📲 Android APK Installation
+Download **`PocketBudget-v1.0.0.apk`** from [GitHub Releases](https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.0.0) and tap to install on your Android device!
 
-### 1. Android APK Installation
-1. Download **`PocketBudget-v1.0.0.apk`** from [GitHub Releases](https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.0.0).
-2. Tap the downloaded file on your Android device to install and launch!
-
-### 2. Local Development Setup
+### 💻 Local Development Setup
 ```bash
 # Clone the repository
 git clone https://github.com/sachinmandawi/pocket-budget-app.git
