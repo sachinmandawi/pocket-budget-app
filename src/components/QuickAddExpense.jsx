@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import { X, CheckCircle2, Calendar as CalendarIcon } from 'lucide-react';
-import { DEFAULT_CATEGORIES, formatDateReadable } from '../utils/storage';
+import { X, CheckCircle2, Calendar as CalendarIcon, AlertCircle } from 'lucide-react';
+import { DEFAULT_CATEGORIES, formatDateReadable, calculatePiggyBankSavings } from '../utils/storage';
 import CustomDropdown from './CustomDropdown';
 import InteractiveCalendar from './InteractiveCalendar';
 
-export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAddExpense, isOpen, onClose }) {
+export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAddExpense, isOpen, onClose, budgetData }) {
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(categories[0]?.id || 'chai_snacks');
   const [note, setNote] = useState('');
   const [date, setDate] = useState(new Date().toISOString().substring(0, 10));
   const [spendSource, setSpendSource] = useState('allowance');
   const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const { totalSaved: availablePiggyBalance } = calculatePiggyBankSavings(budgetData);
 
   const categoryOptions = categories.map(cat => ({
     value: cat.id,
@@ -25,9 +27,15 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
     }
   };
 
+  const isPiggyInsufficient = spendSource === 'piggy_bank' && Number(amount || 0) > availablePiggyBalance;
+
   const handleSubmitCustom = (e) => {
     e.preventDefault();
     if (!amount || Number(amount) <= 0) return;
+    if (isPiggyInsufficient) {
+      alert(`Insufficient Piggy Vault balance! You only have ₹${availablePiggyBalance} in your Vault.`);
+      return;
+    }
 
     onAddExpense({
       amount: Number(amount),
@@ -111,9 +119,31 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                   gap: '4px'
                 }}
               >
-                🐷 Piggy Bank Vault
+                🐷 Vault (₹{availablePiggyBalance})
               </button>
             </div>
+
+            {/* Insufficient Piggy Vault Balance Alert Banner */}
+            {isPiggyInsufficient && (
+              <div style={{
+                marginTop: '10px',
+                padding: '10px 12px',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--ios-red-bg)',
+                border: '1px solid var(--ios-red)',
+                color: 'var(--ios-red)',
+                fontSize: '12px',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <AlertCircle size={16} style={{ flexShrink: 0 }} />
+                <span>
+                  Insufficient Vault balance! Available: <strong>₹{availablePiggyBalance}</strong>. Switch to Main Allowance or lower amount.
+                </span>
+              </div>
+            )}
           </div>
           {/* Hero Amount Input Box */}
           <div className="form-group" style={{ marginBottom: '16px' }}>

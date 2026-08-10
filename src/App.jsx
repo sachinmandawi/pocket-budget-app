@@ -531,6 +531,7 @@ export default function App() {
       {/* Quick Add Modal */}
       <QuickAddExpense 
         categories={data.categories}
+        budgetData={data}
         onAddExpense={handleAddExpense}
         isOpen={isQuickAddOpen}
         onClose={() => setIsQuickAddOpen(false)}
