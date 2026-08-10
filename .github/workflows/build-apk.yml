@@ -55,11 +55,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Delete Extra Release v1.0.1 if exists
+      - name: Delete Extra Release v1.0.1 if exists via REST API
         run: |
-          gh release delete v1.0.1 --yes --cleanup-tag || true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/releases/tags/v1.0.1 | grep '"id":' | head -n 1 | awk '{print $2}' | tr -d ',')
+          if [ -n "$RELEASE_ID" ] && [ "$RELEASE_ID" != "null" ]; then
+            echo "Deleting release ID $RELEASE_ID for tag v1.0.1..."
+            curl -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID
+            curl -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/git/refs/tags/v1.0.1
+          fi
 
       - name: Update Repository About Description & Homepage
         run: |
