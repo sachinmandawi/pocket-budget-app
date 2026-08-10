@@ -34,7 +34,7 @@ jobs:
         run: npm run build
 
       - name: Sync Capacitor Android Project
-        run: npx cap copy android
+        run: npx cap sync android
 
       - name: Make Gradle Executable
         run: chmod +x android/gradlew
