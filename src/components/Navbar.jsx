@@ -7,6 +7,7 @@ export default function Navbar({ activeSettingPage, onOpenSettings, onOpenSettin
       case 'settings_main': return 'Settings';
       case 'settings_github': return 'GitHub Sync';
       case 'settings_allowance': return 'Allowance & Payday';
+      case 'settings_reminder': return 'Daily Spend Reminder';
       case 'settings_categories': return 'Categories';
       case 'settings_appearance': return 'Appearance';
       case 'settings_reset': return 'Data Reset';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wallet, Tag, Palette, RefreshCw, ChevronRight, Github } from 'lucide-react';
+import { Wallet, Tag, Palette, RefreshCw, ChevronRight, Github, Bell } from 'lucide-react';
 
 export default function SettingsMainPage({ onNavigateSubPage }) {
   const menuItems = [
@@ -14,6 +14,12 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
       title: 'Allowance & Payday Date',
       subtitle: 'Monthly amount & payday calendar',
       icon: <Wallet size={20} color="var(--ios-blue)" />
+    },
+    {
+      id: 'settings_reminder',
+      title: 'Daily Spend Reminder',
+      subtitle: 'Evening alert at 8:00 PM',
+      icon: <Bell size={20} color="var(--ios-green)" />
     },
     {
       id: 'settings_categories',

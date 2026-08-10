@@ -251,12 +251,13 @@ html.dark-theme .bottom-nav-wrapper {
   max-width: 600px;
   background: var(--bg-card);
   border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-  padding: 24px 20px 36px;
-  max-height: 85vh;
+  padding: 20px 20px calc(max(24px, env(safe-area-inset-bottom)) + 20px);
+  max-height: 88vh;
   box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-grab-handle {

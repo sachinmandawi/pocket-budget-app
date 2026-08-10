@@ -1,0 +1,145 @@
+import React, { useState } from 'react';
+import { Bell, Save, CheckCircle2, Clock } from 'lucide-react';
+
+export default function ReminderSettingsPage({ reminderSettings = { enabled: true, time: '20:00' }, onSaveReminder, onBack }) {
+  const [enabled, setEnabled] = useState(reminderSettings.enabled !== undefined ? reminderSettings.enabled : true);
+  const [time, setTime] = useState(reminderSettings.time || '20:00');
+  const [testSent, setTestSent] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSaveReminder({ enabled, time });
+    onBack();
+  };
+
+  const handleTestNotification = () => {
+    setTestSent(true);
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('PocketBudget Evening Reminder 🔔', {
+        body: 'Aaj ka expense log kiya? Tap to record your spends today!',
+        icon: '/app-icon.png'
+      });
+    } else if ('Notification' in window && Notification.permission !== 'denied') {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          new Notification('PocketBudget Evening Reminder 🔔', {
+            body: 'Aaj ka expense log kiya? Tap to record your spends today!',
+            icon: '/app-icon.png'
+          });
+        }
+      });
+    }
+
+    setTimeout(() => {
+      setTestSent(false);
+    }, 3000);
+  };
+
+  return (
+    <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
+      <form onSubmit={handleSubmit} className="ios-card">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+          <div style={{
+            width: '42px',
+            height: '42px',
+            borderRadius: '12px',
+            background: 'var(--ios-green-bg)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Bell size={22} color="var(--ios-green)" />
+          </div>
+          <div>
+            <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+              Daily Spend Reminder
+            </h3>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>
+              Evening notification to log your daily expenses
+            </p>
+          </div>
+        </div>
+
+        {/* Toggle Enable/Disable Card */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '14px 16px',
+          background: 'var(--bg-card-subtle)',
+          borderRadius: 'var(--radius-md)',
+          marginBottom: '16px',
+          border: '1px solid var(--border-subtle)'
+        }}>
+          <div>
+            <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', display: 'block' }}>
+              Enable Daily Alert
+            </span>
+            <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+              Reminds you every evening
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setEnabled(!enabled)}
+            style={{
+              width: '50px',
+              height: '28px',
+              borderRadius: '14px',
+              background: enabled ? 'var(--ios-green)' : 'var(--border-medium)',
+              border: 'none',
+              cursor: 'pointer',
+              position: 'relative',
+              transition: 'background 0.2s ease'
+            }}
+          >
+            <div style={{
+              width: '24px',
+              height: '24px',
+              borderRadius: '50%',
+              background: '#ffffff',
+              position: 'absolute',
+              top: '2px',
+              left: enabled ? '24px' : '2px',
+              transition: 'left 0.2s ease',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+            }} />
+          </button>
+        </div>
+
+        {/* Time Selector */}
+        {enabled && (
+          <div className="form-group" style={{ marginBottom: '16px', animation: 'fadeIn 0.15s ease-out' }}>
+            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Clock size={15} color="var(--ios-blue)" /> Reminder Time
+            </label>
+            <input
+              type="time"
+              required
+              className="form-input"
+              style={{ fontSize: '16px', fontWeight: 700 }}
+              value={time}
+              onChange={e => setTime(e.target.value)}
+            />
+          </div>
+        )}
+
+        {/* Test Notification Button */}
+        <button
+          type="button"
+          onClick={handleTestNotification}
+          className="btn btn-secondary"
+          style={{ width: '100%', padding: '12px', marginBottom: '16px', fontSize: '13px' }}
+        >
+          {testSent ? <CheckCircle2 size={16} color="var(--ios-green)" /> : <Bell size={16} />}
+          {testSent ? 'Test Alert Triggered!' : 'Send Test Notification'}
+        </button>
+
+        <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '14px', fontSize: '14px' }}>
+          <Save size={16} /> Save Reminder Settings
+        </button>
+      </form>
+    </div>
+  );
+}
