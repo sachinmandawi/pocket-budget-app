@@ -128,8 +128,8 @@ main {
   width: 100%;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
-  padding: 20px 16px;
-  margin-bottom: 14px;
+  padding: 14px 14px;
+  margin-bottom: 10px;
   box-shadow: var(--shadow-card);
   border: 1px solid var(--border-subtle);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -271,34 +271,35 @@ html.dark-theme .bottom-nav-wrapper {
 
 /* Forms */
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .form-label {
   display: block;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-secondary);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.4px;
 }
 
 .form-input {
   width: 100%;
   background: var(--bg-input);
-  border: none;
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
-  padding: 13px 16px;
+  padding: 10px 12px;
   color: var(--text-primary);
-  font-family: var(--font-sans);
-  font-size: 15px;
+  font-family: inherit;
+  font-size: 13px;
   font-weight: 600;
   outline: none;
-  transition: box-shadow 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .form-input:focus {
+  border-color: var(--ios-blue);
   box-shadow: 0 0 0 3px var(--ios-blue-bg);
 }
 

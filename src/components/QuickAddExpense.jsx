@@ -138,8 +138,8 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <span style={{
                 position: 'absolute',
-                left: '16px',
-                fontSize: '24px',
+                left: '14px',
+                fontSize: '20px',
                 fontWeight: 800,
                 color: 'var(--ios-red)'
               }}>
@@ -152,11 +152,11 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                 placeholder="0"
                 className="form-input"
                 style={{
-                  paddingLeft: '40px',
-                  fontSize: '28px',
+                  paddingLeft: '34px',
+                  fontSize: '22px',
                   fontWeight: 800,
                   color: 'var(--ios-red)',
-                  height: '56px',
+                  height: '46px',
                   borderRadius: 'var(--radius-md)'
                 }}
                 value={amount}
