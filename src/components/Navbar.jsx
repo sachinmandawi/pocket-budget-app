@@ -75,19 +75,8 @@ export default function Navbar({ activeSettingPage, onOpenSettings, onOpenSettin
           </h1>
         </div>
 
-        {/* Action Button Right Section */}
+        {/* Header Right Section */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {!activeSettingPage && (
-            <button
-              type="button"
-              onClick={handleSettingsClick}
-              className="btn btn-secondary btn-sm"
-              style={{ width: '36px', height: '36px', padding: 0, cursor: 'pointer' }}
-              title="Settings"
-            >
-              <Settings size={18} color="var(--text-secondary)" />
-            </button>
-          )}
         </div>
       </header>
     </div>
