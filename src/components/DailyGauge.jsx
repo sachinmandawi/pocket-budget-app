@@ -31,8 +31,15 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
 
   return (
     <div className="ios-card" style={{ padding: '20px 18px', marginBottom: '16px' }}>
-      {/* Header Status Bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+      {/* Header Status Bar - Flex Wrapped to prevent collision on narrow mobile screens */}
+      <div style={{ 
+        display: 'flex', 
+        justify: 'space-between', 
+        alignItems: 'center', 
+        flexWrap: 'wrap', 
+        gap: '8px', 
+        marginBottom: '16px' 
+      }}>
         <span style={{ 
           fontSize: '11px', 
           fontWeight: 800, 
@@ -42,13 +49,22 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
           borderRadius: 'var(--radius-full)',
           display: 'inline-flex',
           alignItems: 'center',
-          gap: '4px'
+          gap: '4px',
+          whiteSpace: 'nowrap'
         }}>
           <ShieldCheck size={13} /> {statusText} • Day {currentDayNumber}/{totalDaysInMonth}
         </span>
 
         {cyclePeriodLabel && (
-          <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ 
+            fontSize: '11px', 
+            color: 'var(--text-secondary)', 
+            fontWeight: 600, 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '4px',
+            whiteSpace: 'nowrap'
+          }}>
             <Calendar size={12} color="var(--ios-blue)" /> {cyclePeriodLabel}
           </span>
         )}
