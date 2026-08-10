@@ -17,7 +17,7 @@ import GithubSyncSettingsPage from './pages/settings/GithubSyncSettingsPage';
 import ReminderSettingsPage from './pages/settings/ReminderSettingsPage';
 
 import { getInitialData, saveData, calculateBudgetStats } from './utils/storage';
-import { pushToGitHub, pullFromGitHub, getGitHubConfig } from './utils/githubSync';
+import { pushToGitHub, pullFromGitHub, getGitHubConfig, mergeBudgetData } from './utils/githubSync';
 import { App as CapApp } from '@capacitor/app';
 import { LayoutDashboard, ReceiptText, Clock, BarChart3, LogOut, CheckCircle2 } from 'lucide-react';
 
@@ -200,17 +200,39 @@ export default function App() {
     }
   }, [data]);
 
-  // On App Mount, Pull latest data from GitHub if connected
+  // On App Mount & On Focus/Visibility Change, Smart Sync & Merge Cloud Data
   useEffect(() => {
-    const config = getGitHubConfig();
-    if (config.token && config.owner && config.repo) {
-      pullFromGitHub().then(res => {
-        if (res.success && res.data) {
-          setData(res.data);
-          triggerSyncToast('✅ GitHub Cloud Data Loaded!');
-        }
-      }).catch(() => {});
-    }
+    const syncAndMergeOnFocus = () => {
+      const config = getGitHubConfig();
+      if (config.token && config.owner && config.repo) {
+        pullFromGitHub().then(res => {
+          if (res.success && res.data) {
+            setData(prevData => {
+              const merged = mergeBudgetData(prevData, res.data);
+              return merged;
+            });
+            triggerSyncToast('✅ Cloud Database Synced & Merged!');
+          }
+        }).catch(() => {});
+      }
+    };
+
+    // Initial mount sync
+    syncAndMergeOnFocus();
+
+    // Focus & Visibility Heartbeat Sync
+    window.addEventListener('focus', syncAndMergeOnFocus);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        syncAndMergeOnFocus();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', syncAndMergeOnFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const stats = calculateBudgetStats(data);
