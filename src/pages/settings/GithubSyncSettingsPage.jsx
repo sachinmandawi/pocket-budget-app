@@ -9,9 +9,9 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
 
   const isConfigured = Boolean(config.owner && config.repo && config.token);
 
-  // 1-Click Cloudflare Worker GitHub OAuth Flow
+  // 1-Click Cloudflare Worker GitHub OAuth Flow (PocketBudget Gatekeeper Engine)
   const handleGithubSignIn = () => {
-    window.location.href = 'https://panthernote-gatekeeper.smandavi2003.workers.dev/auth/login';
+    window.location.href = 'https://pocketbudget-gatekeeper.smandavi2003.workers.dev/auth/login';
   };
 
   const handleDisconnect = () => {
