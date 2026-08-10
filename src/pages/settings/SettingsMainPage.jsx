@@ -16,18 +16,6 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
       icon: <Wallet size={20} color="var(--ios-blue)" />
     },
     {
-      id: 'allowance_countdown',
-      title: 'Allowance Credit Countdown',
-      subtitle: 'Ticking digital clock & cycle stats',
-      icon: <Clock size={20} color="var(--ios-blue)" />
-    },
-    {
-      id: 'piggy_bank',
-      title: 'Piggy Bank Savings Vault',
-      subtitle: 'Date-by-date leftover savings history',
-      icon: <span style={{ fontSize: '18px' }}>🐷</span>
-    },
-    {
       id: 'settings_reminder',
       title: 'Daily Spend Reminder',
       subtitle: 'Evening alert at 8:00 PM',
