@@ -6,6 +6,13 @@ export default function ReminderSettingsPage({ reminderSettings = { enabled: tru
   const [time, setTime] = useState(reminderSettings.time || '20:00');
   const [testSent, setTestSent] = useState(false);
 
+  const presetTimes = [
+    { id: '19:00', label: '🌇 7:00 PM' },
+    { id: '20:00', label: '🌙 8:00 PM' },
+    { id: '21:00', label: '🌌 9:00 PM' },
+    { id: '22:00', label: '🌃 10:00 PM' }
+  ];
+
   const handleSubmit = (e) => {
     e.preventDefault();
     onSaveReminder({ enabled, time });
@@ -108,20 +115,49 @@ export default function ReminderSettingsPage({ reminderSettings = { enabled: tru
           </button>
         </div>
 
-        {/* Time Selector */}
+        {/* Preset Time Chip Cards & Custom Time Input */}
         {enabled && (
-          <div className="form-group" style={{ marginBottom: '16px', animation: 'fadeIn 0.15s ease-out' }}>
-            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Clock size={15} color="var(--ios-blue)" /> Reminder Time
+          <div className="form-group" style={{ marginBottom: '18px', animation: 'fadeIn 0.15s ease-out' }}>
+            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+              <Clock size={15} color="var(--ios-blue)" /> Select Reminder Time
             </label>
-            <input
-              type="time"
-              required
-              className="form-input"
-              style={{ fontSize: '16px', fontWeight: 700 }}
-              value={time}
-              onChange={e => setTime(e.target.value)}
-            />
+
+            {/* Quick Preset Time Chips */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px' }}>
+              {presetTimes.map(pt => (
+                <button
+                  key={pt.id}
+                  type="button"
+                  onClick={() => setTime(pt.id)}
+                  style={{
+                    padding: '10px 12px',
+                    borderRadius: 'var(--radius-md)',
+                    border: time === pt.id ? '2px solid var(--ios-blue)' : '1px solid var(--border-subtle)',
+                    background: time === pt.id ? 'var(--ios-blue-bg)' : 'var(--bg-card-subtle)',
+                    color: time === pt.id ? 'var(--ios-blue)' : 'var(--text-primary)',
+                    fontSize: '13px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  {pt.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Custom Input Time */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-tertiary)', fontWeight: 600 }}>Custom Time:</span>
+              <input
+                type="time"
+                required
+                className="form-input"
+                style={{ flex: 1, fontSize: '15px', fontWeight: 700, padding: '8px 12px' }}
+                value={time}
+                onChange={e => setTime(e.target.value)}
+              />
+            </div>
           </div>
         )}
 

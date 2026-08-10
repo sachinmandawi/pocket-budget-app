@@ -48,7 +48,7 @@ export default function SplashScreen({ fadeOut }) {
         color: 'var(--text-secondary)',
         letterSpacing: '0.4px'
       }}>
-        ₹1500 Pocket Money Tracker
+        Smart Daily Expense Tracker
       </p>
 
       {/* CSS Keyframe Animations */}
