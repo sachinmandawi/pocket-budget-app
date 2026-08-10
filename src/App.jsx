@@ -513,25 +513,28 @@ export default function App() {
         isOpen={isQuickAddOpen}
         onClose={() => setIsQuickAddOpen(false)}
       />
-      {/* Floating Auto-Sync Toast Banner */}
+      {/* Sleek Compact Bottom Auto-Sync Toast Pill */}
       {syncToastMsg && (
         <div style={{
           position: 'fixed',
-          top: '20px',
+          bottom: '82px',
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 9999,
           background: 'rgba(24, 24, 27, 0.92)',
           color: '#ffffff',
-          padding: '10px 18px',
+          padding: '8px 16px',
           borderRadius: 'var(--radius-full)',
-          fontSize: '13px',
-          fontWeight: 800,
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
-          backdropFilter: 'blur(8px)',
+          fontSize: '12px',
+          fontWeight: 700,
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255, 255, 255, 0.15)',
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
+          gap: '6px',
+          whiteSpace: 'nowrap',
+          pointerEvents: 'none',
           animation: 'fadeIn 0.2s ease-out'
         }}>
           {syncToastMsg}
