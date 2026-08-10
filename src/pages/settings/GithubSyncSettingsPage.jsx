@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, ExternalLink, LogOut } from 'lucide-react';
+import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, ExternalLink, LogOut, Sparkles, KeyRound } from 'lucide-react';
 import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub, fetchGitHubUser, mergeBudgetData } from '../../utils/githubSync';
 
 export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData }) {
@@ -9,58 +9,81 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
 
   const isConfigured = Boolean(config.owner && config.repo && config.token);
 
-  // Catch OAuth Token from URL Hash on redirect
+  // Helper to connect token, fetch user, and smart-merge
+  const connectWithToken = async (rawToken) => {
+    if (!rawToken || rawToken.trim().length < 10) return;
+    const tokenVal = rawToken.trim();
+
+    setIsSyncing(true);
+    setSyncStatusMsg({ type: 'info', text: 'Syncing GitHub Profile...' });
+
+    const username = await fetchGitHubUser(tokenVal);
+    if (username) {
+      const newConfig = {
+        ...getGitHubConfig(),
+        token: tokenVal,
+        owner: username,
+        repo: 'pocket-budget-db'
+      };
+      saveGitHubConfig(newConfig);
+      setConfig(newConfig);
+
+      setSyncStatusMsg({ type: 'info', text: '📥 Merging offline and cloud databases...' });
+      const res = await pullFromGitHub(newConfig);
+      setIsSyncing(false);
+
+      if (res.success && res.data) {
+        const mergedData = mergeBudgetData(budgetData, res.data);
+        onUpdateBudgetData(mergedData);
+        pushToGitHub(mergedData, newConfig);
+        setSyncStatusMsg({ type: 'success', text: `✅ Connected as @${username} & Smart Merged!` });
+      } else {
+        pushToGitHub(budgetData, newConfig);
+        setSyncStatusMsg({ type: 'success', text: `✅ Connected as @${username} & Initial Data Backed Up!` });
+      }
+    } else {
+      setIsSyncing(false);
+      setSyncStatusMsg({ type: 'error', text: '❌ Invalid Token or API Fetch Failed' });
+    }
+  };
+
+  // Catch OAuth Token from URL Hash on redirect (Web/Localhost)
   useEffect(() => {
     if (window.location.hash && window.location.hash.includes('oauth_token=')) {
       try {
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const token = hashParams.get('oauth_token');
         if (token && token.length > 15) {
-          setIsSyncing(true);
-          setSyncStatusMsg({ type: 'info', text: 'Syncing GitHub Profile...' });
-
-          fetchGitHubUser(token).then(username => {
-            setIsSyncing(false);
-            if (username) {
-              const newConfig = {
-                ...getGitHubConfig(),
-                token: token.trim(),
-                owner: username,
-                repo: 'pocket-budget-db'
-              };
-              saveGitHubConfig(newConfig);
-              setConfig(newConfig);
-              window.history.replaceState(null, null, window.location.pathname);
-
-              // AUTOMATIC SMART MERGE (OFFLINE + CLOUD DATA COMBINED) ON INITIAL CONNECTION!
-              setSyncStatusMsg({ type: 'info', text: '📥 Merging offline and cloud databases...' });
-              pullFromGitHub(newConfig).then(res => {
-                setIsSyncing(false);
-                if (res.success && res.data) {
-                  const mergedData = mergeBudgetData(budgetData, res.data);
-                  onUpdateBudgetData(mergedData);
-                  pushToGitHub(mergedData, newConfig);
-                  setSyncStatusMsg({ type: 'success', text: `✅ Connected as @${username} & Smart Merged (Offline + Cloud Data Synced)!` });
-                } else {
-                  // If fresh repo, back up initial local database
-                  pushToGitHub(budgetData, newConfig).then(() => {
-                    setSyncStatusMsg({ type: 'success', text: `✅ Connected as @${username} & Initial Data Backed Up!` });
-                  });
-                }
-              });
-            } else {
-              setIsSyncing(false);
-              setSyncStatusMsg({ type: 'error', text: '❌ Invalid token or API fetch failed' });
-            }
-          });
+          connectWithToken(token);
+          window.history.replaceState(null, null, window.location.pathname);
         }
       } catch (e) {}
     }
   }, []);
 
-  // 1-Click Cloudflare Worker GitHub OAuth Flow (PocketBudget Gatekeeper Engine)
+  // 1-Click Auto-Connect from Clipboard
+  const handleClipboardAutoConnect = async () => {
+    try {
+      let clipText = '';
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        clipText = await navigator.clipboard.readText();
+      }
+      if (!clipText || clipText.trim().length < 10) {
+        const input = window.prompt('Paste your GitHub Auth Token here:');
+        clipText = input || '';
+      }
+      if (clipText) {
+        await connectWithToken(clipText);
+      }
+    } catch (e) {
+      const input = window.prompt('Paste your GitHub Auth Token here:');
+      if (input) await connectWithToken(input);
+    }
+  };
+
+  // 1-Click Cloudflare Worker GitHub OAuth Flow
   const handleGithubSignIn = () => {
-    window.location.href = 'https://pocketbudget-gatekeeper.smandavi2003.workers.dev/auth/login';
+    window.open('https://pocketbudget-gatekeeper.smandavi2003.workers.dev/auth/login', '_blank');
   };
 
   const handleDisconnect = () => {
@@ -204,10 +227,34 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px'
+                gap: '8px',
+                marginBottom: '10px'
               }}
             >
               <Github size={18} /> Sign in with GitHub Auth <ExternalLink size={14} style={{ opacity: 0.8 }} />
+            </button>
+
+            {/* 1-Click Auto-Connect Button */}
+            <button
+              type="button"
+              onClick={handleClipboardAutoConnect}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--ios-blue-bg)',
+                border: '1px solid var(--ios-blue)',
+                color: 'var(--ios-blue)',
+                fontSize: '13px',
+                fontWeight: 800,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                cursor: 'pointer'
+              }}
+            >
+              <Sparkles size={16} /> Auto-Connect / Paste Token
             </button>
           </div>
         )}
