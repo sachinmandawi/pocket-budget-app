@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Bell, Save, CheckCircle2, Clock, Plus, Minus } from 'lucide-react';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 export default function ReminderSettingsPage({ reminderSettings = { enabled: true, time: '20:00' }, onSaveReminder, onBack }) {
   const [enabled, setEnabled] = useState(reminderSettings.enabled !== undefined ? reminderSettings.enabled : true);
@@ -38,28 +39,55 @@ export default function ReminderSettingsPage({ reminderSettings = { enabled: tru
   const display12Formatted = String(display12Hour).padStart(2, '0');
   const displayMinFormatted = String(currentMin).padStart(2, '0');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     onSaveReminder({ enabled, time });
+
+    if (enabled) {
+      try {
+        await LocalNotifications.requestPermissions();
+      } catch (err) {
+        if ('Notification' in window) {
+          Notification.requestPermission().catch(() => {});
+        }
+      }
+    }
     onBack();
   };
 
-  const handleTestNotification = () => {
+  const handleTestNotification = async () => {
     setTestSent(true);
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('PocketBudget Evening Reminder 🔔', {
-        body: 'Aaj ka expense log kiya? Tap to record your spends today!',
-        icon: '/app-icon.png'
-      });
-    } else if ('Notification' in window && Notification.permission !== 'denied') {
-      Notification.requestPermission().then(permission => {
-        if (permission === 'granted') {
-          new Notification('PocketBudget Evening Reminder 🔔', {
-            body: 'Aaj ka expense log kiya? Tap to record your spends today!',
-            icon: '/app-icon.png'
-          });
-        }
-      });
+
+    try {
+      const perm = await LocalNotifications.requestPermissions();
+      if (perm.display === 'granted') {
+        await LocalNotifications.schedule({
+          notifications: [
+            {
+              title: 'PocketBudget Evening Reminder 🔔',
+              body: 'Aaj ka expense log kiya? Tap to record your spends today!',
+              id: 101,
+              schedule: { at: new Date(Date.now() + 1000) }
+            }
+          ]
+        });
+      }
+    } catch (e) {
+      if ('Notification' in window && Notification.permission === 'granted') {
+        new Notification('PocketBudget Evening Reminder 🔔', {
+          body: 'Aaj ka expense log kiya? Tap to record your spends today!',
+          icon: '/app-icon.png'
+        });
+      } else if ('Notification' in window && Notification.permission !== 'denied') {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            new Notification('PocketBudget Evening Reminder 🔔', {
+              body: 'Aaj ka expense log kiya? Tap to record your spends today!',
+              icon: '/app-icon.png'
+            });
+          }
+        });
+      }
     }
 
     setTimeout(() => {
