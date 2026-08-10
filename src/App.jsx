@@ -115,6 +115,17 @@ export default function App() {
     }
   }, [isQuickAddOpen, activeSettingPage, activeTab]);
 
+  // Global Unhandled Rejection Safeguard (Silences browser extension message channel warnings)
+  useEffect(() => {
+    const handleUnhandledRejection = (event) => {
+      if (event && event.reason && typeof event.reason === 'object' && event.reason.message && event.reason.message.includes('message channel closed')) {
+        event.preventDefault();
+      }
+    };
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    return () => window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+  }, []);
+
   // Splash Screen 2-second timer & Instant App Notification Permission Prompt
   useEffect(() => {
     const initNotificationPermissions = async () => {
