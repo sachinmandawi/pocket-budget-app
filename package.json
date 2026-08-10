@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@capacitor/android": "^6.2.0",
+    "@capacitor/app": "^6.0.3",
     "@capacitor/cli": "^6.2.0",
     "@capacitor/core": "^6.2.0",
     "canvas-confetti": "^1.9.4",

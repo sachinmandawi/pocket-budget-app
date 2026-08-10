@@ -17,6 +17,7 @@ import GithubSyncSettingsPage from './pages/settings/GithubSyncSettingsPage';
 
 import { getInitialData, saveData, calculateBudgetStats } from './utils/storage';
 import { pushToGitHub, pullFromGitHub, getGitHubConfig } from './utils/githubSync';
+import { App as CapApp } from '@capacitor/app';
 import { LayoutDashboard, ReceiptText, Clock, BarChart3, LogOut, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
@@ -36,9 +37,11 @@ export default function App() {
   const [isAppExited, setIsAppExited] = useState(false);
   const lastBackPressRef = useRef(0);
 
-  // Native APK Hardware & Browser Back Button Handler
+  // Native Capacitor APK & Web Hardware Back Button Handler
   useEffect(() => {
-    const handlePopState = (e) => {
+    let capListenerHandle = null;
+
+    const handleBackAction = () => {
       if (isQuickAddOpen) {
         setIsQuickAddOpen(false);
         return;
@@ -60,32 +63,54 @@ export default function App() {
       const now = Date.now();
       if (now - lastBackPressRef.current < 2000) {
         setShowExitToast(false);
-        setIsAppExited(true);
         try {
-          if (window.navigator && window.navigator.app && window.navigator.app.exitApp) {
-            window.navigator.app.exitApp();
-          } else {
-            window.close();
-          }
-        } catch (err) {}
+          CapApp.exitApp();
+        } catch (err) {
+          setIsAppExited(true);
+        }
       } else {
         lastBackPressRef.current = now;
         setShowExitToast(true);
-        window.history.pushState({ page: 'home' }, '');
+        try {
+          window.history.pushState({ page: 'home' }, '');
+        } catch (e) {}
         setTimeout(() => {
           setShowExitToast(false);
         }, 2000);
       }
     };
 
+    // 1. Native Capacitor Hardware Back Button Listener (Android APK)
+    const initCapacitorBackButton = async () => {
+      try {
+        capListenerHandle = await CapApp.addListener('backButton', () => {
+          handleBackAction();
+        });
+      } catch (e) {}
+    };
+
+    initCapacitorBackButton();
+
+    // 2. Web Browser Popstate Listener (Fallback for PWA & Web)
+    const handlePopState = () => {
+      handleBackAction();
+    };
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      if (capListenerHandle && capListenerHandle.remove) {
+        capListenerHandle.remove();
+      }
+    };
   }, [isQuickAddOpen, activeSettingPage, activeTab]);
 
   // Push state to history stack on sub-view open
   useEffect(() => {
     if (isQuickAddOpen || activeSettingPage || activeTab !== 'daily') {
-      window.history.pushState({ isModal: isQuickAddOpen, page: activeSettingPage, tab: activeTab }, '');
+      try {
+        window.history.pushState({ isModal: isQuickAddOpen, page: activeSettingPage, tab: activeTab }, '');
+      } catch (e) {}
     }
   }, [isQuickAddOpen, activeSettingPage, activeTab]);
 
