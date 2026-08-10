@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, ExternalLink, LogOut, Sparkles, KeyRound } from 'lucide-react';
+import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, ExternalLink, LogOut, Sparkles } from 'lucide-react';
 import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub, fetchGitHubUser, mergeBudgetData } from '../../utils/githubSync';
 
 export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData }) {
@@ -47,7 +47,7 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
     }
   };
 
-  // Catch OAuth Token from URL Hash on redirect (Web/Localhost)
+  // Catch OAuth Token from URL Hash on redirect (Mobile APK & Web)
   useEffect(() => {
     if (window.location.hash && window.location.hash.includes('oauth_token=')) {
       try {
@@ -61,7 +61,13 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
     }
   }, []);
 
-  // 1-Click Auto-Connect from Clipboard
+  // 1-Click Cloudflare Worker GitHub OAuth Flow with Dynamic App Origin Handoff
+  const handleGithubSignIn = () => {
+    const currentOrigin = window.location.origin;
+    window.location.href = `https://pocketbudget-gatekeeper.smandavi2003.workers.dev/auth/login?redirect_uri=${encodeURIComponent(currentOrigin)}`;
+  };
+
+  // Fallback 1-Click Auto-Connect from Clipboard
   const handleClipboardAutoConnect = async () => {
     try {
       let clipText = '';
@@ -79,11 +85,6 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
       const input = window.prompt('Paste your GitHub Auth Token here:');
       if (input) await connectWithToken(input);
     }
-  };
-
-  // 1-Click Cloudflare Worker GitHub OAuth Flow
-  const handleGithubSignIn = () => {
-    window.open('https://pocketbudget-gatekeeper.smandavi2003.workers.dev/auth/login', '_blank');
   };
 
   const handleDisconnect = () => {
@@ -173,7 +174,7 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
           </span>
         </div>
 
-        {/* Connected State vs 1-Click Cloudflare Worker Sign In Button */}
+        {/* Connected State vs 1-Click Sign In Button */}
         {isConfigured ? (
           <div style={{
             background: 'var(--bg-card-subtle)',
@@ -214,7 +215,7 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
           </div>
         ) : (
           <div style={{ marginBottom: '16px' }}>
-            {/* 1-Click GitHub OAuth Authorization Button */}
+            {/* Direct 1-Click GitHub OAuth Authorization Button */}
             <button
               type="button"
               onClick={handleGithubSignIn}
@@ -234,27 +235,27 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
               <Github size={18} /> Sign in with GitHub Auth <ExternalLink size={14} style={{ opacity: 0.8 }} />
             </button>
 
-            {/* 1-Click Auto-Connect Button */}
+            {/* Quick Auto-Connect / Token Paste Option */}
             <button
               type="button"
               onClick={handleClipboardAutoConnect}
               style={{
                 width: '100%',
-                padding: '12px 16px',
+                padding: '10px 14px',
                 borderRadius: 'var(--radius-md)',
-                background: 'var(--ios-blue-bg)',
-                border: '1px solid var(--ios-blue)',
-                color: 'var(--ios-blue)',
-                fontSize: '13px',
-                fontWeight: 800,
+                background: 'var(--bg-card-subtle)',
+                border: '1px solid var(--border-subtle)',
+                color: 'var(--text-secondary)',
+                fontSize: '12px',
+                fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
+                gap: '6px',
                 cursor: 'pointer'
               }}
             >
-              <Sparkles size={16} /> Auto-Connect / Paste Token
+              <Sparkles size={14} color="var(--ios-blue)" /> Auto-Connect / Token Input Option
             </button>
           </div>
         )}
