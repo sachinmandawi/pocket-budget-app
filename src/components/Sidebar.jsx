@@ -4,17 +4,10 @@ import {
   LayoutDashboard, 
   ReceiptText, 
   Clock, 
-  PiggyBank, 
   Flame, 
   BarChart3, 
-  Github, 
-  Bell, 
-  Palette, 
-  RefreshCw, 
-  ShieldCheck,
-  ChevronRight,
-  Wallet,
-  Tag
+  Settings,
+  ChevronRight
 } from 'lucide-react';
 
 export default function Sidebar({ 
@@ -80,52 +73,12 @@ export default function Sidebar({
 
   const settingsNavItems = [
     {
-      id: 'page_allowance',
+      id: 'page_settings_main',
       type: 'page',
-      target: 'settings_allowance',
-      label: 'Allowance & Payday Date',
-      subtitle: 'Monthly allowance & payday calendar',
-      icon: <Wallet size={20} color="var(--ios-blue)" />
-    },
-    {
-      id: 'page_categories',
-      type: 'page',
-      target: 'settings_categories',
-      label: 'Category Manager',
-      subtitle: 'Edit custom expense categories',
-      icon: <Tag size={20} color="var(--ios-purple)" />
-    },
-    {
-      id: 'page_github',
-      type: 'page',
-      target: 'settings_github',
-      label: 'GitHub Cloud Sync',
-      subtitle: 'Automated cloud database backup',
-      icon: <Github size={20} color="var(--ios-blue)" />
-    },
-    {
-      id: 'page_reminder',
-      type: 'page',
-      target: 'settings_reminder',
-      label: 'Daily Spend Reminder',
-      subtitle: 'Evening alert at 8:00 PM',
-      icon: <Bell size={20} color="var(--ios-green)" />
-    },
-    {
-      id: 'page_appearance',
-      type: 'page',
-      target: 'settings_appearance',
-      label: 'Appearance & Theme',
-      subtitle: 'Light & Dark mode',
-      icon: <Palette size={20} color="var(--ios-orange)" />
-    },
-    {
-      id: 'page_reset',
-      type: 'page',
-      target: 'settings_reset',
-      label: 'Reset Database',
-      subtitle: 'Clear all local data state',
-      icon: <RefreshCw size={20} color="var(--ios-red)" />
+      target: 'settings_main',
+      label: 'Settings',
+      subtitle: 'Allowance, Sync, Reminder, Categories, Theme',
+      icon: <Settings size={20} color="var(--ios-blue)" />
     }
   ];
 
@@ -142,7 +95,7 @@ export default function Sidebar({
     if (item.type === 'tab') {
       return !activeSettingPage && activeTab === item.target;
     }
-    return activeSettingPage === item.target;
+    return activeSettingPage === item.target || (item.target === 'settings_main' && activeSettingPage && activeSettingPage.startsWith('settings_'));
   };
 
   return (
@@ -287,7 +240,7 @@ export default function Sidebar({
             })}
           </div>
 
-          {/* Settings & Config Section */}
+          {/* Settings & Control Section */}
           <span style={{
             fontSize: '10px',
             fontWeight: 800,
@@ -298,7 +251,7 @@ export default function Sidebar({
             marginBottom: '8px',
             display: 'block'
           }}>
-            Settings & Control
+            Settings & Controls
           </span>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
