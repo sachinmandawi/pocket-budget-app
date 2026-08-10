@@ -17,7 +17,7 @@ import GithubSyncSettingsPage from './pages/settings/GithubSyncSettingsPage';
 
 import { getInitialData, saveData, calculateBudgetStats } from './utils/storage';
 import { pushToGitHub, pullFromGitHub, getGitHubConfig } from './utils/githubSync';
-import { LayoutDashboard, ReceiptText, Clock, BarChart3, LogOut } from 'lucide-react';
+import { LayoutDashboard, ReceiptText, Clock, BarChart3, LogOut, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
   const [data, setData] = useState(() => getInitialData());
@@ -33,6 +33,7 @@ export default function App() {
 
   // Double Back To Exit State
   const [showExitToast, setShowExitToast] = useState(false);
+  const [isAppExited, setIsAppExited] = useState(false);
   const lastBackPressRef = useRef(0);
 
   // Native APK Hardware & Browser Back Button Handler
@@ -59,8 +60,13 @@ export default function App() {
       const now = Date.now();
       if (now - lastBackPressRef.current < 2000) {
         setShowExitToast(false);
+        setIsAppExited(true);
         try {
-          window.close();
+          if (window.navigator && window.navigator.app && window.navigator.app.exitApp) {
+            window.navigator.app.exitApp();
+          } else {
+            window.close();
+          }
         } catch (err) {}
       } else {
         lastBackPressRef.current = now;
@@ -204,6 +210,49 @@ export default function App() {
       pushToGitHub(freshData).catch(() => {});
     }
   };
+
+  // Full Screen Exit Overlay for Web Browser Mode
+  if (isAppExited) {
+    return (
+      <div style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9999,
+        background: 'var(--bg-app)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          width: '72px',
+          height: '72px',
+          borderRadius: '20px',
+          background: 'var(--ios-green-bg)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: '16px'
+        }}>
+          <CheckCircle2 size={36} color="var(--ios-green)" />
+        </div>
+        <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '6px' }}>
+          App Closed Successfully
+        </h2>
+        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '24px' }}>
+          On mobile APK / PWA, the app exits to your phone home screen.
+        </p>
+        <button 
+          onClick={() => setIsAppExited(false)} 
+          className="btn btn-primary"
+        >
+          Re-Open App
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="app-shell">
