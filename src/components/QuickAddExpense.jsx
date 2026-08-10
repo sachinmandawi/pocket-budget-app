@@ -119,7 +119,7 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                   gap: '4px'
                 }}
               >
-                🐷 Vault (₹{availablePiggyBalance})
+                🐷 Piggy Bank (₹{availablePiggyBalance})
               </button>
             </div>
 
