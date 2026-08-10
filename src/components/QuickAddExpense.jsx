@@ -31,9 +31,12 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
     }
   };
 
-  const isPiggyInsufficient = spendSource === 'piggy_bank' && Number(amount || 0) > availablePiggyBalance;
-  const isAllowanceInsufficient = spendSource === 'allowance' && (Number(amount || 0) > availableAllowanceCash || availableAllowanceCash <= 0);
-  const isAllowanceOverDailySafe = spendSource === 'allowance' && !isAllowanceInsufficient && Number(amount || 0) > todaysSafe && todaysSafe > 0;
+  const numAmt = Number(amount || 0);
+  const hasEnteredAmount = numAmt > 0;
+
+  const isPiggyInsufficient = spendSource === 'piggy_bank' && hasEnteredAmount && numAmt > availablePiggyBalance;
+  const isAllowanceInsufficient = spendSource === 'allowance' && hasEnteredAmount && numAmt > availableAllowanceCash;
+  const isAllowanceOverDailySafe = spendSource === 'allowance' && hasEnteredAmount && !isAllowanceInsufficient && numAmt > todaysSafe && todaysSafe > 0;
   const isInsufficient = spendSource === 'piggy_bank' ? isPiggyInsufficient : isAllowanceInsufficient;
 
   const handleSubmitCustom = (e) => {
