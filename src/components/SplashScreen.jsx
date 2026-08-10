@@ -16,25 +16,20 @@ export default function SplashScreen({ fadeOut }) {
       transform: fadeOut ? 'scale(1.05)' : 'scale(1)',
       pointerEvents: fadeOut ? 'none' : 'auto'
     }}>
-      {/* Centered Pulsing Logo */}
-      <div style={{
-        width: '90px',
-        height: '90px',
-        borderRadius: '24px',
-        background: 'var(--bg-card)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        boxShadow: '0 12px 35px rgba(37, 99, 235, 0.15)',
-        marginBottom: '20px',
-        animation: 'pulseLogo 1.5s ease-in-out infinite alternate'
-      }}>
-        <img 
-          src="/app-icon.png" 
-          alt="PocketBudget" 
-          style={{ width: '64px', height: '64px', objectFit: 'contain' }} 
-        />
-      </div>
+      {/* Centered Pulsing Light Card Logo */}
+      <img 
+        src="/app-icon.png" 
+        alt="PocketBudget" 
+        style={{ 
+          width: '84px', 
+          height: '84px', 
+          borderRadius: '22px', 
+          objectFit: 'contain',
+          boxShadow: '0 12px 35px rgba(37, 99, 235, 0.15)',
+          marginBottom: '20px',
+          animation: 'pulseLogo 1.5s ease-in-out infinite alternate'
+        }} 
+      />
 
       <h1 style={{ 
         fontSize: '26px', 
