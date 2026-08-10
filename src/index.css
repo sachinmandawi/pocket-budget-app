@@ -120,7 +120,7 @@ main {
   max-width: 600px;
   margin: 0 auto;
   flex: 1;
-  padding: 16px 14px 100px;
+  padding: 16px 14px calc(95px + env(safe-area-inset-bottom));
 }
 
 /* Clean Card Component */
@@ -159,7 +159,7 @@ html.dark-theme .bottom-nav-wrapper {
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  padding: 8px 6px 16px;
+  padding: 8px 6px calc(max(14px, env(safe-area-inset-bottom)) + 4px);
 }
 
 .nav-item {
