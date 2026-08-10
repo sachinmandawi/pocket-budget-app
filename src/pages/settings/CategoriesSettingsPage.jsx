@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Trash2, ArrowLeft, Save, MoreVertical, Edit2, Check, X } from 'lucide-react';
+import { Plus, Trash2, Save, MoreVertical, Edit2, Check, X } from 'lucide-react';
 import { DEFAULT_CATEGORIES } from '../../utils/storage';
 
 export default function CategoriesSettingsPage({ data, onSaveSettings, onBack }) {
@@ -41,10 +41,10 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
     setOpenMenuId(null);
   };
 
-  const handleSaveEdit = (id) => {
+  const handleSaveEdit = (catId) => {
     if (!editName.trim()) return;
     setCategories(categories.map(c => {
-      if (c.id === id) {
+      if (c.id === catId) {
         return { ...c, name: editName.trim(), icon: editIcon || '🏷️' };
       }
       return c;
@@ -63,9 +63,17 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-      <form onSubmit={handleSubmit} className="ios-card">
-        <label className="form-label" style={{ marginBottom: '10px' }}>Active Categories</label>
+      <form onSubmit={handleSubmit} className="ios-card" style={{ marginBottom: '24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+          <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)' }}>
+            Category Manager
+          </span>
+          <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)' }}>
+            {categories.length} Categories
+          </span>
+        </div>
         
+        {/* Categories List */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
           {categories.map(cat => {
             const isEditing = editingId === cat.id;
@@ -134,8 +142,8 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ fontSize: '22px' }}>{cat.icon}</span>
-                  <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>{cat.name}</span>
+                  <span style={{ fontSize: '20px' }}>{cat.icon}</span>
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>{cat.name}</span>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -151,7 +159,7 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
                       type="button" 
                       onClick={() => setOpenMenuId(isMenuOpen ? null : cat.id)} 
                       className="btn btn-secondary btn-sm"
-                      style={{ width: '34px', height: '34px', padding: 0 }}
+                      style={{ width: '32px', height: '32px', padding: 0 }}
                     >
                       <MoreVertical size={16} color="var(--text-secondary)" />
                     </button>
@@ -160,7 +168,7 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
                       <div style={{
                         position: 'absolute',
                         right: 0,
-                        top: '40px',
+                        top: '38px',
                         zIndex: 50,
                         background: 'var(--bg-card)',
                         border: '1px solid var(--border-medium)',
@@ -191,7 +199,6 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
                             textAlign: 'left',
                             width: '100%'
                           }}
-                          className="menu-item-hover"
                         >
                           <Edit2 size={14} color="var(--ios-blue)" /> Edit
                         </button>
@@ -214,7 +221,6 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
                             textAlign: 'left',
                             width: '100%'
                           }}
-                          className="menu-item-hover"
                         >
                           <Trash2 size={14} color="var(--ios-red)" /> Delete
                         </button>
@@ -227,39 +233,47 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
           })}
         </div>
 
-        {/* Add New Category Section */}
-        <div style={{ background: 'var(--bg-card-subtle)', padding: '14px', borderRadius: 'var(--radius-md)', marginBottom: '16px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', display: 'block', marginBottom: '8px' }}>
-            ➕ New Category
+        {/* Add New Category Box */}
+        <div style={{
+          background: 'var(--bg-card-subtle)',
+          padding: '14px',
+          borderRadius: 'var(--radius-md)',
+          marginBottom: '16px',
+          border: '1px solid var(--border-subtle)'
+        }}>
+          <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', display: 'block', marginBottom: '10px' }}>
+            + Add New Category
           </span>
-          
-          <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '50px 1fr auto', gap: '8px' }}>
             <input
               type="text"
-              placeholder="Emoji"
               className="form-input"
-              style={{ width: '70px', fontSize: '18px', textAlign: 'center' }}
-              maxLength={3}
+              style={{ textAlign: 'center', fontSize: '18px', padding: '6px' }}
               value={newCatIcon}
               onChange={e => setNewCatIcon(e.target.value)}
+              maxLength={3}
             />
             <input
               type="text"
-              placeholder="Category Title"
+              placeholder="Category Name"
               className="form-input"
-              style={{ flex: 1, fontSize: '14px' }}
+              style={{ fontSize: '13px' }}
               value={newCatName}
               onChange={e => setNewCatName(e.target.value)}
             />
+            <button
+              type="button"
+              onClick={handleAddCategory}
+              className="btn btn-secondary btn-sm"
+              style={{ padding: '0 12px' }}
+            >
+              <Plus size={16} /> Add
+            </button>
           </div>
-          
-          <button type="button" onClick={handleAddCategory} className="btn btn-secondary btn-sm" style={{ width: '100%', padding: '10px' }}>
-            <Plus size={16} /> Add Category
-          </button>
         </div>
 
-        <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '14px' }}>
-          <Save size={18} /> Save Changes
+        <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '14px', fontSize: '14px' }}>
+          <Save size={16} /> Save Changes
         </button>
       </form>
     </div>

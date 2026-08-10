@@ -1,51 +1,69 @@
 import React from 'react';
-import { ArrowLeft, Sun, Moon } from 'lucide-react';
+import { Sun, Moon, CheckCircle2 } from 'lucide-react';
 
-export default function AppearanceSettingsPage({ isDarkMode, onToggleDarkMode, onBack }) {
+export default function AppearanceSettingsPage({ isDarkMode, onToggleDarkMode }) {
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
       <div className="ios-card">
-        <label className="form-label" style={{ marginBottom: '14px' }}>Select Theme Mode</label>
-        
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+          {/* Light Mode Card */}
           <div
             onClick={() => { if (isDarkMode) onToggleDarkMode(); }}
             style={{
               padding: '20px 16px',
-              borderRadius: 'var(--radius-md)',
+              borderRadius: 'var(--radius-lg)',
               border: `2px solid ${!isDarkMode ? 'var(--ios-blue)' : 'var(--border-subtle)'}`,
               background: !isDarkMode ? 'var(--ios-blue-bg)' : 'var(--bg-card-subtle)',
-              color: !isDarkMode ? 'var(--ios-blue)' : 'var(--text-secondary)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '10px',
+              justifyContent: 'center',
+              gap: '8px',
               cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              position: 'relative',
+              transition: 'all 0.2s ease',
+              boxShadow: !isDarkMode ? '0 4px 14px rgba(37, 99, 235, 0.15)' : 'none'
             }}
           >
-            <Sun size={28} color="var(--ios-orange)" />
-            <span style={{ fontSize: '15px', fontWeight: 800 }}>☀️ Light Mode</span>
+            {!isDarkMode && (
+              <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+                <CheckCircle2 size={16} color="var(--ios-blue)" />
+              </div>
+            )}
+            <Sun size={32} color="var(--ios-orange)" />
+            <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)' }}>
+              Light Mode
+            </span>
           </div>
 
+          {/* Dark Mode Card */}
           <div
             onClick={() => { if (!isDarkMode) onToggleDarkMode(); }}
             style={{
               padding: '20px 16px',
-              borderRadius: 'var(--radius-md)',
+              borderRadius: 'var(--radius-lg)',
               border: `2px solid ${isDarkMode ? 'var(--ios-blue)' : 'var(--border-subtle)'}`,
               background: isDarkMode ? 'var(--ios-blue-bg)' : 'var(--bg-card-subtle)',
-              color: isDarkMode ? 'var(--ios-blue)' : 'var(--text-secondary)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '10px',
+              justifyContent: 'center',
+              gap: '8px',
               cursor: 'pointer',
-              transition: 'all 0.2s ease'
+              position: 'relative',
+              transition: 'all 0.2s ease',
+              boxShadow: isDarkMode ? '0 4px 14px rgba(37, 99, 235, 0.15)' : 'none'
             }}
           >
-            <Moon size={28} color="var(--ios-blue)" />
-            <span style={{ fontSize: '15px', fontWeight: 800 }}>🌙 Dark Mode</span>
+            {isDarkMode && (
+              <div style={{ position: 'absolute', top: '10px', right: '10px' }}>
+                <CheckCircle2 size={16} color="var(--ios-blue)" />
+              </div>
+            )}
+            <Moon size={32} color="var(--ios-blue)" />
+            <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)' }}>
+              Dark Mode
+            </span>
           </div>
         </div>
       </div>
