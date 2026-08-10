@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, LogOut, KeyRound, Sparkles } from 'lucide-react';
 import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub, fetchGitHubUser, mergeBudgetData } from '../../utils/githubSync';
 
@@ -9,6 +9,11 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
   const [syncStatusMsg, setSyncStatusMsg] = useState(null);
 
   const isConfigured = Boolean(config.owner && config.repo && config.token);
+
+  // Always sync state from localStorage on mount
+  useEffect(() => {
+    setConfig(getGitHubConfig());
+  }, []);
 
   // Connect via Manual / Pasted Token Input
   const handleConnectToken = async (e) => {

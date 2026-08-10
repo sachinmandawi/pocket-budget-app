@@ -7,11 +7,7 @@ export const getGitHubConfig = () => {
     const stored = localStorage.getItem(CONFIG_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
-      // Remove legacy hardcoded credentials if present
-      if (parsed) {
-        if (parsed.token && parsed.token.includes('9WArQWO0qBS9qAA')) parsed.token = '';
-        return parsed;
-      }
+      if (parsed) return parsed;
     }
   } catch (e) {}
 
