@@ -194,12 +194,11 @@ export const calculateBudgetStats = (rawInput) => {
   };
 };
 
-// 🐷 Feature: Piggy Bank Vault & Daily Savings History (Local Engine)
+// 🐷 Feature: Piggy Bank Vault & Daily Savings History (Option 1: Lifetime Vault - Never Resets)
 export const calculatePiggyBankSavings = (data) => {
   if (!data) return { totalSaved: 0, accumulatedSaved: 0, totalPiggySpent: 0, history: [] };
   
   const stats = calculateBudgetStats(data);
-  const cycleStartStr = stats.cycleStartStr;
   const todayStr = new Date().toISOString().substring(0, 10);
   const baseDailyTarget = stats.baseDailyTarget || 50;
 
@@ -207,8 +206,9 @@ export const calculatePiggyBankSavings = (data) => {
   const datesMap = new Map();
   let totalPiggySpent = 0;
 
+  // Track all transactions across ALL time (Lifetime)
   transactions.forEach(tx => {
-    if (tx && tx.date && tx.date >= cycleStartStr) {
+    if (tx && tx.date) {
       if (tx.spendSource === 'piggy_bank') {
         totalPiggySpent += Number(tx.amount || 0);
       } else if (tx.date < todayStr) {
@@ -221,7 +221,10 @@ export const calculatePiggyBankSavings = (data) => {
   const history = [];
   let accumulatedSaved = 0;
 
-  const startDate = new Date(cycleStartStr);
+  const allDates = Array.from(datesMap.keys()).sort();
+  const startDateStr = allDates.length > 0 ? allDates[0] : stats.cycleStartStr;
+  
+  const startDate = new Date(startDateStr);
   const todayDate = new Date(todayStr);
 
   for (let d = new Date(startDate); d < todayDate; d.setDate(d.getDate() + 1)) {
