@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './components/Navbar';
+import Sidebar from './components/Sidebar';
 import QuickAddExpense from './components/QuickAddExpense';
 import SplashScreen from './components/SplashScreen';
 
@@ -35,6 +36,7 @@ export default function App() {
   const [activeSettingPage, setActiveSettingPage] = useState(null);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Double Back To Exit State
   const [showExitToast, setShowExitToast] = useState(false);
@@ -46,6 +48,10 @@ export default function App() {
     let capListenerHandle = null;
 
     const handleBackAction = () => {
+      if (isSidebarOpen) {
+        setIsSidebarOpen(false);
+        return;
+      }
       if (isQuickAddOpen) {
         setIsQuickAddOpen(false);
         return;
@@ -386,16 +392,27 @@ export default function App() {
         </div>
       )}
 
-      {/* iOS Minimalist Navbar */}
-      <Navbar 
-        onOpenSettings={() => handleOpenSettingsPage('settings_main')}
-        onOpenSettingsPage={() => handleOpenSettingsPage('settings_main')}
-        onResetDemo={handleResetDemo}
-        isFastBurn={stats.isFastBurn}
-        isDarkMode={isDarkMode}
-        onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+      {/* Left Drawer Navigation Sidebar */}
+      <Sidebar 
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        activeTab={activeTab}
         activeSettingPage={activeSettingPage}
+        onNavigateTab={(tab) => {
+          setActiveSettingPage(null);
+          setActiveTab(tab);
+        }}
+        onNavigateSettingPage={(page) => {
+          setActiveSettingPage(page);
+        }}
+      />
+
+      <Navbar 
+        activeSettingPage={activeSettingPage}
+        onOpenSettings={setActiveSettingPage}
+        onOpenSettingsPage={setActiveSettingPage}
         onBackToApp={handleBackToApp}
+        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
       {/* Main Separate Page View Area */}

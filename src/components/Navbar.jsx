@@ -1,7 +1,7 @@
 import React from 'react';
-import { ArrowLeft, Settings } from 'lucide-react';
+import { ArrowLeft, Settings, Menu } from 'lucide-react';
 
-export default function Navbar({ activeSettingPage, onOpenSettings, onOpenSettingsPage, onBackToApp }) {
+export default function Navbar({ activeSettingPage, onOpenSettings, onOpenSettingsPage, onBackToApp, onToggleSidebar }) {
   const getHeaderTitle = () => {
     switch (activeSettingPage) {
       case 'settings_main': return 'Settings';
@@ -30,6 +30,17 @@ export default function Navbar({ activeSettingPage, onOpenSettings, onOpenSettin
       <header className="app-header">
         {/* Brand / Back Header Left Section */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Hamburger Menu Button for Left Drawer Sidebar */}
+          <button 
+            type="button"
+            onClick={onToggleSidebar}
+            className="btn btn-secondary btn-sm"
+            style={{ width: '36px', height: '36px', padding: 0, borderRadius: '10px' }}
+            title="Open Navigation Menu"
+          >
+            <Menu size={18} color="var(--ios-blue)" />
+          </button>
+
           {activeSettingPage ? (
             <button 
               onClick={onBackToApp} 
@@ -41,7 +52,7 @@ export default function Navbar({ activeSettingPage, onOpenSettings, onOpenSettin
             </button>
           ) : (
             <img 
-              src="/app-icon.png" 
+              src="./app-icon.png" 
               alt="PocketBudget" 
               onClick={handleSettingsClick}
               style={{ width: '34px', height: '34px', borderRadius: '10px', objectFit: 'contain', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', cursor: 'pointer' }} 
