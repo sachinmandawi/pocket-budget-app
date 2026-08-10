@@ -2,7 +2,7 @@ import React from 'react';
 import { HeartPulse, ShieldAlert } from 'lucide-react';
 
 export default function SurvivalHealthBar({ stats }) {
-  const { healthScore, isFastBurn, currentDayNumber } = stats;
+  const { healthScore = 100, isFastBurn = false, currentDayNumber = 1 } = stats || {};
 
   let hpColor = 'var(--ios-green)';
   let hpBg = 'var(--ios-green-bg)';
