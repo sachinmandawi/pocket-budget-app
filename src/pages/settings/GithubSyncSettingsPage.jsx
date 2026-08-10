@@ -45,52 +45,49 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
       <div className="ios-card">
-        {/* Repo Status Pill Container */}
+        {/* Repo Status Pill Card */}
         <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '10px',
-          padding: '14px',
+          padding: '16px',
           background: 'var(--bg-card-subtle)',
-          borderRadius: 'var(--radius-md)',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid var(--border-subtle)',
           marginBottom: '16px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: '1 1 180px', minWidth: 0 }}>
-            <Github size={22} color="var(--ios-blue)" style={{ flexShrink: 0 }} />
-            <div style={{ minWidth: 0, overflow: 'hidden' }}>
-              <p style={{
-                fontSize: '13px',
-                fontWeight: 800,
-                color: 'var(--text-primary)',
-                wordBreak: 'break-all',
-                lineHeight: 1.2
-              }}>
-                {config.owner}/{config.repo}
-              </p>
-              <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                Private Database Repository
-              </p>
+          {/* Top Row: Icon + Connected Badge */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Github size={20} color="var(--ios-blue)" />
+              <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+                Private Database
+              </span>
             </div>
+
+            <span style={{
+              fontSize: '11px',
+              fontWeight: 800,
+              background: 'var(--ios-green-bg)',
+              color: 'var(--ios-green)',
+              padding: '3px 10px',
+              borderRadius: 'var(--radius-full)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}>
+              <ShieldCheck size={13} /> Connected
+            </span>
           </div>
 
-          <span style={{
-            fontSize: '11px',
+          {/* Repository Full Name */}
+          <p style={{
+            fontSize: '15px',
             fontWeight: 800,
-            background: 'var(--ios-green-bg)',
-            color: 'var(--ios-green)',
-            padding: '4px 10px',
-            borderRadius: 'var(--radius-full)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px',
-            whiteSpace: 'nowrap',
-            flexShrink: 0,
-            marginLeft: 'auto'
+            color: 'var(--text-primary)',
+            lineHeight: 1.3,
+            wordBreak: 'break-word',
+            margin: 0
           }}>
-            <ShieldCheck size={13} /> Connected
-          </span>
+            {config.owner} / {config.repo}
+          </p>
         </div>
 
         {/* Sync Action Buttons */}
@@ -174,8 +171,8 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
             </div>
           </div>
 
-          <button type="submit" className="btn btn-secondary btn-sm" style={{ width: '100%' }}>
-            <Save size={14} /> Update Credentials
+          <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '12px', fontSize: '13px' }}>
+            <Save size={15} /> Save Credentials
           </button>
         </form>
       </div>
