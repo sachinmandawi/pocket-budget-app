@@ -26,19 +26,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install NPM Dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build Web Dist Assets
         run: npm run build
 
       - name: Sync Capacitor Android Project
-        run: npx cap sync android
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        run: npx cap copy android
 
       - name: Make Gradle Executable
         run: chmod +x android/gradlew
