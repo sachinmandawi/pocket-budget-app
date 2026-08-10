@@ -10,7 +10,7 @@ export default function CooloffPage({ wishlist, onAddWishItem, onDeleteWishItem 
       {/* Sleek Top Header Bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
         <div>
-          <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+          <h2 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px', margin: 0 }}>
             Wishlist Cool-Off
           </h2>
         </div>

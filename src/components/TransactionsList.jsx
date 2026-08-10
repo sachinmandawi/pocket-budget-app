@@ -184,16 +184,16 @@ export default function TransactionsList({
                 }}
               >
                 {/* Left Category Icon & Details */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
                   <div style={{ 
-                    width: '44px', 
-                    height: '44px', 
-                    borderRadius: '14px', 
+                    width: '36px', 
+                    height: '36px', 
+                    borderRadius: '10px', 
                     background: catBgColor, 
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'center',
-                    fontSize: '22px',
+                    fontSize: '17px',
                     flexShrink: 0,
                     border: '1px solid rgba(0,0,0,0.04)'
                   }}>
@@ -202,24 +202,25 @@ export default function TransactionsList({
 
                   <div style={{ minWidth: 0, overflow: 'hidden' }}>
                     <p style={{ 
-                      fontSize: '14px', 
-                      fontWeight: 800, 
+                      fontSize: '13px', 
+                      fontWeight: 700, 
                       color: 'var(--text-primary)',
                       lineHeight: 1.2,
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
-                      textOverflow: 'ellipsis'
+                      textOverflow: 'ellipsis',
+                      margin: 0
                     }}>
                       {tx.note || cat.name}
                     </p>
                     
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
                       <span style={{
                         fontSize: '10px',
-                        fontWeight: 700,
+                        fontWeight: 600,
                         color: 'var(--text-secondary)',
                         background: 'var(--bg-card-subtle)',
-                        padding: '2px 6px',
+                        padding: '1px 5px',
                         borderRadius: '4px'
                       }}>
                         {cat.name}
@@ -227,16 +228,16 @@ export default function TransactionsList({
                       {tx.spendSource === 'piggy_bank' && (
                         <span style={{
                           fontSize: '9px',
-                          fontWeight: 800,
+                          fontWeight: 700,
                           color: 'var(--ios-green)',
                           background: 'var(--ios-green-bg)',
-                          padding: '1px 6px',
+                          padding: '1px 5px',
                           borderRadius: 'var(--radius-full)'
                         }}>
                           🐷 Vault
                         </span>
                       )}
-                      <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
+                      <span style={{ fontSize: '10px', color: 'var(--text-tertiary)' }}>
                         {formatDateReadable(tx.date)} {tx.time ? `• ${tx.time}` : ''}
                       </span>
                     </div>
@@ -244,8 +245,8 @@ export default function TransactionsList({
                 </div>
 
                 {/* Right Amount & Delete Action */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0, marginLeft: '12px' }}>
-                  <span style={{ fontWeight: 800, fontSize: '16px', color: 'var(--ios-red)', letterSpacing: '-0.3px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0, marginLeft: '10px' }}>
+                  <span style={{ fontWeight: 800, fontSize: '14px', color: 'var(--ios-red)', letterSpacing: '-0.3px' }}>
                     -₹{tx.amount}
                   </span>
 

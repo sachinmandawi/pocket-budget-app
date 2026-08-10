@@ -7,8 +7,8 @@ export default function AnalyticsPage({ stats, categories, reserveAmount, isEmer
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
       {/* Clean Page Title */}
-      <div style={{ marginBottom: '16px' }}>
-        <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+      <div style={{ marginBottom: '14px' }}>
+        <h2 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px', margin: 0 }}>
           Budget Analytics
         </h2>
       </div>

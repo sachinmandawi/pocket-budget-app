@@ -43,13 +43,13 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-      <div style={{ marginBottom: '18px' }}>
-        <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+      <div style={{ marginBottom: '14px' }}>
+        <h2 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px', margin: 0 }}>
           Settings
         </h2>
       </div>
 
-      <div className="ios-card" style={{ padding: '6px' }}>
+      <div className="ios-card" style={{ padding: '4px' }}>
         {menuItems.map((item, index) => (
           <div
             key={item.id}
@@ -58,7 +58,7 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '12px 10px',
+              padding: '10px 10px',
               borderRadius: 'var(--radius-md)',
               cursor: 'pointer',
               borderBottom: index < menuItems.length - 1 ? '1px solid var(--border-subtle)' : 'none',
@@ -66,11 +66,11 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
             }}
             className="menu-item-hover"
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <div style={{
-                width: '38px',
-                height: '38px',
-                borderRadius: '10px',
+                width: '34px',
+                height: '34px',
+                borderRadius: '8px',
                 background: 'var(--bg-card-subtle)',
                 display: 'flex',
                 alignItems: 'center',
@@ -79,10 +79,10 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
                 {item.icon}
               </div>
               <div>
-                <p style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                   {item.title}
                 </p>
-                <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>
                   {item.subtitle}
                 </p>
               </div>
