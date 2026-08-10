@@ -2,18 +2,23 @@
 
 const CONFIG_KEY = 'pocket_budget_github_config';
 
-const defaultTokenParts = ['ghp_', '9WArQWO0qBS9qAA', 'Lo9vUxc2Q9DQLxo21G7x2'];
-
 export const getGitHubConfig = () => {
   try {
     const stored = localStorage.getItem(CONFIG_KEY);
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      // Remove legacy hardcoded credentials if present
+      if (parsed) {
+        if (parsed.token && parsed.token.includes('9WArQWO0qBS9qAA')) parsed.token = '';
+        return parsed;
+      }
+    }
   } catch (e) {}
 
   return {
-    token: defaultTokenParts.join(''),
-    owner: 'sachinmandawi',
-    repo: 'pocket-budget-db',
+    token: '',
+    owner: '',
+    repo: '',
     filename: 'pocket_budget_db.json',
     lastSyncTime: null,
     sha: null
@@ -24,6 +29,24 @@ export const saveGitHubConfig = (config) => {
   try {
     localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
   } catch (e) {}
+};
+
+// Dynamically fetch real GitHub username via token
+export const fetchGitHubUser = async (token) => {
+  if (!token || token.trim().length < 10) return null;
+  try {
+    const res = await fetch('https://api.github.com/user', {
+      headers: {
+        'Authorization': `Bearer ${token.trim()}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    if (res.ok) {
+      const userData = await res.json();
+      return userData.login || null;
+    }
+  } catch (e) {}
+  return null;
 };
 
 // Helper: Safely encode UTF-8 text to Base64 (handles emojis & special characters)
