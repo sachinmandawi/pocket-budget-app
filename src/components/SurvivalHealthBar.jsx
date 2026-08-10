@@ -26,12 +26,12 @@ export default function SurvivalHealthBar({ stats }) {
   return (
     <div className="ios-card">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-        <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <HeartPulse size={18} color={hpColor} />
+        <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <HeartPulse size={16} color={hpColor} />
           {hpTitle}
         </span>
         <span style={{ 
-          fontSize: '13px', 
+          fontSize: '11px', 
           fontWeight: 800, 
           color: hpColor,
           background: hpBg,

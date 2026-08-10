@@ -4,18 +4,18 @@ import { Lock, Unlock, HeartHandshake } from 'lucide-react';
 export default function EmergencyReserve({ reserveAmount, isUnlocked, currentDay, onToggleUnlock }) {
   return (
     <div className="ios-card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-        <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <HeartHandshake size={18} color="var(--ios-orange)" />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+        <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <HeartHandshake size={16} color="var(--ios-orange)" />
           Papa Emergency Vault
         </span>
 
         <span style={{
-          fontSize: '11px',
-          fontWeight: 800,
+          fontSize: '10px',
+          fontWeight: 700,
           background: isUnlocked ? 'var(--ios-green-bg)' : 'var(--ios-orange-bg)',
           color: isUnlocked ? 'var(--ios-green)' : 'var(--ios-orange)',
-          padding: '4px 10px',
+          padding: '3px 8px',
           borderRadius: 'var(--radius-full)'
         }}>
           {isUnlocked ? 'Unlocked' : 'Locked (Day 25)'}
@@ -24,16 +24,16 @@ export default function EmergencyReserve({ reserveAmount, isUnlocked, currentDay
 
       <div style={{ 
         background: isUnlocked ? 'var(--ios-green-bg)' : 'var(--ios-orange-bg)', 
-        padding: '12px 14px', 
+        padding: '10px 12px', 
         borderRadius: 'var(--radius-md)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {isUnlocked ? <Unlock size={18} color="var(--ios-green)" /> : <Lock size={18} color="var(--ios-orange)" />}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {isUnlocked ? <Unlock size={16} color="var(--ios-green)" /> : <Lock size={16} color="var(--ios-orange)" />}
           <div>
-            <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)' }}>
+            <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>
               ₹{reserveAmount}
             </span>
             <span style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', lineHeight: 1 }}>
