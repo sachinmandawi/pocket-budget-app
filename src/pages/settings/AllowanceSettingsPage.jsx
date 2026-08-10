@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Save, Trash2, Plus, ArrowLeft, Calendar } from 'lucide-react';
+import { Save, Trash2, Plus, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import InteractiveCalendar from '../../components/InteractiveCalendar';
 
 export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) {
@@ -9,6 +9,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
   const [fixedDeductions, setFixedDeductions] = useState(data.fixedDeductions || []);
   const [newFixedTitle, setNewFixedTitle] = useState('');
   const [newFixedAmount, setNewFixedAmount] = useState('');
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const handleDateSelect = (dateStr, dayNum) => {
     if (dayNum) {
@@ -46,45 +47,78 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-      <form onSubmit={handleSubmit} className="ios-card">
+      <form onSubmit={handleSubmit} className="ios-card" style={{ marginBottom: '24px' }}>
+        {/* Monthly Allowance Input */}
         <div className="form-group">
           <label className="form-label">Monthly Allowance (₹)</label>
           <input
             type="number"
             required
             className="form-input"
-            style={{ fontSize: '22px', fontWeight: 800, color: 'var(--ios-blue)' }}
+            style={{ fontSize: '20px', fontWeight: 800, color: 'var(--ios-blue)' }}
             value={allowance}
             onChange={e => setAllowance(e.target.value)}
           />
         </div>
 
-        {/* Real Interactive Calendar Date Picker */}
+        {/* Payday Anchor Date Collapsible Card */}
         <div className="form-group">
-          <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Calendar size={14} color="var(--ios-blue)" />
-            Credit Day: <strong style={{ color: 'var(--ios-blue)', marginLeft: '4px' }}>{paydayAnchorDate}{daySuffix} of month</strong>
-          </label>
-          
-          <InteractiveCalendar
-            selectedDate={null}
-            paydayDay={paydayAnchorDate}
-            onSelectDate={handleDateSelect}
-          />
+          <div 
+            onClick={() => setShowCalendar(!showCalendar)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '12px 14px',
+              background: 'var(--bg-card-subtle)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-subtle)',
+              cursor: 'pointer'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Calendar size={16} color="var(--ios-blue)" />
+              <div>
+                <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', display: 'block', fontWeight: 600 }}>
+                  Credit Payday Date
+                </span>
+                <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-blue)' }}>
+                  {paydayAnchorDate}{daySuffix} of every month
+                </span>
+              </div>
+            </div>
+
+            <button type="button" className="btn btn-secondary btn-sm" style={{ padding: '4px 10px', fontSize: '12px' }}>
+              {showCalendar ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+              {showCalendar ? 'Close' : 'Change Date'}
+            </button>
+          </div>
+
+          {showCalendar && (
+            <div style={{ marginTop: '10px', animation: 'fadeIn 0.15s ease-out' }}>
+              <InteractiveCalendar
+                selectedDate={null}
+                paydayDay={paydayAnchorDate}
+                onSelectDate={handleDateSelect}
+              />
+            </div>
+          )}
         </div>
 
+        {/* Emergency Reserve Input */}
         <div className="form-group">
           <label className="form-label">Papa Emergency Reserve (₹)</label>
           <input
             type="number"
             required
             className="form-input"
-            style={{ fontSize: '18px', fontWeight: 700 }}
+            style={{ fontSize: '16px', fontWeight: 700 }}
             value={emergency}
             onChange={e => setEmergency(e.target.value)}
           />
         </div>
 
+        {/* Fixed Day-1 Deductions */}
         <div className="form-group">
           <label className="form-label">Fixed Day-1 Expenses (Recharge / Pass)</label>
           {fixedDeductions.length > 0 && (
@@ -101,11 +135,11 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
                     borderRadius: 'var(--radius-md)'
                   }}
                 >
-                  <span style={{ fontSize: '14px', fontWeight: 600 }}>{item.title}</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ fontWeight: 800 }}>₹{item.amount}</span>
-                    <button type="button" onClick={() => handleRemoveFixed(item.id)} className="btn btn-secondary btn-sm" style={{ width: '32px', height: '32px', padding: 0 }}>
-                      <Trash2 size={14} color="var(--ios-red)" />
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{item.title}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontWeight: 800, fontSize: '13px', color: 'var(--ios-blue)' }}>₹{item.amount}</span>
+                    <button type="button" onClick={() => handleRemoveFixed(item.id)} className="btn btn-secondary btn-sm" style={{ width: '28px', height: '28px', padding: 0 }}>
+                      <Trash2 size={13} color="var(--ios-red)" />
                     </button>
                   </div>
                 </div>
@@ -113,12 +147,12 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
             </div>
           )}
 
-          <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 90px auto', gap: '8px' }}>
             <input
               type="text"
-              placeholder="Title (Recharge)"
+              placeholder="Title (e.g. Bus Pass)"
               className="form-input"
-              style={{ fontSize: '14px' }}
+              style={{ fontSize: '13px' }}
               value={newFixedTitle}
               onChange={e => setNewFixedTitle(e.target.value)}
             />
@@ -126,18 +160,23 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
               type="number"
               placeholder="₹ Amount"
               className="form-input"
-              style={{ width: '90px', fontSize: '14px' }}
+              style={{ fontSize: '13px' }}
               value={newFixedAmount}
               onChange={e => setNewFixedAmount(e.target.value)}
             />
-            <button type="button" onClick={handleAddFixed} className="btn btn-secondary btn-sm">
-              <Plus size={16} /> Add
+            <button type="button" onClick={handleAddFixed} className="btn btn-secondary btn-sm" style={{ padding: '0 14px' }}>
+              <Plus size={15} /> Add
             </button>
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '14px', marginTop: '10px' }}>
-          <Save size={18} /> Save Settings
+        {/* Primary Save Button */}
+        <button 
+          type="submit" 
+          className="btn btn-primary" 
+          style={{ width: '100%', padding: '14px', marginTop: '12px', fontSize: '14px' }}
+        >
+          <Save size={16} /> Save Settings
         </button>
       </form>
     </div>

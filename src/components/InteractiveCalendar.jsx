@@ -64,24 +64,24 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
       background: 'var(--bg-card)',
       border: '1px solid var(--border-subtle)',
       borderRadius: 'var(--radius-lg)',
-      padding: '16px',
+      padding: '12px 14px',
       width: '100%',
       boxShadow: 'var(--shadow-ios)'
     }}>
       {/* Calendar Header Navigation */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
         <button 
           type="button"
           onClick={handlePrevMonth}
           className="btn btn-secondary btn-sm"
-          style={{ width: '32px', height: '32px', padding: 0 }}
+          style={{ width: '30px', height: '30px', padding: 0 }}
         >
           <ChevronLeft size={16} />
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <CalendarIcon size={16} color="var(--ios-blue)" />
-          <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)' }}>
+          <CalendarIcon size={15} color="var(--ios-blue)" />
+          <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>
             {monthNames[month]} {year}
           </span>
         </div>
@@ -90,7 +90,7 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
           type="button"
           onClick={handleNextMonth}
           className="btn btn-secondary btn-sm"
-          style={{ width: '32px', height: '32px', padding: 0 }}
+          style={{ width: '30px', height: '30px', padding: 0 }}
         >
           <ChevronRight size={16} />
         </button>
@@ -100,9 +100,9 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(7, 1fr)',
-        gap: '4px',
+        gap: '2px',
         textAlign: 'center',
-        marginBottom: '8px'
+        marginBottom: '6px'
       }}>
         {dayNames.map((d, index) => (
           <span key={d} style={{
@@ -120,7 +120,7 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(7, 1fr)',
-        gap: '4px'
+        gap: '2px'
       }}>
         {calendarCells.map((cell, idx) => {
           if (!cell.isCurrentMonth) {
@@ -128,7 +128,7 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
               <div 
                 key={idx} 
                 style={{
-                  height: '36px',
+                  height: '32px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -166,12 +166,12 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
               type="button"
               onClick={() => onSelectDate(cell.dateStr, cell.day)}
               style={{
-                height: '36px',
-                borderRadius: 'var(--radius-sm)',
+                height: '32px',
+                borderRadius: '8px',
                 border: borderStyle,
                 background: bg,
                 color: textColor,
-                fontSize: '13px',
+                fontSize: '12px',
                 fontWeight: isPaydaySelected || isToday ? 800 : 600,
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
@@ -185,10 +185,6 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
             </button>
           );
         })}
-      </div>
-
-      <div style={{ marginTop: '12px', textAlign: 'center', fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>
-        Tap any date to select Allowance Credit Day ({paydayDay}{paydayDay === 1 ? 'st' : paydayDay === 2 ? 'nd' : paydayDay === 3 ? 'rd' : 'th'} of month)
       </div>
     </div>
   );
