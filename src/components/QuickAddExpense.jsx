@@ -46,40 +46,64 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
+      <div className="modal-content" onClick={e => e.stopPropagation()} style={{ paddingBottom: '24px' }}>
         <div className="modal-grab-handle" />
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
             Log Expense
           </h3>
           <button 
             onClick={onClose}
             className="btn btn-secondary btn-sm"
-            style={{ width: '32px', height: '32px', padding: 0 }}
+            style={{ width: '32px', height: '32px', padding: 0, borderRadius: '50%' }}
           >
             <X size={16} />
           </button>
         </div>
 
         <form onSubmit={handleSubmitCustom}>
-          <div className="form-group">
-            <label className="form-label">Amount (₹)</label>
-            <input
-              type="number"
-              step="1"
-              required
-              placeholder="0"
-              className="form-input"
-              style={{ fontSize: '32px', fontWeight: 800, color: 'var(--ios-red)' }}
-              value={amount}
-              onChange={e => setAmount(e.target.value)}
-              autoFocus
-            />
+          {/* Hero Amount Input Box */}
+          <div className="form-group" style={{ marginBottom: '16px' }}>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
+              Amount
+            </span>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <span style={{
+                position: 'absolute',
+                left: '16px',
+                fontSize: '24px',
+                fontWeight: 800,
+                color: 'var(--ios-red)'
+              }}>
+                ₹
+              </span>
+              <input
+                type="number"
+                step="1"
+                required
+                placeholder="0"
+                className="form-input"
+                style={{
+                  paddingLeft: '40px',
+                  fontSize: '28px',
+                  fontWeight: 800,
+                  color: 'var(--ios-red)',
+                  height: '56px',
+                  borderRadius: 'var(--radius-md)'
+                }}
+                value={amount}
+                onChange={e => setAmount(e.target.value)}
+                autoFocus
+              />
+            </div>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Category</label>
+          {/* Category Dropdown */}
+          <div className="form-group" style={{ marginBottom: '14px' }}>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
+              Category
+            </span>
             <CustomDropdown
               options={categoryOptions}
               value={category}
@@ -87,20 +111,26 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
             />
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Note / Details</label>
+          {/* Note Input */}
+          <div className="form-group" style={{ marginBottom: '14px' }}>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
+              Note / Details
+            </span>
             <input
               type="text"
-              placeholder="e.g. Chai with friends"
+              placeholder="e.g. Chai & Snacks"
               className="form-input"
+              style={{ fontSize: '14px', height: '44px' }}
               value={note}
               onChange={e => setNote(e.target.value)}
             />
           </div>
 
-          {/* Custom Formatted Date Picker (Displays "10 Aug 2026") */}
-          <div className="form-group">
-            <label className="form-label">Date</label>
+          {/* Date Picker Button */}
+          <div className="form-group" style={{ marginBottom: '20px' }}>
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
+              Transaction Date
+            </span>
             <button
               type="button"
               onClick={() => setShowDatePicker(!showDatePicker)}
@@ -109,12 +139,12 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '13px 16px',
+                padding: '12px 14px',
                 background: 'var(--bg-input)',
                 border: showDatePicker ? '1px solid var(--ios-blue)' : 'none',
                 borderRadius: 'var(--radius-md)',
                 color: 'var(--text-primary)',
-                fontSize: '15px',
+                fontSize: '14px',
                 fontWeight: 700,
                 cursor: 'pointer'
               }}
@@ -129,7 +159,7 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
             </button>
 
             {showDatePicker && (
-              <div style={{ marginTop: '10px' }}>
+              <div style={{ marginTop: '10px', animation: 'fadeIn 0.15s ease-out' }}>
                 <InteractiveCalendar
                   selectedDate={date}
                   onSelectDate={handleDateSelectFromCalendar}
@@ -138,7 +168,18 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
             )}
           </div>
 
-          <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '16px', marginTop: '10px' }}>
+          {/* Primary Save Button */}
+          <button 
+            type="submit" 
+            className="btn btn-primary" 
+            style={{ 
+              width: '100%', 
+              padding: '14px', 
+              fontSize: '15px', 
+              fontWeight: 800,
+              boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)'
+            }}
+          >
             <CheckCircle2 size={18} /> Save Expense
           </button>
         </form>
