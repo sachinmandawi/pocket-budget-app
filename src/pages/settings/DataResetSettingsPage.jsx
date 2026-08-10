@@ -4,20 +4,6 @@ import { ArrowLeft, RefreshCw, AlertTriangle } from 'lucide-react';
 export default function DataResetSettingsPage({ onResetDemo, onBack }) {
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-        <button onClick={onBack} className="btn btn-secondary btn-sm" style={{ width: '36px', height: '36px', padding: 0 }}>
-          <ArrowLeft size={18} />
-        </button>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
-            Data & Reset
-          </h2>
-          <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-            Reset app budget data to fresh state
-          </p>
-        </div>
-      </div>
-
       <div className="ios-card">
         <div style={{
           background: 'var(--ios-red-bg)',

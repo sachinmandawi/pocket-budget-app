@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Save, CloudUpload, CloudDownload, CheckCircle, ShieldCheck, Github } from 'lucide-react';
+import { Save, CloudUpload, CloudDownload, ShieldCheck, Github } from 'lucide-react';
 import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub } from '../../utils/githubSync';
 
-export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData, onBack }) {
+export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData }) {
   const [config, setConfig] = useState(getGitHubConfig);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncStatusMsg, setSyncStatusMsg] = useState(null);
@@ -44,38 +44,32 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData,
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-        <button onClick={onBack} className="btn btn-secondary btn-sm" style={{ width: '36px', height: '36px', padding: 0 }}>
-          <ArrowLeft size={18} />
-        </button>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
-            GitHub Private Repo Sync
-          </h2>
-          <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-            Encrypted database sync like PantherNote
-          </p>
-        </div>
-      </div>
-
       <div className="ios-card">
-        {/* Repo Status Pill */}
+        {/* Repo Status Pill Container */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '10px',
           padding: '14px',
           background: 'var(--bg-card-subtle)',
           borderRadius: 'var(--radius-md)',
           marginBottom: '16px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Github size={22} color="var(--ios-blue)" />
-            <div>
-              <p style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: '1 1 180px', minWidth: 0 }}>
+            <Github size={22} color="var(--ios-blue)" style={{ flexShrink: 0 }} />
+            <div style={{ minWidth: 0, overflow: 'hidden' }}>
+              <p style={{
+                fontSize: '13px',
+                fontWeight: 800,
+                color: 'var(--text-primary)',
+                wordBreak: 'break-all',
+                lineHeight: 1.2
+              }}>
                 {config.owner}/{config.repo}
               </p>
-              <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+              <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>
                 Private Database Repository
               </p>
             </div>
@@ -88,9 +82,12 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData,
             color: 'var(--ios-green)',
             padding: '4px 10px',
             borderRadius: 'var(--radius-full)',
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
-            gap: '4px'
+            gap: '4px',
+            whiteSpace: 'nowrap',
+            flexShrink: 0,
+            marginLeft: 'auto'
           }}>
             <ShieldCheck size={13} /> Connected
           </span>

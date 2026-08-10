@@ -7,6 +7,18 @@ export default function Navbar({
   activeSettingPage,
   onBackToApp
 }) {
+  const getHeaderTitle = () => {
+    switch (activeSettingPage) {
+      case 'settings_main': return 'Settings';
+      case 'settings_github': return 'GitHub Sync';
+      case 'settings_allowance': return 'Allowance & Payday';
+      case 'settings_categories': return 'Categories';
+      case 'settings_appearance': return 'Appearance';
+      case 'settings_reset': return 'Data Reset';
+      default: return 'PocketBudget';
+    }
+  };
+
   return (
     <div className="app-header-wrapper">
       <header className="app-header">
@@ -48,7 +60,7 @@ export default function Navbar({
             margin: 0,
             lineHeight: 1
           }}>
-            {activeSettingPage ? 'Settings' : 'PocketBudget'}
+            {getHeaderTitle()}
           </h1>
         </div>
 
@@ -58,27 +70,28 @@ export default function Navbar({
             <span style={{
               background: 'var(--ios-red-bg)',
               color: 'var(--ios-red)',
+              fontSize: '11px',
+              fontWeight: 800,
               padding: '4px 10px',
               borderRadius: 'var(--radius-full)',
-              fontSize: '11px',
-              fontWeight: 700,
               display: 'flex',
               alignItems: 'center',
               gap: '4px'
             }}>
-              <ShieldAlert size={13} /> Burn Alert
+              <ShieldAlert size={12} /> Fast Burn
             </span>
           )}
 
-          {/* Settings Gear Icon Button */}
-          <button 
-            onClick={() => onOpenSettingsPage('settings_main')}
-            className="btn btn-secondary btn-sm"
-            style={{ width: '36px', height: '36px', padding: 0, borderRadius: '50%' }}
-            title="Settings"
-          >
-            <Settings size={19} color={activeSettingPage ? 'var(--ios-blue)' : 'var(--text-primary)'} />
-          </button>
+          {!activeSettingPage && (
+            <button 
+              onClick={() => onOpenSettingsPage('settings_main')}
+              className="btn btn-secondary btn-sm"
+              style={{ width: '36px', height: '36px', padding: 0 }}
+              title="Settings"
+            >
+              <Settings size={18} />
+            </button>
+          )}
         </div>
       </header>
     </div>

@@ -46,18 +46,6 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-      {/* Subpage Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '18px' }}>
-        <button onClick={onBack} className="btn btn-secondary btn-sm" style={{ width: '36px', height: '36px', padding: 0 }}>
-          <ArrowLeft size={18} />
-        </button>
-        <div>
-          <h2 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
-            Allowance & Payday
-          </h2>
-        </div>
-      </div>
-
       <form onSubmit={handleSubmit} className="ios-card">
         <div className="form-group">
           <label className="form-label">Monthly Allowance (₹)</label>
