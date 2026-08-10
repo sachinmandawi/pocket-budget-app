@@ -115,15 +115,28 @@ export default function App() {
     }
   }, [isQuickAddOpen, activeSettingPage, activeTab]);
 
-  // Global Unhandled Rejection Safeguard (Silences browser extension message channel warnings)
+  // Cloudflare Worker 1-Click GitHub OAuth Hash Listener
   useEffect(() => {
-    const handleUnhandledRejection = (event) => {
-      if (event && event.reason && typeof event.reason === 'object' && event.reason.message && event.reason.message.includes('message channel closed')) {
-        event.preventDefault();
-      }
-    };
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
-    return () => window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    if (window.location.hash && window.location.hash.includes('oauth_token=')) {
+      try {
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const token = hashParams.get('oauth_token');
+        if (token && token.length > 15) {
+          fetchGitHubUser(token).then(username => {
+            if (username) {
+              const config = getGitHubConfig();
+              saveGitHubConfig({
+                ...config,
+                token: token.trim(),
+                owner: username,
+                repo: 'pocket-budget-db'
+              });
+              window.history.replaceState(null, null, window.location.pathname);
+            }
+          });
+        }
+      } catch (e) {}
+    }
   }, []);
 
   // Splash Screen 2-second timer & Instant App Notification Permission Prompt
