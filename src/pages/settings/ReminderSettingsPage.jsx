@@ -64,7 +64,7 @@ export default function ReminderSettingsPage({ reminderSettings = { enabled: tru
         await LocalNotifications.schedule({
           notifications: [
             {
-              title: 'PocketBudget Evening Reminder 🔔',
+              title: 'Pocket Budget Evening Reminder 🔔',
               body: 'Did you log today\'s expenses? Tap to record your spends now!',
               id: 101,
               schedule: { at: new Date(Date.now() + 1000) }
@@ -74,14 +74,14 @@ export default function ReminderSettingsPage({ reminderSettings = { enabled: tru
       }
     } catch (e) {
       if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('PocketBudget Evening Reminder 🔔', {
+        new Notification('Pocket Budget Evening Reminder 🔔', {
           body: 'Did you log today\'s expenses? Tap to record your spends now!',
           icon: '/app-icon.png'
         });
       } else if ('Notification' in window && Notification.permission !== 'denied') {
         Notification.requestPermission().then(permission => {
           if (permission === 'granted') {
-            new Notification('PocketBudget Evening Reminder 🔔', {
+            new Notification('Pocket Budget Evening Reminder 🔔', {
               body: 'Did you log today\'s expenses? Tap to record your spends now!',
               icon: '/app-icon.png'
             });

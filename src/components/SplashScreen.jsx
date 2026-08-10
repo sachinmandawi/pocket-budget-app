@@ -19,7 +19,7 @@ export default function SplashScreen({ fadeOut }) {
       {/* Centered Pulsing Light Card Logo */}
       <img 
         src="/app-icon.png" 
-        alt="PocketBudget" 
+        alt="Pocket Budget" 
         style={{ 
           width: '84px', 
           height: '84px', 
@@ -39,7 +39,7 @@ export default function SplashScreen({ fadeOut }) {
         marginBottom: '6px',
         fontFamily: 'var(--font-sans)'
       }}>
-        PocketBudget
+        Pocket Budget
       </h1>
 
       <p style={{ 

@@ -28,7 +28,7 @@ export default function Navbar({ onToggleSidebar }) {
               lineHeight: 1
             }}
           >
-            PocketBudget
+            Pocket Budget
           </h1>
         </div>
 

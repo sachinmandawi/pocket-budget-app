@@ -140,12 +140,12 @@ export default function Sidebar({
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <img 
               src="./app-icon.png" 
-              alt="PocketBudget Logo" 
+              alt="Pocket Budget Logo" 
               style={{ width: '38px', height: '38px', borderRadius: '12px', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
             />
             <div>
               <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
-                PocketBudget
+                Pocket Budget
               </h3>
               <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>
                 Smart Expense Tracker
@@ -317,7 +317,7 @@ export default function Sidebar({
           justifyContent: 'space-between'
         }}>
           <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontWeight: 600 }}>
-            PocketBudget v1.0.0
+            Pocket Budget v1.0.0
           </span>
           <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--ios-green)', background: 'var(--ios-green-bg)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
             Active
