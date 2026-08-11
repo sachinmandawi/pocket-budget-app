@@ -71,38 +71,52 @@ export default function DataResetSettingsPage({ onResetDemo, onBack }) {
         </button>
       </div>
 
-      {/* Premium iOS Glassmorphism Confirmation Modal */}
+      {/* Premium High-Contrast iOS Glassmorphism Confirmation Modal */}
       {showModal && (
-        <div className="modal-overlay" style={{ animation: 'fadeIn 0.15s ease-out', zIndex: 9999 }}>
+        <div 
+          className="modal-overlay" 
+          onClick={() => setShowModal(false)}
+          style={{ 
+            animation: 'fadeIn 0.15s ease-out', 
+            zIndex: 9999, 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            padding: '16px' 
+          }}
+        >
           <div 
-            className="modal-card" 
+            onClick={e => e.stopPropagation()}
             style={{ 
-              maxWidth: '340px', 
-              padding: '20px', 
+              width: '100%',
+              maxWidth: '320px', 
+              padding: '24px 20px', 
               textAlign: 'center', 
               borderRadius: '24px',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-medium)',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.35)',
               animation: 'slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
             }}
           >
             <div style={{
-              width: '52px',
-              height: '52px',
+              width: '56px',
+              height: '56px',
               borderRadius: '50%',
               background: 'var(--ios-red-bg)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 14px auto',
-              border: '1px solid rgba(239, 68, 68, 0.2)'
+              margin: '0 auto 16px auto',
+              border: '1px solid rgba(239, 68, 68, 0.25)'
             }}>
-              <AlertTriangle size={26} color="var(--ios-red)" />
+              <AlertTriangle size={28} color="var(--ios-red)" />
             </div>
 
-            <h3 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px', lineHeight: 1.2 }}>
               Reset App Database?
             </h3>
             
-            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '20px' }}>
+            <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '22px' }}>
               Are you sure you want to wipe all transactions, piggy bank savings & wishlist items back to ₹0 state?
             </p>
 
@@ -111,7 +125,7 @@ export default function DataResetSettingsPage({ onResetDemo, onBack }) {
                 type="button"
                 onClick={() => setShowModal(false)}
                 className="btn btn-secondary"
-                style={{ flex: 1, padding: '9px 14px', fontSize: '13px', fontWeight: 700 }}
+                style={{ flex: 1, padding: '11px', fontSize: '13px', fontWeight: 700 }}
               >
                 Cancel
               </button>
@@ -122,13 +136,13 @@ export default function DataResetSettingsPage({ onResetDemo, onBack }) {
                 className="btn"
                 style={{
                   flex: 1.2,
-                  padding: '9px 14px',
+                  padding: '11px',
                   fontSize: '13px',
                   fontWeight: 800,
                   color: '#ffffff',
-                  background: 'var(--ios-red)',
-                  borderRadius: 'var(--radius-md)',
-                  boxShadow: '0 4px 12px rgba(239, 68, 68, 0.35)',
+                  background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+                  borderRadius: 'var(--radius-full)',
+                  boxShadow: '0 4px 14px rgba(239, 68, 68, 0.4)',
                   border: 'none',
                   display: 'flex',
                   alignItems: 'center',
@@ -136,7 +150,7 @@ export default function DataResetSettingsPage({ onResetDemo, onBack }) {
                   gap: '6px'
                 }}
               >
-                <RefreshCw size={14} /> Reset Data
+                <RefreshCw size={15} /> Reset Data
               </button>
             </div>
           </div>
