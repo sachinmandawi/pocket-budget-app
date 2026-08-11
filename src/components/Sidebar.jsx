@@ -24,7 +24,7 @@ export default function Sidebar({
 
   const navSections = [
     {
-      title: '📌 MAIN OVERVIEW',
+      title: 'MAIN OVERVIEW',
       items: [
         {
           id: 'tab_daily',
@@ -43,7 +43,7 @@ export default function Sidebar({
       ]
     },
     {
-      title: '💰 SAVINGS & VAULTS',
+      title: 'SAVINGS & VAULTS',
       items: [
         {
           id: 'page_piggy_bank',
@@ -69,7 +69,7 @@ export default function Sidebar({
       ]
     },
     {
-      title: '⚙️ CONFIGURATION & ANALYTICS',
+      title: 'CONFIGURATION & ANALYTICS',
       items: [
         {
           id: 'page_settings_allowance',
