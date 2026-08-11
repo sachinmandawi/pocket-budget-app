@@ -76,7 +76,7 @@ export default function App() {
         return;
       }
       if (activeSettingPage) {
-        if (['allowance_countdown', 'piggy_bank', 'settings_main'].includes(activeSettingPage)) {
+        if (['allowance_countdown', 'piggy_bank', 'settings_main', 'settings_allowance', 'settings_categories'].includes(activeSettingPage)) {
           setActiveSettingPage(null);
         } else {
           setActiveSettingPage('settings_main');

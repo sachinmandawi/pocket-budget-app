@@ -116,7 +116,14 @@ export default function Sidebar({
     if (item.type === 'tab') {
       return !activeSettingPage && activeTab === item.target;
     }
-    return activeSettingPage === item.target || (item.target === 'settings_main' && activeSettingPage && activeSettingPage.startsWith('settings_'));
+    if (item.target === activeSettingPage) {
+      return true;
+    }
+    if (item.target === 'settings_main') {
+      const mainSubPages = ['settings_github', 'settings_reminder', 'settings_appearance', 'settings_reset'];
+      return mainSubPages.includes(activeSettingPage);
+    }
+    return false;
   };
 
   return (
