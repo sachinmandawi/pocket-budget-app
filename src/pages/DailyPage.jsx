@@ -1,10 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DailyGauge from '../components/DailyGauge';
-import { DEFAULT_CATEGORIES, formatDateReadable } from '../utils/storage';
+import { DEFAULT_CATEGORIES } from '../utils/storage';
+import { getGitHubConfig } from '../utils/githubSync';
+import { Cloud, X, ArrowRight } from 'lucide-react';
 
-export default function DailyPage({ stats, onOpenQuickAdd, transactions = [] }) {
+export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, transactions = [] }) {
   const todayStr = new Date().toISOString().substring(0, 10);
   const todayTx = transactions.filter(tx => tx.date === todayStr);
+
+  const [showGithubBanner, setShowGithubBanner] = useState(() => {
+    try {
+      const isDismissed = localStorage.getItem('pocket_budget_dismiss_gh_banner');
+      const config = getGitHubConfig();
+      return !isDismissed && !config?.token;
+    } catch (e) {
+      return false;
+    }
+  });
+
+  const handleDismissBanner = () => {
+    try {
+      localStorage.setItem('pocket_budget_dismiss_gh_banner', 'true');
+    } catch (e) {}
+    setShowGithubBanner(false);
+  };
 
   const getCategoryInfo = (catId) => {
     return DEFAULT_CATEGORIES.find(c => c.id === catId) || { name: 'Other', icon: '🏷️', color: '#2563eb' };
@@ -12,6 +31,85 @@ export default function DailyPage({ stats, onOpenQuickAdd, transactions = [] }) 
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
+      {/* Recommended GitHub Auto-Sync Card */}
+      {showGithubBanner && (
+        <div 
+          className="ios-card" 
+          style={{ 
+            marginBottom: '16px', 
+            padding: '14px 16px',
+            background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-subtle) 100%)',
+            border: '1px solid var(--border-medium)',
+            position: 'relative'
+          }}
+        >
+          <button
+            onClick={handleDismissBanner}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--text-tertiary)'
+            }}
+          >
+            <X size={14} />
+          </button>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+            <div style={{
+              width: '34px',
+              height: '34px',
+              borderRadius: '10px',
+              background: 'var(--ios-blue-bg)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Cloud size={18} color="var(--ios-blue)" />
+            </div>
+
+            <div>
+              <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                Recommend: GitHub Auto-Sync ☁️
+              </h4>
+              <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>
+                Never lose your data. 100% private cloud backup.
+              </p>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+            <button
+              onClick={() => onNavigateToPage('settings_github')}
+              className="btn btn-primary btn-sm"
+              style={{
+                flex: 1,
+                fontSize: '11px',
+                fontWeight: 800,
+                padding: '6px 12px',
+                borderRadius: 'var(--radius-full)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '4px'
+              }}
+            >
+              Connect GitHub <ArrowRight size={12} />
+            </button>
+            <button
+              onClick={handleDismissBanner}
+              className="btn btn-secondary btn-sm"
+              style={{ fontSize: '11px', fontWeight: 700, padding: '6px 10px' }}
+            >
+              Later
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Clean Hero Card */}
       <DailyGauge 
         stats={stats} 
