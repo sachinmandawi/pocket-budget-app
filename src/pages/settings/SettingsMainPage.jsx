@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wallet, Tag, Palette, RefreshCw, ChevronRight, Github, Bell, Clock } from 'lucide-react';
+import { Wallet, Tag, Palette, RefreshCw, ChevronRight, Github, Bell, Clock, Mail } from 'lucide-react';
 
 export default function SettingsMainPage({ onNavigateSubPage }) {
   const menuItems = [
@@ -79,6 +79,64 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
             <ChevronRight size={18} color="var(--text-tertiary)" />
           </div>
         ))}
+      </div>
+
+      {/* Premium Developer Support & Feedback Card */}
+      <div 
+        className="ios-card" 
+        style={{ 
+          marginTop: '16px', 
+          padding: '16px 18px',
+          background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-subtle) 100%)',
+          border: '1px solid var(--border-medium)'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+          <div style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '12px',
+            background: 'var(--ios-blue-bg)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '1px solid rgba(37, 99, 235, 0.2)'
+          }}>
+            <Mail size={20} color="var(--ios-blue)" />
+          </div>
+
+          <div>
+            <h3 style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.3px' }}>
+              Developer Support & Feedback
+            </h3>
+            <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0, fontWeight: 600 }}>
+              Made with ❤️ by Sachin Mandawi
+            </p>
+          </div>
+        </div>
+
+        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '14px' }}>
+          Have questions, feature requests, or feedback? Reach out directly via email!
+        </p>
+
+        <a 
+          href="mailto:sachinmandawi@gmail.com?subject=Pocket%20Budget%20App%20Feedback"
+          className="btn btn-primary"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            width: '100%',
+            padding: '10px',
+            fontSize: '13px',
+            fontWeight: 800,
+            textDecoration: 'none',
+            borderRadius: 'var(--radius-full)'
+          }}
+        >
+          <Mail size={16} /> Send Email: sachinmandawi@gmail.com
+        </a>
       </div>
     </div>
   );
