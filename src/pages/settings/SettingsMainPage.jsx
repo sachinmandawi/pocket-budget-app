@@ -10,22 +10,10 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
       icon: <Github size={20} color="var(--ios-blue)" />
     },
     {
-      id: 'settings_allowance',
-      title: 'Allowance & Payday Date',
-      subtitle: 'Monthly amount & payday calendar',
-      icon: <Wallet size={20} color="var(--ios-blue)" />
-    },
-    {
       id: 'settings_reminder',
       title: 'Daily Spend Reminder',
       subtitle: 'Evening alert at 8:00 PM',
       icon: <Bell size={20} color="var(--ios-green)" />
-    },
-    {
-      id: 'settings_categories',
-      title: 'Category Manager',
-      subtitle: 'Edit custom expense categories',
-      icon: <Tag size={20} color="var(--ios-purple)" />
     },
     {
       id: 'settings_appearance',
