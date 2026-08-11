@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, LogOut, KeyRound, Sparkles } from 'lucide-react';
-import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub, fetchGitHubUser, mergeBudgetData } from '../../utils/githubSync';
+import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub, fetchGitHubUser, mergeBudgetData, ensurePrivateRepoExists } from '../../utils/githubSync';
 
 export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData }) {
   const [config, setConfig] = useState(getGitHubConfig);
@@ -38,6 +38,12 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
       saveGitHubConfig(newConfig);
       setConfig(newConfig);
       setTokenInput('');
+
+      setSyncStatusMsg({ type: 'info', text: '🔒 Verifying / Creating Private Repository...' });
+      const repoRes = await ensurePrivateRepoExists(newConfig);
+      if (repoRes.created) {
+        setSyncStatusMsg({ type: 'info', text: '✨ Private repository "pocket-budget-db" created automatically!' });
+      }
 
       setSyncStatusMsg({ type: 'info', text: '📥 Merging offline and cloud databases...' });
       const res = await pullFromGitHub(newConfig);

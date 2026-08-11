@@ -93,12 +93,66 @@ const base64ToUtf8 = (str) => {
   }).join(''));
 };
 
-// Push local budget data to private GitHub repository with Automatic 409 Conflict Handling
+// Automatically check & create private GitHub repository if it doesn't exist
+export const ensurePrivateRepoExists = async (configOverride = null) => {
+  const config = configOverride || getGitHubConfig();
+  if (!config.token || !config.owner || !config.repo) {
+    return { success: false, error: 'GitHub credentials missing' };
+  }
+
+  const repoUrl = `https://api.github.com/repos/${config.owner}/${config.repo}`;
+
+  try {
+    const checkRes = await fetch(repoUrl, {
+      headers: {
+        'Authorization': `Bearer ${config.token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    if (checkRes.ok) {
+      return { success: true, created: false };
+    }
+
+    if (checkRes.status === 404) {
+      const createRes = await fetch('https://api.github.com/user/repos', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${config.token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: config.repo,
+          description: 'Pocket Budget App Private Automated Database Repository',
+          private: true,
+          auto_init: true
+        })
+      });
+
+      if (createRes.ok || createRes.status === 201) {
+        return { success: true, created: true };
+      } else {
+        const errData = await createRes.json();
+        return { success: false, error: errData.message || 'Auto-creation of private repository failed' };
+      }
+    }
+
+    return { success: false, error: `GitHub check failed with status ${checkRes.status}` };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
+
+// Push local budget data to private GitHub repository with Automatic 409 Conflict & Auto Repo Creation
 export const pushToGitHub = async (budgetData, configOverride = null) => {
   const config = configOverride || getGitHubConfig();
   if (!config.token || !config.owner || !config.repo) {
     return { success: false, error: 'GitHub credentials missing' };
   }
+
+  // Ensure private repo exists automatically
+  await ensurePrivateRepoExists(config);
 
   const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.filename}`;
   

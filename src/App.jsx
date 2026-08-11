@@ -44,6 +44,14 @@ export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
+    window.__POCKET_BUDGET_NAVIGATE__ = (tab = 'daily', settingPage = null) => {
+      setActiveTab(tab);
+      setActiveSettingPage(settingPage);
+      setIsSidebarOpen(false);
+    };
+  }, []);
+
+  useEffect(() => {
     try {
       const isAlreadyOnboarded = localStorage.getItem('pocket_budget_onboarded_v1');
       if (!isAlreadyOnboarded) {

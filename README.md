@@ -38,6 +38,37 @@
 
 ---
 
+## 📸 App Screenshots
+
+<table align="center">
+  <tr>
+    <td><img src="./screenshots/01_Daily_Dashboard.png" alt="Daily Dashboard" width="250"/></td>
+    <td><img src="./screenshots/02_Expenses_Log.png" alt="Expenses Log" width="250"/></td>
+    <td><img src="./screenshots/03_Piggy_Savings.png" alt="Piggy Savings" width="250"/></td>
+  </tr>
+  <tr>
+    <td><img src="./screenshots/04_Next_Payday_Clock.png" alt="Next Payday Clock" width="250"/></td>
+    <td><img src="./screenshots/05_Shopping_Wishlist.png" alt="Shopping Wishlist" width="250"/></td>
+    <td><img src="./screenshots/06_Pocket_Money_and_Payday.png" alt="Pocket Money & Payday" width="250"/></td>
+  </tr>
+  <tr>
+    <td><img src="./screenshots/07_Category_Manager.png" alt="Category Manager" width="250"/></td>
+    <td><img src="./screenshots/08_Expense_Summary.png" alt="Expense Summary" width="250"/></td>
+    <td><img src="./screenshots/09_All_Settings_and_Reset.png" alt="All Settings & Reset" width="250"/></td>
+  </tr>
+  <tr>
+    <td><img src="./screenshots/10_Settings_GitHub_Cloud_Sync.png" alt="GitHub Cloud Sync" width="250"/></td>
+    <td><img src="./screenshots/11_Settings_Daily_Spend_Reminder.png" alt="Daily Spend Reminder" width="250"/></td>
+    <td><img src="./screenshots/12_Settings_Appearance_and_Theme.png" alt="Appearance & Theme" width="250"/></td>
+  </tr>
+  <tr>
+    <td><img src="./screenshots/13_Settings_Data_and_Reset.png" alt="Data & Reset" width="250"/></td>
+    <td colspan="2"></td>
+  </tr>
+</table>
+
+---
+
 ## 🌟 Key Features
 
 <table align="center">
