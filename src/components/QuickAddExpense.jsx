@@ -142,7 +142,7 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
             )}
             {isAllowanceInsufficient && (
               <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ios-red)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
-                ⚠️ Insufficient Allowance balance (Max ₹{availableAllowanceCash})
+                ⚠️ Insufficient Pocket Money balance (Max ₹{availableAllowanceCash})
               </span>
             )}
             {isAllowanceOverDailySafe && (

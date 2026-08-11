@@ -72,10 +72,10 @@ export default function AllowanceCountdownWidget({ stats, onClick }) {
           </div>
           <div>
             <h4 style={{ fontSize: '13px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.2px' }}>
-              Allowance Credit Countdown
+              Pocket Money Countdown
             </h4>
             <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-              Time until next cycle allowance credit
+              Time until next pocket money credit
             </span>
           </div>
         </div>

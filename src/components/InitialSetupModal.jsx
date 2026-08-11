@@ -111,7 +111,7 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
             onClick={() => setActiveTab('allowance')}
           >
             <Wallet size={16} />
-            <span style={{ fontSize: '11px' }}>Allowance</span>
+            <span style={{ fontSize: '11px' }}>Pocket Money</span>
           </button>
 
           <button
@@ -150,11 +150,11 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
         </div>
 
         <form onSubmit={handleSubmit}>
-          {/* TAB 1: POCKET ALLOWANCE & EMERGENCY */}
+          {/* TAB 1: POCKET MONEY & EMERGENCY */}
           {activeTab === 'allowance' && (
             <div>
               <div className="form-group">
-                <label className="form-label">Monthly Pocket Allowance (₹)</label>
+                <label className="form-label">Monthly Pocket Money (₹)</label>
                 <input
                   type="number"
                   required
@@ -164,7 +164,7 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
                   onChange={e => setAllowance(e.target.value)}
                 />
                 <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                  Monthly allowance / budget (e.g. ₹1,500)
+                  Monthly pocket money (e.g. ₹1,500)
                 </span>
               </div>
 
