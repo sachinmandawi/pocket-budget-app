@@ -7,6 +7,8 @@ import {
   Flame, 
   BarChart3, 
   Settings,
+  Calendar,
+  Tags,
   ChevronRight
 } from 'lucide-react';
 
@@ -67,8 +69,22 @@ export default function Sidebar({
       ]
     },
     {
-      title: '⚙️ SYSTEM & ANALYTICS',
+      title: '⚙️ CONFIGURATION & ANALYTICS',
       items: [
+        {
+          id: 'page_settings_allowance',
+          type: 'page',
+          target: 'settings_allowance',
+          label: 'Allowance & Payday Date',
+          icon: <Calendar size={18} color="var(--ios-blue)" />
+        },
+        {
+          id: 'page_settings_categories',
+          type: 'page',
+          target: 'settings_categories',
+          label: 'Category Manager',
+          icon: <Tags size={18} color="var(--ios-blue)" />
+        },
         {
           id: 'tab_analytics',
           type: 'tab',
@@ -80,7 +96,7 @@ export default function Sidebar({
           id: 'page_settings_main',
           type: 'page',
           target: 'settings_main',
-          label: 'Settings & Preferences',
+          label: 'All Settings & Reset',
           icon: <Settings size={18} color="var(--ios-blue)" />
         }
       ]
