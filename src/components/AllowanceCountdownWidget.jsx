@@ -3,13 +3,25 @@ import { Clock, Sparkles, Calendar, TrendingUp } from 'lucide-react';
 
 export default function AllowanceCountdownWidget({ stats, onClick }) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const paydayDay = stats?.paydayAnchorDate || 1;
 
   useEffect(() => {
     const calculateCountdown = () => {
       const now = new Date();
-      // Target: 1st day of next month at 00:00:00
-      const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0);
-      const diff = nextMonth.getTime() - now.getTime();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const currentDate = now.getDate();
+
+      const paydayTargetDay = Math.min(31, Math.max(1, Number(paydayDay || 1)));
+
+      let targetDate;
+      if (currentDate < paydayTargetDay) {
+        targetDate = new Date(year, month, paydayTargetDay, 0, 0, 0);
+      } else {
+        targetDate = new Date(year, month + 1, paydayTargetDay, 0, 0, 0);
+      }
+
+      const diff = targetDate.getTime() - now.getTime();
 
       if (diff > 0) {
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -26,7 +38,7 @@ export default function AllowanceCountdownWidget({ stats, onClick }) {
     calculateCountdown();
     const timer = setInterval(calculateCountdown, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [paydayDay]);
 
   const totalDaysInMonth = stats?.totalDaysInMonth || 30;
   const currentDayNumber = stats?.currentDayNumber || 1;

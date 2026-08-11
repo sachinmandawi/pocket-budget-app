@@ -1,14 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { Clock, Sparkles, Calendar, ShieldCheck, Zap } from 'lucide-react';
 
+const getOrdinalSuffix = (day) => {
+  const d = Number(day || 1);
+  if (d > 3 && d < 21) return `${d}th`;
+  switch (d % 10) {
+    case 1:  return `${d}st`;
+    case 2:  return `${d}nd`;
+    case 3:  return `${d}rd`;
+    default: return `${d}th`;
+  }
+};
+
 export default function AllowanceCountdownPage({ stats, onBack }) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const paydayDay = stats?.paydayAnchorDate || 1;
 
   useEffect(() => {
     const calculateCountdown = () => {
       const now = new Date();
-      const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1, 0, 0, 0);
-      const diff = nextMonth.getTime() - now.getTime();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const currentDate = now.getDate();
+
+      const paydayTargetDay = Math.min(31, Math.max(1, Number(paydayDay || 1)));
+
+      let targetDate;
+      if (currentDate < paydayTargetDay) {
+        targetDate = new Date(year, month, paydayTargetDay, 0, 0, 0);
+      } else {
+        targetDate = new Date(year, month + 1, paydayTargetDay, 0, 0, 0);
+      }
+
+      const diff = targetDate.getTime() - now.getTime();
 
       if (diff > 0) {
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -25,7 +49,7 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
     calculateCountdown();
     const timer = setInterval(calculateCountdown, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [paydayDay]);
 
   const totalDaysInMonth = stats?.totalDaysInMonth || 30;
   const currentDayNumber = stats?.currentDayNumber || 1;
@@ -60,7 +84,7 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
           Next Allowance Credit
         </h3>
         <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '0 0 20px' }}>
-          Countdown to 1st of next month cycle
+          Countdown to {getOrdinalSuffix(paydayDay)} of next cycle
         </p>
 
         {/* Big Live Digital Clock */}
