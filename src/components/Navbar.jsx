@@ -18,12 +18,6 @@ export default function Navbar({ onToggleSidebar }) {
             <Menu size={18} color="var(--ios-blue)" />
           </button>
 
-          <img 
-            src="./app-icon.png" 
-            alt="Pocket Budget Logo" 
-            style={{ width: '28px', height: '28px', borderRadius: '7px' }}
-          />
-
           <h1 
             style={{ 
               fontSize: '18px', 
