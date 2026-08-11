@@ -110,17 +110,19 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
               Developer Support & Feedback
             </h3>
             <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0, fontWeight: 600 }}>
-              Made with ❤️ by Sachin Mandawi
+              Made with ❤️ by Sachin Mandavi
             </p>
           </div>
         </div>
 
         <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '14px' }}>
-          Have questions, feature requests, or feedback? Reach out directly via email!
+          Have questions, feature requests, or feedback? Reach out directly via Gmail!
         </p>
 
         <a 
-          href="mailto:sachinmandawi@gmail.com?subject=Pocket%20Budget%20App%20Feedback"
+          href="https://mail.google.com/mail/?view=cm&fs=1&to=sachinmandawi@gmail.com&su=Pocket%20Budget%20App%20Feedback"
+          target="_blank"
+          rel="noopener noreferrer"
           className="btn btn-primary"
           style={{
             display: 'flex',
@@ -135,7 +137,7 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
             borderRadius: 'var(--radius-full)'
           }}
         >
-          <Mail size={16} /> Send Email: sachinmandawi@gmail.com
+          <Mail size={16} /> Open in Gmail: sachinmandawi@gmail.com
         </a>
       </div>
     </div>

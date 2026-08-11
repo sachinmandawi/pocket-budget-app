@@ -131,11 +131,11 @@ npm run dev
 
 ## 📩 Developer Support & Feedback
 Have questions, feature requests, or feedback? Feel free to reach out directly:
-- ✉️ **Developer Email**: [sachinmandawi@gmail.com](mailto:sachinmandawi@gmail.com)
-- 👨‍💻 **Author**: Sachin Mandawi
+- ✉️ **Developer Email**: [sachinmandawi@gmail.com](https://mail.google.com/mail/?view=cm&fs=1&to=sachinmandawi@gmail.com&su=Pocket%20Budget%20App%20Feedback)
+- 👨‍💻 **Author**: Sachin Mandavi
 
 ---
 
 <div align="center">
-  <p>Built with ❤️ by Sachin Mandawi ([sachinmandawi@gmail.com](mailto:sachinmandawi@gmail.com)) • Pocket Budget © 2026</p>
+  <p>Built with ❤️ by Sachin Mandavi ([sachinmandawi@gmail.com](https://mail.google.com/mail/?view=cm&fs=1&to=sachinmandawi@gmail.com&su=Pocket%20Budget%20App%20Feedback)) • Pocket Budget © 2026</p>
 </div>
