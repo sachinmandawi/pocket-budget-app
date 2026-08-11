@@ -133,7 +133,9 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
         </p>
 
         <a 
-          href="mailto:sachinmandawi@gmail.com?subject=Pocket%20Budget%20App%20Feedback"
+          href="https://mail.google.com/mail/?view=cm&fs=1&to=sachinmandawi@gmail.com&su=Pocket%20Budget%20App%20Feedback"
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={handleOpenEmail}
           className="btn btn-primary"
           style={{
