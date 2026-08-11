@@ -75,7 +75,7 @@ export default function Sidebar({
           id: 'page_settings_allowance',
           type: 'page',
           target: 'settings_allowance',
-          label: 'Pocket Money & Payday Date',
+          label: 'Pocket Money & Payday',
           icon: <Calendar size={18} color="var(--ios-blue)" />
         },
         {
@@ -89,7 +89,7 @@ export default function Sidebar({
           id: 'tab_analytics',
           type: 'tab',
           target: 'analytics',
-          label: 'Monthly Expense Summary',
+          label: 'Expense Summary',
           icon: <BarChart3 size={18} color="var(--ios-green)" />
         },
         {
