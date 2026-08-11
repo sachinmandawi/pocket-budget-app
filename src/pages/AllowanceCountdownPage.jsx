@@ -81,7 +81,7 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
         </div>
 
         <h3 style={{ fontSize: '16px', fontWeight: 800, margin: '0 0 2px', color: 'var(--text-primary)' }}>
-          Next Allowance Credit
+          Next Pocket Money Credit
         </h3>
         <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '0 0 20px' }}>
           Countdown to {getOrdinalSuffix(paydayDay)} of next cycle
@@ -170,7 +170,7 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
         <div className="ios-card" style={{ padding: '14px 16px' }}>
           <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-tertiary)', textTransform: 'uppercase', display: 'block' }}>
-            Monthly Allowance
+            Monthly Pocket Money
           </span>
           <strong style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', display: 'block', marginTop: '2px' }}>
             ₹{stats?.monthlyAllowance || 0}
