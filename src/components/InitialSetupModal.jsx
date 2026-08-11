@@ -164,12 +164,12 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
                   onChange={e => setAllowance(e.target.value)}
                 />
                 <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                  Monthly money sent by papa (e.g. ₹1,500)
+                  Monthly allowance / budget (e.g. ₹1,500)
                 </span>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Papa Emergency Reserve (₹)</label>
+                <label className="form-label">Emergency Reserve (₹)</label>
                 <input
                   type="number"
                   required

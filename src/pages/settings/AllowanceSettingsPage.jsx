@@ -107,7 +107,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
 
         {/* Emergency Reserve Input */}
         <div className="form-group">
-          <label className="form-label">Papa Emergency Reserve (₹)</label>
+          <label className="form-label">Emergency Reserve (₹)</label>
           <input
             type="number"
             required

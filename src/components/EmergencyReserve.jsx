@@ -7,7 +7,7 @@ export default function EmergencyReserve({ reserveAmount, isUnlocked, currentDay
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
         <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
           <HeartHandshake size={16} color="var(--ios-orange)" />
-          Papa Emergency Vault
+          Emergency Reserve Vault
         </span>
 
         <span style={{
