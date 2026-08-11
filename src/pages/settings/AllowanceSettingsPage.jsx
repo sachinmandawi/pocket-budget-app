@@ -120,7 +120,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
 
         {/* Fixed Day-1 Deductions */}
         <div className="form-group">
-          <label className="form-label">Fixed Day-1 Expenses (Recharge / Pass)</label>
+          <label className="form-label">Monthly Fixed Bills (Recharge / Pass)</label>
           {fixedDeductions.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px' }}>
               {fixedDeductions.map(item => (

@@ -75,7 +75,7 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
       {/* Hero Daily Amount Display */}
       <div style={{ textAlign: 'center', marginBottom: '14px' }}>
         <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: '2px' }}>
-          Safe Allowance Today
+          Today's Daily Limit
         </p>
         <div style={{ 
           fontSize: '36px', 
@@ -137,25 +137,29 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
           textAlign: 'center',
           border: '1px solid var(--border-subtle)'
         }}>
-          <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>Cash</span>
+          <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>In Hand</span>
           <strong style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-blue)' }}>₹{remainingTotalInHand}</strong>
         </div>
       </div>
 
-      {/* Primary Log Button */}
+      {/* Action Button */}
       <button 
+        type="button"
         onClick={onOpenQuickAdd}
         className="btn btn-primary"
-        style={{ 
-          width: '100%', 
-          padding: '10px 16px', 
-          fontSize: '13px', 
-          fontWeight: 700,
-          borderRadius: 'var(--radius-full)',
-          boxShadow: '0 3px 10px rgba(37, 99, 235, 0.25)'
+        style={{
+          width: '100%',
+          padding: '11px',
+          fontSize: '13px',
+          fontWeight: 800,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '6px',
+          borderRadius: 'var(--radius-full)'
         }}
       >
-        <Plus size={16} /> Log Spend
+        <Plus size={16} /> Log Today's Spend
       </button>
     </div>
   );

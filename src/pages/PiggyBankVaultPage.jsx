@@ -10,7 +10,7 @@ export default function PiggyBankVaultPage({ budgetData, onBack }) {
       {/* Page Header */}
       <div style={{ marginBottom: '14px' }}>
         <h2 style={{ fontSize: '17px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
-          Piggy Bank Vault
+          Piggy Savings 🐷
         </h2>
       </div>
 

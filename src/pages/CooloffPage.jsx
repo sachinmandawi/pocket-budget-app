@@ -11,7 +11,7 @@ export default function CooloffPage({ wishlist, onAddWishItem, onDeleteWishItem 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
         <div>
           <h2 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px', margin: 0 }}>
-            Wishlist Cool-Off
+            Shopping Wishlist 🛍️
           </h2>
         </div>
 

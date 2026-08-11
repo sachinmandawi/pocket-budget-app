@@ -49,21 +49,21 @@ export default function Sidebar({
           id: 'page_piggy_bank',
           type: 'page',
           target: 'piggy_bank',
-          label: 'Piggy Bank Vault',
+          label: 'Piggy Savings',
           icon: <span style={{ fontSize: '16px' }}>🐷</span>
         },
         {
           id: 'page_allowance_countdown',
           type: 'page',
           target: 'allowance_countdown',
-          label: 'Allowance Countdown',
+          label: 'Next Payday Clock',
           icon: <Clock size={18} color="var(--ios-blue)" />
         },
         {
           id: 'tab_cooloff',
           type: 'tab',
           target: 'cooloff',
-          label: 'Cool-Off Wishlist',
+          label: 'Shopping Wishlist',
           icon: <Flame size={18} color="var(--ios-orange)" />
         }
       ]
@@ -89,7 +89,7 @@ export default function Sidebar({
           id: 'tab_analytics',
           type: 'tab',
           target: 'analytics',
-          label: 'Analytics & Insights',
+          label: 'Monthly Expense Summary',
           icon: <BarChart3 size={18} color="var(--ios-green)" />
         },
         {

@@ -85,10 +85,10 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
         </div>
 
         <form onSubmit={handleSubmitCustom}>
-          {/* Spend Source Selector (Main Allowance vs Piggy Bank Vault) */}
+          {/* Spend Source Selector (Main Allowance vs Piggy Savings) */}
           <div className="form-group" style={{ marginBottom: '16px' }}>
             <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
-              Deduct From (Spend Source)
+              Pay From 👛
             </span>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               <button
@@ -130,7 +130,7 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                   gap: '4px'
                 }}
               >
-                🐷 Piggy Bank
+                🐷 Piggy Savings
               </button>
             </div>
 

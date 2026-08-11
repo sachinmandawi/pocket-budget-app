@@ -9,7 +9,7 @@ export default function AnalyticsPage({ stats, categories, reserveAmount, isEmer
       {/* Clean Page Title */}
       <div style={{ marginBottom: '14px' }}>
         <h2 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px', margin: 0 }}>
-          Budget Analytics
+          Monthly Expense Summary 📊
         </h2>
       </div>
 

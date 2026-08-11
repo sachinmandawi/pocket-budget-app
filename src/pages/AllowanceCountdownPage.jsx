@@ -61,7 +61,7 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
       {/* Page Header */}
       <div style={{ marginBottom: '14px' }}>
         <h2 style={{ fontSize: '17px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
-          Allowance Countdown
+          Next Payday Clock ⏱️
         </h2>
       </div>
 
