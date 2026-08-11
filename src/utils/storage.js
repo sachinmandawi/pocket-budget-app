@@ -66,7 +66,10 @@ export const getInitialData = () => {
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
-      if (parsed && typeof parsed === 'object' && Array.isArray(parsed.categories) && parsed.categories.length > 0) {
+      if (parsed && typeof parsed === 'object') {
+        if (parsed.categories && Array.isArray(parsed.categories)) {
+          parsed.categories = parsed.categories.filter(c => c && c.name && !c.name.toLowerCase().includes('cigarette') && !c.id.toLowerCase().includes('cigarette'));
+        }
         if (parsed.monthlyAllowance === undefined) parsed.monthlyAllowance = 0;
         if (parsed.emergencyReserve === undefined) parsed.emergencyReserve = 0;
         if (!parsed.paydayAnchorDate) parsed.paydayAnchorDate = 1;
