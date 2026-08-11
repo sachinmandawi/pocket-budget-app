@@ -452,8 +452,15 @@ export default function App() {
         {activeSettingPage === 'settings_allowance' && (
           <AllowanceSettingsPage 
             data={data}
-            onSaveSettings={setData}
-            onBack={() => setActiveSettingPage('settings_main')}
+            onSaveSettings={(newData) => {
+              setData(newData);
+              setActiveSettingPage(null);
+              setActiveTab('daily');
+            }}
+            onBack={() => {
+              setActiveSettingPage(null);
+              setActiveTab('daily');
+            }}
           />
         )}
 
