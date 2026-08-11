@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import QuickAddExpense from './components/QuickAddExpense';
 import SplashScreen from './components/SplashScreen';
+import WelcomeOnboardingModal from './components/WelcomeOnboardingModal';
 
 import DailyPage from './pages/DailyPage';
 import ExpensesPage from './pages/ExpensesPage';
@@ -38,6 +39,23 @@ export default function App() {
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // 1-Time Welcome Onboarding Carousel State
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    try {
+      const isAlreadyOnboarded = localStorage.getItem('pocket_budget_onboarded_v1');
+      if (!isAlreadyOnboarded) {
+        setShowOnboarding(true);
+      }
+    } catch (e) {}
+  }, []);
+
+  const handleStartOnboardingSetup = () => {
+    setShowOnboarding(false);
+    setActiveSettingPage('settings_allowance');
+  };
 
   // Double Back To Exit State
   const [showExitToast, setShowExitToast] = useState(false);
@@ -534,6 +552,13 @@ export default function App() {
         onAddExpense={handleAddExpense}
         isOpen={isQuickAddOpen}
         onClose={() => setIsQuickAddOpen(false)}
+      />
+
+      {/* 1-Time Welcome Onboarding Carousel Modal */}
+      <WelcomeOnboardingModal 
+        isOpen={showOnboarding && !showSplash}
+        onClose={() => setShowOnboarding(false)}
+        onStartSetup={handleStartOnboardingSetup}
       />
       {/* Sleek Compact Bottom Auto-Sync Toast Pill */}
       {syncToastMsg && (
