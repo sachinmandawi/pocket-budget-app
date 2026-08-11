@@ -101,7 +101,7 @@ export const saveData = (data) => {
 };
 
 export const calculateBudgetStats = (rawInput) => {
-  const data = (rawInput && typeof rawInput === 'object' && Array.isArray(rawInput.categories)) ? rawInput : getInitialData();
+  const data = (rawInput && typeof rawInput === 'object') ? rawInput : getInitialData();
   const now = new Date();
   const todayStr = now.toISOString().substring(0, 10);
   const paydayDay = Number(data.paydayAnchorDate || 1);
@@ -190,7 +190,8 @@ export const calculateBudgetStats = (rawInput) => {
     cyclePeriodLabel,
     cycleStartStr,
     cycleEndStr,
-    currentCycleTx
+    currentCycleTx,
+    paydayAnchorDate: paydayDay
   };
 };
 
