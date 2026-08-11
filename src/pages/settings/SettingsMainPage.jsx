@@ -29,6 +29,14 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
     }
   ];
 
+  const handleOpenEmail = (e) => {
+    const isMobileOrCapacitor = window.Capacitor !== undefined || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isMobileOrCapacitor) {
+      e.preventDefault();
+      window.location.href = "mailto:sachinmandawi@gmail.com?subject=Pocket%20Budget%20App%20Feedback";
+    }
+  };
+
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
       <div style={{ marginBottom: '14px' }}>
@@ -124,6 +132,7 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
             href="https://mail.google.com/mail/?view=cm&fs=1&to=sachinmandawi@gmail.com&su=Pocket%20Budget%20App%20Feedback"
             target="_blank"
             rel="noopener noreferrer"
+            onClick={handleOpenEmail}
             className="btn btn-primary"
             style={{
               display: 'inline-flex',
