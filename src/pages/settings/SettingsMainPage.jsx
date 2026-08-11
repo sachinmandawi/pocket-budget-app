@@ -119,25 +119,47 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
           Have questions, feature requests, or feedback? Reach out directly via Gmail!
         </p>
 
-        <a 
-          href="https://mail.google.com/mail/?view=cm&fs=1&to=sachinmandawi@gmail.com&su=Pocket%20Budget%20App%20Feedback"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn btn-primary"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '6px',
-            padding: '7px 16px',
-            fontSize: '12px',
-            fontWeight: 800,
-            textDecoration: 'none',
-            borderRadius: 'var(--radius-full)'
-          }}
-        >
-          <Mail size={14} /> Contact via Gmail
-        </a>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <a 
+            href="https://mail.google.com/mail/?view=cm&fs=1&to=sachinmandawi@gmail.com&su=Pocket%20Budget%20App%20Feedback"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-primary"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              padding: '7px 14px',
+              fontSize: '12px',
+              fontWeight: 800,
+              textDecoration: 'none',
+              borderRadius: 'var(--radius-full)'
+            }}
+          >
+            <Mail size={14} /> Contact via Gmail
+          </a>
+
+          <a 
+            href="https://github.com/sachinmandawi/pocket-budget-app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-secondary"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              padding: '7px 14px',
+              fontSize: '12px',
+              fontWeight: 800,
+              textDecoration: 'none',
+              borderRadius: 'var(--radius-full)'
+            }}
+          >
+            <Github size={14} /> GitHub Repo
+          </a>
+        </div>
       </div>
     </div>
   );
