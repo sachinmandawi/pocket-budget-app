@@ -109,7 +109,7 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                   gap: '4px'
                 }}
               >
-                👛 Main Allowance
+                👛 Main Pocket Money
               </button>
 
               <button

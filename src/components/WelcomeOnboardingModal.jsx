@@ -226,7 +226,7 @@ export default function WelcomeOnboardingModal({ isOpen, onClose, onStartSetup }
             }}
           >
             {currentSlide === slides.length - 1 ? (
-              <>🚀 Set Allowance Now <ArrowRight size={16} /></>
+              <>🚀 Set Pocket Money Now <ArrowRight size={16} /></>
             ) : (
               <>Next <ChevronRight size={16} /></>
             )}

@@ -50,7 +50,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
       <form onSubmit={handleSubmit} className="ios-card" style={{ marginBottom: '24px' }}>
         {/* Monthly Allowance Input */}
         <div className="form-group">
-          <label className="form-label">Monthly Allowance (₹)</label>
+          <label className="form-label">Monthly Pocket Money (₹)</label>
           <input
             type="number"
             required

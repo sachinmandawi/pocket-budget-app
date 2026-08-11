@@ -75,7 +75,7 @@ export default function Sidebar({
           id: 'page_settings_allowance',
           type: 'page',
           target: 'settings_allowance',
-          label: 'Allowance & Payday Date',
+          label: 'Pocket Money & Payday Date',
           icon: <Calendar size={18} color="var(--ios-blue)" />
         },
         {
