@@ -444,7 +444,11 @@ export default function App() {
         {activeSettingPage === 'settings_github' && (
           <GithubSyncSettingsPage 
             budgetData={data}
-            onUpdateBudgetData={setData}
+            onUpdateBudgetData={(newData) => {
+              setData(newData);
+              setActiveSettingPage(null);
+              setActiveTab('daily');
+            }}
             onBack={() => setActiveSettingPage('settings_main')}
           />
         )}
@@ -467,7 +471,11 @@ export default function App() {
         {activeSettingPage === 'settings_reminder' && (
           <ReminderSettingsPage 
             reminderSettings={data.reminderSettings || { enabled: true, time: '20:00' }}
-            onSaveReminder={(reminderSettings) => setData({ ...data, reminderSettings })}
+            onSaveReminder={(reminderSettings) => {
+              setData({ ...data, reminderSettings });
+              setActiveSettingPage(null);
+              setActiveTab('daily');
+            }}
             onBack={() => setActiveSettingPage('settings_main')}
           />
         )}
@@ -475,8 +483,15 @@ export default function App() {
         {activeSettingPage === 'settings_categories' && (
           <CategoriesSettingsPage 
             data={data}
-            onSaveSettings={setData}
-            onBack={() => setActiveSettingPage('settings_main')}
+            onSaveSettings={(newData) => {
+              setData(newData);
+              setActiveSettingPage(null);
+              setActiveTab('daily');
+            }}
+            onBack={() => {
+              setActiveSettingPage(null);
+              setActiveTab('daily');
+            }}
           />
         )}
 
@@ -490,7 +505,11 @@ export default function App() {
 
         {activeSettingPage === 'settings_reset' && (
           <DataResetSettingsPage 
-            onResetDemo={handleResetDemo}
+            onResetDemo={() => {
+              handleResetDemo();
+              setActiveSettingPage(null);
+              setActiveTab('daily');
+            }}
             onBack={() => setActiveSettingPage('settings_main')}
           />
         )}
