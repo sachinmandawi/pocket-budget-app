@@ -20,58 +20,70 @@ export default function Sidebar({
 }) {
   if (!isOpen) return null;
 
-  const mainNavItems = [
+  const navSections = [
     {
-      id: 'tab_daily',
-      type: 'tab',
-      target: 'daily',
-      label: 'Daily Dashboard',
-      icon: <LayoutDashboard size={19} color="var(--ios-blue)" />
+      title: '📌 MAIN OVERVIEW',
+      items: [
+        {
+          id: 'tab_daily',
+          type: 'tab',
+          target: 'daily',
+          label: 'Daily Dashboard',
+          icon: <LayoutDashboard size={18} color="var(--ios-blue)" />
+        },
+        {
+          id: 'tab_expenses',
+          type: 'tab',
+          target: 'expenses',
+          label: 'Expenses Log',
+          icon: <ReceiptText size={18} color="var(--ios-blue)" />
+        }
+      ]
     },
     {
-      id: 'tab_expenses',
-      type: 'tab',
-      target: 'expenses',
-      label: 'Expenses Log',
-      icon: <ReceiptText size={19} color="var(--ios-blue)" />
+      title: '💰 SAVINGS & VAULTS',
+      items: [
+        {
+          id: 'page_piggy_bank',
+          type: 'page',
+          target: 'piggy_bank',
+          label: 'Piggy Bank Vault',
+          icon: <span style={{ fontSize: '16px' }}>🐷</span>
+        },
+        {
+          id: 'page_allowance_countdown',
+          type: 'page',
+          target: 'allowance_countdown',
+          label: 'Allowance Countdown',
+          icon: <Clock size={18} color="var(--ios-blue)" />
+        },
+        {
+          id: 'tab_cooloff',
+          type: 'tab',
+          target: 'cooloff',
+          label: 'Cool-Off Wishlist',
+          icon: <Flame size={18} color="var(--ios-orange)" />
+        }
+      ]
     },
     {
-      id: 'page_allowance_countdown',
-      type: 'page',
-      target: 'allowance_countdown',
-      label: 'Allowance Countdown',
-      icon: <Clock size={19} color="var(--ios-blue)" />
-    },
-    {
-      id: 'page_piggy_bank',
-      type: 'page',
-      target: 'piggy_bank',
-      label: 'Piggy Bank Vault',
-      icon: <span style={{ fontSize: '17px' }}>🐷</span>
-    },
-    {
-      id: 'tab_cooloff',
-      type: 'tab',
-      target: 'cooloff',
-      label: 'Cool-Off Wishlist',
-      icon: <Flame size={19} color="var(--ios-orange)" />
-    },
-    {
-      id: 'tab_analytics',
-      type: 'tab',
-      target: 'analytics',
-      label: 'Analytics & Insights',
-      icon: <BarChart3 size={19} color="var(--ios-green)" />
-    }
-  ];
-
-  const settingsNavItems = [
-    {
-      id: 'page_settings_main',
-      type: 'page',
-      target: 'settings_main',
-      label: 'Settings',
-      icon: <Settings size={19} color="var(--ios-blue)" />
+      title: '⚙️ SYSTEM & ANALYTICS',
+      items: [
+        {
+          id: 'tab_analytics',
+          type: 'tab',
+          target: 'analytics',
+          label: 'Analytics & Insights',
+          icon: <BarChart3 size={18} color="var(--ios-green)" />
+        },
+        {
+          id: 'page_settings_main',
+          type: 'page',
+          target: 'settings_main',
+          label: 'Settings & Preferences',
+          icon: <Settings size={18} color="var(--ios-blue)" />
+        }
+      ]
     }
   ];
 
@@ -168,105 +180,71 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* Navigation Items Scroll Container */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '12px 10px' }}>
-          {/* Main Navigation */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginBottom: '14px' }}>
-            {mainNavItems.map(item => {
-              const active = isItemActive(item);
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => handleItemClick(item)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '11px 12px',
-                    borderRadius: 'var(--radius-md)',
-                    background: active ? 'var(--ios-blue-bg)' : 'transparent',
-                    border: active ? '1px solid var(--ios-blue)' : '1px solid transparent',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '8px',
-                      background: active ? '#ffffff' : 'var(--bg-card-subtle)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      {item.icon}
+        {/* Navigation Items Scroll Container (Concept 1: Grouped Sectional Categories) */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '14px 12px' }}>
+          {navSections.map((section, idx) => (
+            <div key={section.title} style={{ marginBottom: idx === navSections.length - 1 ? '0' : '18px' }}>
+              {/* Section Header Title */}
+              <p style={{
+                fontSize: '10px',
+                fontWeight: 800,
+                color: 'var(--text-tertiary)',
+                letterSpacing: '0.6px',
+                margin: '0 0 6px 6px',
+                textTransform: 'uppercase'
+              }}>
+                {section.title}
+              </p>
+
+              {/* Section Items */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                {section.items.map(item => {
+                  const active = isItemActive(item);
+                  return (
+                    <div
+                      key={item.id}
+                      onClick={() => handleItemClick(item)}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '9px 12px',
+                        borderRadius: 'var(--radius-md)',
+                        background: active ? 'var(--ios-blue-bg)' : 'transparent',
+                        border: active ? '1px solid var(--ios-blue)' : '1px solid transparent',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div style={{
+                          width: '30px',
+                          height: '30px',
+                          borderRadius: '8px',
+                          background: active ? '#ffffff' : 'var(--bg-card-subtle)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0
+                        }}>
+                          {item.icon}
+                        </div>
+                        <span style={{
+                          fontSize: '13px',
+                          fontWeight: active ? 800 : 700,
+                          color: active ? 'var(--ios-blue)' : 'var(--text-primary)'
+                        }}>
+                          {item.label}
+                        </span>
+                      </div>
+
+                      <ChevronRight size={15} color={active ? 'var(--ios-blue)' : 'var(--text-tertiary)'} />
                     </div>
-                    <span style={{
-                      fontSize: '14px',
-                      fontWeight: active ? 800 : 700,
-                      color: active ? 'var(--ios-blue)' : 'var(--text-primary)'
-                    }}>
-                      {item.label}
-                    </span>
-                  </div>
-
-                  <ChevronRight size={16} color={active ? 'var(--ios-blue)' : 'var(--text-tertiary)'} />
-                </div>
-              );
-            })}
-          </div>
-
-          <div style={{ height: '1px', background: 'var(--border-subtle)', margin: '8px 6px 12px' }} />
-
-          {/* Settings Nav Item */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-            {settingsNavItems.map(item => {
-              const active = isItemActive(item);
-              return (
-                <div
-                  key={item.id}
-                  onClick={() => handleItemClick(item)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '11px 12px',
-                    borderRadius: 'var(--radius-md)',
-                    background: active ? 'var(--ios-blue-bg)' : 'transparent',
-                    border: active ? '1px solid var(--ios-blue)' : '1px solid transparent',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '8px',
-                      background: active ? '#ffffff' : 'var(--bg-card-subtle)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      {item.icon}
-                    </div>
-                    <span style={{
-                      fontSize: '14px',
-                      fontWeight: active ? 800 : 700,
-                      color: active ? 'var(--ios-blue)' : 'var(--text-primary)'
-                    }}>
-                      {item.label}
-                    </span>
-                  </div>
-
-                  <ChevronRight size={16} color={active ? 'var(--ios-blue)' : 'var(--text-tertiary)'} />
-                </div>
-              );
-            })}
-          </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Drawer Footer Status */}
