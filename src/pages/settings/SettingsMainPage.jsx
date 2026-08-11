@@ -137,19 +137,18 @@ export default function SettingsMainPage({ onNavigateSubPage }) {
           onClick={handleOpenEmail}
           className="btn btn-primary"
           style={{
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px',
-            width: '100%',
-            padding: '10px',
-            fontSize: '13px',
+            gap: '6px',
+            padding: '7px 16px',
+            fontSize: '12px',
             fontWeight: 800,
             textDecoration: 'none',
             borderRadius: 'var(--radius-full)'
           }}
         >
-          <Mail size={16} /> Open in Gmail: sachinmandawi@gmail.com
+          <Mail size={14} /> Contact via Gmail
         </a>
       </div>
     </div>
