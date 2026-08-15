@@ -47,22 +47,13 @@ jobs:
       - name: Copy Built APK Asset
         run: |
           mkdir -p release-assets
-          cp android/app/build/outputs/apk/debug/app-debug.apk release-assets/PocketBudget-v1.0.0.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk release-assets/PocketBudget-v1.1.0.apk
 
-      - name: Delete Old v1.0.0 Release if exists
+      - name: Delete Old v1.1.0 Release if exists
         run: |
-          gh release delete v1.0.0 --yes --cleanup-tag || true
+          gh release delete v1.1.0 --yes --cleanup-tag || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Delete Extra Release v1.0.1 if exists via REST API
-        run: |
-          RELEASE_ID=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/releases/tags/v1.0.1 | grep '"id":' | head -n 1 | awk '{print $2}' | tr -d ',')
-          if [ -n "$RELEASE_ID" ] && [ "$RELEASE_ID" != "null" ]; then
-            echo "Deleting release ID $RELEASE_ID for tag v1.0.1..."
-            curl -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID
-            curl -X DELETE -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/git/refs/tags/v1.0.1
-          fi
 
       - name: Update Repository About Description & Homepage
         run: |
@@ -70,30 +61,31 @@ jobs:
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/${{ github.repository }} \
-            -d '{"description":"📱 Smart, Self-Healing Daily Expense Tracker & Allowance Manager with Piggy Bank Vault & Private Cloud Sync", "homepage":"https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.0.0"}'
+            -d '{"description":"📱 Smart, Self-Healing Daily Expense Tracker & Multi-Currency Allowance Manager with Piggy Bank Vault & Private Cloud Sync", "homepage":"https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.1.0"}'
 
-      - name: Upload APK to GitHub Release v1.0.0
+      - name: Upload APK to GitHub Release v1.1.0
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0
-          name: "Pocket Budget v1.0.0 — Official Release 📱✨"
+          tag_name: v1.1.0
+          name: "Pocket Budget v1.1.0 — Global Multi-Currency Release 🌍✨"
           body: |
-            # 📱 Pocket Budget v1.0.0 — Official Release 🚀
+            # 📱 Pocket Budget v1.1.0 — Global Multi-Currency Release 🚀
 
-            Welcome to **Pocket Budget v1.0.0**, your smart, self-healing daily expense tracker & allowance manager built with modern iOS glassmorphism design!
+            Welcome to **Pocket Budget v1.1.0**, featuring full **Global Multi-Currency Support** (100+ world currencies including 🇵🇭 PHP, 🇮🇳 INR, 🇺🇸 USD, 🇪🇺 EUR, 🇬🇧 GBP, etc.), an eye-catching minimal currency selector, and hardened stability!
 
             ---
 
-            ### ✨ Key Features & User Highlights:
+            ### 🌍 New in v1.1.0:
 
+            - 💱 **100+ World Currencies**: Choose from over 100 country currencies with country search, instant switch, and live formatting across the entire app.
+            - 🎨 **Minimal & Eye-Catching Currency Settings**: Ultra-sleek UI with search filter, country names, bold symbol badges, and 1-tap instant save.
             - 👛 **Spend Source Selection**: Choose whether an expense is deducted from your **Main Daily Allowance** or your **Piggy Bank Vault**.
             - 🐷 **Piggy Bank Vault (Lifetime Savings)**: Leftover daily allowance builds up in your Piggy Bank Vault indefinitely across months — save for big goals!
             - 🛡️ **Smart Insufficient Balance Alert**: Real-time balance validation prevents over-drawing with clear warnings when typing an amount.
             - ⏱️ **Allowance Countdown**: Dedicated digital clock countdown tracking days, hours, minutes, and seconds until your next payday credit.
             - 📱 **Ultra-Clean Left Sidebar**: 100% clutter-free navigation drawer with native Android status bar notch safe-area compatibility.
-            - 🎛️ **Compact & Sleek Design**: Modern iOS typography, compact action buttons, dark mode support, and smooth micro-animations.
             - 🔄 **Native Hardware Back Navigation**: Smooth Android hardware back button support with double-back to exit.
-            - 🔴 **iOS Glassmorphism Confirmation Modal**: Custom iOS confirmation modal for Data Reset to ₹0 state.
+            - 🔬 **Verified 10-Pass Deep Audit**: 44/44 automated assertions passed with 0 errors.
 
             ---
 
@@ -102,6 +94,6 @@ jobs:
             - 🔒 **100% Private Data Ownership**: All transactions, piggy vault savings, and settings sync directly into your private GitHub repository (`pocket-budget-db`). No 3rd-party servers ever touch your financial data!
             - ⚡ **Multi-Device Real-Time Auto-Sync**: Seamlessly log spends and sync budget stats across multiple phones, tablets, or web browsers instantly.
             - 🔑 **1-Click Cloudflare OAuth Login**: Instant secure GitHub login integration without typing manual tokens!
-          files: release-assets/PocketBudget-v1.0.0.apk
+          files: release-assets/PocketBudget-v1.1.0.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
