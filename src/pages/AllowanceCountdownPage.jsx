@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Sparkles, Calendar, ShieldCheck, Zap, ArrowLeft } from 'lucide-react';
+import { Clock, Sparkles, Calendar, ShieldCheck, Zap } from 'lucide-react';
+import { formatCurrencyAmount } from '../utils/currencies';
 
 const getOrdinalSuffix = (day) => {
   const d = Number(day || 1);
@@ -12,7 +13,7 @@ const getOrdinalSuffix = (day) => {
   }
 };
 
-export default function AllowanceCountdownPage({ stats, onBack }) {
+export default function AllowanceCountdownPage({ stats }) {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const paydayDay = stats?.paydayAnchorDate || 1;
 
@@ -57,33 +58,11 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out', paddingBottom: '80px' }}>
-      {/* Page Header with Back Button */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-        {onBack && (
-          <button 
-            type="button"
-            onClick={onBack}
-            className="btn-icon"
-            style={{ 
-              width: '34px',
-              height: '34px',
-              background: 'var(--bg-card-subtle)', 
-              borderRadius: '50%', 
-              border: 'none', 
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <ArrowLeft size={18} color="var(--text-primary)" />
-          </button>
-        )}
-        <div>
-          <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
-            Next Payday Clock ⏱️
-          </h2>
-        </div>
+      {/* Page Header */}
+      <div style={{ marginBottom: '14px' }}>
+        <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
+          Next Payday Clock ⏱️
+        </h2>
       </div>
 
       {/* Main Countdown Hero Card */}
@@ -193,8 +172,8 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
           <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-tertiary)', textTransform: 'uppercase', display: 'block' }}>
             Monthly Pocket Money
           </span>
-          <strong style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', display: 'block', marginTop: '2px' }}>
-            {stats?.currencySymbol || '₹'}{stats?.monthlyAllowance || 0}
+          <strong style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', display: 'block', marginTop: '2px' }}>
+            {formatCurrencyAmount(stats?.currencySymbol || '₹', stats?.monthlyAllowance || 0)}
           </strong>
         </div>
 
@@ -202,8 +181,8 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
           <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-tertiary)', textTransform: 'uppercase', display: 'block' }}>
             Daily Base Target
           </span>
-          <strong style={{ fontSize: '20px', fontWeight: 800, color: 'var(--ios-blue)', display: 'block', marginTop: '2px' }}>
-            {stats?.currencySymbol || '₹'}{stats?.baseDailyTarget || 0}/day
+          <strong style={{ fontSize: '18px', fontWeight: 800, color: 'var(--ios-blue)', display: 'block', marginTop: '2px' }}>
+            {formatCurrencyAmount(stats?.currencySymbol || '₹', stats?.baseDailyTarget || 0)}/day
           </strong>
         </div>
       </div>

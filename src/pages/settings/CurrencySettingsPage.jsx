@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Check, Save, ArrowLeft, Globe } from 'lucide-react';
+import { Search, Check, Save } from 'lucide-react';
 import { WORLD_CURRENCIES, DEFAULT_CURRENCY } from '../../utils/currencies';
 
 export default function CurrencySettingsPage({ data, onSaveSettings, onBack }) {
@@ -27,39 +27,20 @@ export default function CurrencySettingsPage({ data, onSaveSettings, onBack }) {
       ...data,
       currency: selectedCurrency
     });
+    if (onBack) onBack();
   };
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out', paddingBottom: '30px' }}>
       {/* Top Header Bar */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <button 
-            type="button"
-            onClick={onBack}
-            className="btn-icon"
-            style={{ 
-              width: '34px',
-              height: '34px',
-              background: 'var(--bg-card-subtle)', 
-              borderRadius: '50%', 
-              border: 'none', 
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <ArrowLeft size={18} color="var(--text-primary)" />
-          </button>
-          <div>
-            <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.4px' }}>
-              Select Currency
-            </h2>
-            <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>
-              Active: <strong style={{ color: 'var(--ios-blue)' }}>{selectedCurrency.code} ({selectedCurrency.symbol})</strong> • {selectedCurrency.country}
-            </p>
-          </div>
+        <div>
+          <h2 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.4px' }}>
+            Select Currency
+          </h2>
+          <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>
+            Active: <strong style={{ color: 'var(--ios-blue)' }}>{selectedCurrency.code} ({selectedCurrency.symbol})</strong> • {selectedCurrency.country}
+          </p>
         </div>
 
         <button

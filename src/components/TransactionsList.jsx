@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Trash2, Calendar, Filter, Wallet, ArrowUpRight } from 'lucide-react';
 import { DEFAULT_CATEGORIES, formatDateReadable } from '../utils/storage';
+import { formatCurrencyAmount } from '../utils/currencies';
 import CustomDropdown from './CustomDropdown';
 
 export default function TransactionsList({ 
@@ -19,7 +20,7 @@ export default function TransactionsList({
     { value: 'current', label: `Current Cycle (${cyclePeriodLabel})`, icon: '🗓️' },
     ...archivedCycles.map(c => ({
       value: c.cycleId,
-      label: `${c.periodLabel || c.cycleId} (Saved ${currencySymbol}${c.totalSaved || 0})`,
+      label: `${c.periodLabel || c.cycleId} (Saved ${formatCurrencyAmount(currencySymbol, c.totalSaved || 0)})`,
       icon: '📁'
     }))
   ];
@@ -117,11 +118,11 @@ export default function TransactionsList({
               Archived History: {activeCycleInfo.periodLabel}
             </span>
             <p style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600, marginTop: '2px' }}>
-              Allowance: {currencySymbol}{activeCycleInfo.monthlyAllowance} • Spent: {currencySymbol}{activeCycleInfo.totalSpent}
+              Allowance: {formatCurrencyAmount(currencySymbol, activeCycleInfo.monthlyAllowance)} • Spent: {formatCurrencyAmount(currencySymbol, activeCycleInfo.totalSpent)}
             </p>
           </div>
           <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-green)', background: 'var(--ios-green-bg)', padding: '6px 12px', borderRadius: 'var(--radius-full)' }}>
-            +{currencySymbol}{activeCycleInfo.totalSaved} Saved
+            +{formatCurrencyAmount(currencySymbol, activeCycleInfo.totalSaved)} Saved
           </span>
         </div>
       )}
@@ -137,7 +138,7 @@ export default function TransactionsList({
           {selectedCycleId === 'current' ? 'Transactions' : 'Past Records'}
         </h3>
         <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--ios-blue)', background: 'var(--ios-blue-bg)', padding: '4px 12px', borderRadius: 'var(--radius-full)' }}>
-          Total: {currencySymbol}{totalFilteredSpent}
+          Total: {formatCurrencyAmount(currencySymbol, totalFilteredSpent)}
         </span>
       </div>
 
@@ -248,7 +249,7 @@ export default function TransactionsList({
                 {/* Right Amount & Delete Action */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0, marginLeft: '10px' }}>
                   <span style={{ fontWeight: 800, fontSize: '14px', color: 'var(--ios-red)', letterSpacing: '-0.3px' }}>
-                    -{currencySymbol}{tx.amount}
+                    -{formatCurrencyAmount(currencySymbol, tx.amount)}
                   </span>
 
                   {selectedCycleId === 'current' && (

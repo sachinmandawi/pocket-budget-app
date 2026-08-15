@@ -128,3 +128,9 @@ export const getCurrencySymbol = (budgetData) => {
   }
   return '₹';
 };
+
+export const formatCurrencyAmount = (symbol, amount) => {
+  const sym = symbol || '₹';
+  const val = amount !== undefined && amount !== null ? amount : 0;
+  return sym.length > 1 ? `${sym} ${val}` : `${sym}${val}`;
+};

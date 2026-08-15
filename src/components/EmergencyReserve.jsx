@@ -1,5 +1,6 @@
 import React from 'react';
 import { Lock, Unlock, HeartHandshake } from 'lucide-react';
+import { formatCurrencyAmount } from '../utils/currencies';
 
 export default function EmergencyReserve({ reserveAmount, isUnlocked, currentDay, onToggleUnlock, currencySymbol = '₹' }) {
   return (
@@ -34,7 +35,7 @@ export default function EmergencyReserve({ reserveAmount, isUnlocked, currentDay
           {isUnlocked ? <Unlock size={16} color="var(--ios-green)" /> : <Lock size={16} color="var(--ios-orange)" />}
           <div>
             <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>
-              {currencySymbol}{reserveAmount}
+              {formatCurrencyAmount(currencySymbol, reserveAmount)}
             </span>
             <span style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', lineHeight: 1 }}>
               {isUnlocked ? 'Reserve Unlocked' : 'Emergency Fund'}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Plus, Calendar, ShieldCheck } from 'lucide-react';
+import { formatCurrencyAmount } from '../utils/currencies';
 
 export default function DailyGauge({ stats, onOpenQuickAdd }) {
   const {
@@ -59,34 +60,40 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
 
         {cyclePeriodLabel && (
           <span style={{ 
-            fontSize: '10px', 
-            color: 'var(--text-secondary)', 
-            fontWeight: 600, 
-            display: 'inline-flex', 
-            alignItems: 'center', 
-            gap: '3px',
+            fontSize: '11px', 
+            fontWeight: 700, 
+            color: 'var(--text-tertiary)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '4px',
             whiteSpace: 'nowrap',
-            marginLeft: 'auto',
             flexShrink: 0
           }}>
-            <Calendar size={11} color="var(--ios-blue)" /> {cyclePeriodLabel}
+            <Calendar size={12} /> {cyclePeriodLabel}
           </span>
         )}
       </div>
 
-      {/* Hero Daily Amount Display */}
-      <div style={{ textAlign: 'center', marginBottom: '14px' }}>
-        <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: '2px' }}>
-          Today's Daily Limit
+      {/* Main Remaining Daily Budget Number */}
+      <div style={{ textAlign: 'center', padding: '6px 0 2px' }}>
+        <p style={{ 
+          fontSize: '12px', 
+          color: 'var(--text-secondary)', 
+          fontWeight: 600, 
+          margin: '0 0 6px',
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px'
+        }}>
+          {isOverspentToday ? "Today's Overspend" : "Today's Daily Limit"}
         </p>
         <div style={{ 
-          fontSize: '36px', 
+          fontSize: '34px', 
           fontWeight: 800, 
           color: themeColor, 
           letterSpacing: '-1px', 
           lineHeight: 1 
         }}>
-          {currencySymbol}{Math.abs(todaysSafeRemaining)}
+          {isOverspentToday ? '-' : ''}{formatCurrencyAmount(currencySymbol, Math.abs(todaysSafeRemaining))}
         </div>
       </div>
 
@@ -112,35 +119,38 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
       }}>
         <div style={{
           background: 'var(--bg-card-subtle)',
-          padding: '10px 6px',
+          padding: '10px 4px',
           borderRadius: 'var(--radius-md)',
           textAlign: 'center',
-          border: '1px solid var(--border-subtle)'
+          border: '1px solid var(--border-subtle)',
+          overflow: 'hidden'
         }}>
           <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>Limit</span>
-          <strong style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>{currencySymbol}{todaysAllowedTotal}</strong>
+          <strong style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', wordBreak: 'break-all' }}>{formatCurrencyAmount(currencySymbol, todaysAllowedTotal)}</strong>
         </div>
 
         <div style={{
           background: 'var(--bg-card-subtle)',
-          padding: '10px 6px',
+          padding: '10px 4px',
           borderRadius: 'var(--radius-md)',
           textAlign: 'center',
-          border: '1px solid var(--border-subtle)'
+          border: '1px solid var(--border-subtle)',
+          overflow: 'hidden'
         }}>
           <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>Spent</span>
-          <strong style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-red)' }}>{currencySymbol}{spentToday}</strong>
+          <strong style={{ fontSize: '13px', fontWeight: 800, color: 'var(--ios-red)', wordBreak: 'break-all' }}>{formatCurrencyAmount(currencySymbol, spentToday)}</strong>
         </div>
 
         <div style={{
           background: 'var(--bg-card-subtle)',
-          padding: '10px 6px',
+          padding: '10px 4px',
           borderRadius: 'var(--radius-md)',
           textAlign: 'center',
-          border: '1px solid var(--border-subtle)'
+          border: '1px solid var(--border-subtle)',
+          overflow: 'hidden'
         }}>
           <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>In Hand</span>
-          <strong style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-blue)' }}>{currencySymbol}{remainingTotalInHand}</strong>
+          <strong style={{ fontSize: '13px', fontWeight: 800, color: 'var(--ios-blue)', wordBreak: 'break-all' }}>{formatCurrencyAmount(currencySymbol, remainingTotalInHand)}</strong>
         </div>
       </div>
 

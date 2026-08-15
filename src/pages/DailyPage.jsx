@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import DailyGauge from '../components/DailyGauge';
 import { DEFAULT_CATEGORIES } from '../utils/storage';
 import { getGitHubConfig } from '../utils/githubSync';
+import { formatCurrencyAmount } from '../utils/currencies';
 import { Cloud, X, ArrowRight } from 'lucide-react';
 
 export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, transactions = [] }) {
@@ -172,7 +173,7 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
                   </div>
 
                   <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--ios-red)', letterSpacing: '-0.3px' }}>
-                    -{stats.currencySymbol || '₹'}{tx.amount}
+                    -{formatCurrencyAmount(stats.currencySymbol || '₹', tx.amount)}
                   </span>
                 </div>
               );

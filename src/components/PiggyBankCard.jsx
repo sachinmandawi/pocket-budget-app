@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Sparkles, ChevronDown, ChevronUp, Trophy, ArrowUpRight, History } from 'lucide-react';
+import { Trophy, ChevronDown, ChevronUp, ArrowUpRight, History } from 'lucide-react';
 import { calculatePiggyBankSavings, formatDateReadable } from '../utils/storage';
+import { formatCurrencyAmount } from '../utils/currencies';
 
-export default function PiggyBankCard({ budgetData, onClick }) {
+export default function PiggyBankCard({ budgetData, onNavigateVault }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { totalSaved, history } = calculatePiggyBankSavings(budgetData);
 
@@ -10,7 +11,7 @@ export default function PiggyBankCard({ budgetData, onClick }) {
 
   return (
     <div 
-      onClick={onClick}
+      onClick={onNavigateVault}
       className="ios-card" 
       style={{
         padding: '16px 18px',
@@ -53,7 +54,7 @@ export default function PiggyBankCard({ budgetData, onClick }) {
             display: 'block',
             lineHeight: 1
           }}>
-            +{currencySymbol}{totalSaved}
+            +{formatCurrencyAmount(currencySymbol, totalSaved)}
           </span>
           <span style={{ fontSize: '10px', color: 'var(--ios-green)', fontWeight: 700 }}>
             Total Saved
@@ -126,7 +127,7 @@ export default function PiggyBankCard({ budgetData, onClick }) {
                   )}
                 </div>
                 <span style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginTop: '2px' }}>
-                  Spent {currencySymbol}{item.spent} of {currencySymbol}{item.limit} limit
+                  Spent {formatCurrencyAmount(currencySymbol, item.spent)} of {formatCurrencyAmount(currencySymbol, item.limit)} limit
                 </span>
               </div>
 
@@ -138,7 +139,7 @@ export default function PiggyBankCard({ budgetData, onClick }) {
                 alignItems: 'center',
                 gap: '2px'
               }}>
-                <ArrowUpRight size={14} /> +{currencySymbol}{item.savedAmount}
+                <ArrowUpRight size={14} /> +{formatCurrencyAmount(currencySymbol, item.savedAmount)}
               </span>
             </div>
           ))}

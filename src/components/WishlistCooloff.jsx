@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Clock, Plus, Trash2, Target, CheckCircle2 } from 'lucide-react';
+import { formatCurrencyAmount } from '../utils/currencies';
 
 export default function WishlistCooloff({ wishlist, onAddWishItem, onDeleteWishItem, showAddForm, setShowAddForm }) {
   const [title, setTitle] = useState('');
@@ -173,7 +174,7 @@ export default function WishlistCooloff({ wishlist, onAddWishItem, onDeleteWishI
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <span style={{ fontWeight: 800, fontSize: '15px', color: 'var(--text-primary)' }}>
-                      {currencySymbol}{item.amount}
+                      {formatCurrencyAmount(currencySymbol, item.amount)}
                     </span>
                     <button 
                       onClick={() => onDeleteWishItem(item.id)}

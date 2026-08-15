@@ -187,17 +187,28 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
           </div>
           
           {/* Hero Amount Input Box */}
+          {/* Amount Input with Non-Overlapping Currency Prefix */}
           <div className="form-group" style={{ marginBottom: '16px' }}>
             <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
               Amount
             </span>
-            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              background: 'var(--bg-card-subtle)',
+              border: '1.5px solid var(--border-medium)',
+              borderRadius: 'var(--radius-md)',
+              padding: '0 14px',
+              height: '52px',
+              boxShadow: 'var(--shadow-sm)'
+            }}>
               <span style={{
-                position: 'absolute',
-                left: '14px',
-                fontSize: '20px',
+                fontSize: '18px',
                 fontWeight: 800,
-                color: 'var(--ios-red)'
+                color: 'var(--ios-red)',
+                marginRight: '10px',
+                userSelect: 'none',
+                flexShrink: 0
               }}>
                 {currencySymbol}
               </span>
@@ -206,14 +217,16 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                 step="1"
                 required
                 placeholder="0"
-                className="form-input"
                 style={{
-                  paddingLeft: '34px',
+                  flex: 1,
+                  border: 'none',
+                  background: 'transparent',
                   fontSize: '22px',
                   fontWeight: 800,
                   color: 'var(--ios-red)',
-                  height: '46px',
-                  borderRadius: 'var(--radius-md)'
+                  outline: 'none',
+                  padding: 0,
+                  width: '100%'
                 }}
                 value={amount}
                 onChange={e => setAmount(e.target.value)}

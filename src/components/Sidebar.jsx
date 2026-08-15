@@ -172,16 +172,11 @@ export default function Sidebar({
             <img 
               src="./app-icon.png" 
               alt="Pocket Budget Logo" 
-              style={{ width: '36px', height: '36px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+              style={{ width: '34px', height: '34px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
             />
-            <div>
-              <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
-                Pocket Budget
-              </h3>
-              <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', margin: 0, fontWeight: 600 }}>
-                Smart Expense Tracker
-              </p>
-            </div>
+            <h3 style={{ fontSize: '17px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px', lineHeight: 1 }}>
+              Pocket Budget
+            </h3>
           </div>
 
           <button
