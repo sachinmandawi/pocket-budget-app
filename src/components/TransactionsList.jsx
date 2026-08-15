@@ -5,10 +5,11 @@ import CustomDropdown from './CustomDropdown';
 
 export default function TransactionsList({ 
   categories = DEFAULT_CATEGORIES, 
-  transactions, 
-  onDeleteTransaction,
+  transactions = [], 
+  onDeleteTransaction, 
   archivedCycles = [],
-  cyclePeriodLabel = 'Current Cycle'
+  cyclePeriodLabel = 'Current Cycle',
+  currencySymbol = '₹'
 }) {
   const [selectedCycleId, setSelectedCycleId] = useState('current');
   const [search, setSearch] = useState('');
@@ -18,7 +19,7 @@ export default function TransactionsList({
     { value: 'current', label: `Current Cycle (${cyclePeriodLabel})`, icon: '🗓️' },
     ...archivedCycles.map(c => ({
       value: c.cycleId,
-      label: `${c.periodLabel || c.cycleId} (Saved ₹${c.totalSaved || 0})`,
+      label: `${c.periodLabel || c.cycleId} (Saved ${currencySymbol}${c.totalSaved || 0})`,
       icon: '📁'
     }))
   ];
@@ -116,11 +117,11 @@ export default function TransactionsList({
               Archived History: {activeCycleInfo.periodLabel}
             </span>
             <p style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600, marginTop: '2px' }}>
-              Allowance: ₹{activeCycleInfo.monthlyAllowance} • Spent: ₹{activeCycleInfo.totalSpent}
+              Allowance: {currencySymbol}{activeCycleInfo.monthlyAllowance} • Spent: {currencySymbol}{activeCycleInfo.totalSpent}
             </p>
           </div>
           <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-green)', background: 'var(--ios-green-bg)', padding: '6px 12px', borderRadius: 'var(--radius-full)' }}>
-            +₹{activeCycleInfo.totalSaved} Saved
+            +{currencySymbol}{activeCycleInfo.totalSaved} Saved
           </span>
         </div>
       )}
@@ -136,7 +137,7 @@ export default function TransactionsList({
           {selectedCycleId === 'current' ? 'Transactions' : 'Past Records'}
         </h3>
         <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--ios-blue)', background: 'var(--ios-blue-bg)', padding: '4px 12px', borderRadius: 'var(--radius-full)' }}>
-          Total: ₹{totalFilteredSpent}
+          Total: {currencySymbol}{totalFilteredSpent}
         </span>
       </div>
 
@@ -247,7 +248,7 @@ export default function TransactionsList({
                 {/* Right Amount & Delete Action */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0, marginLeft: '10px' }}>
                   <span style={{ fontWeight: 800, fontSize: '14px', color: 'var(--ios-red)', letterSpacing: '-0.3px' }}>
-                    -₹{tx.amount}
+                    -{currencySymbol}{tx.amount}
                   </span>
 
                   {selectedCycleId === 'current' && (

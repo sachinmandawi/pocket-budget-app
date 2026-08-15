@@ -1,0 +1,130 @@
+export const WORLD_CURRENCIES = [
+  // Popular / Primary Currencies
+  { code: 'INR', symbol: '₹', name: 'Indian Rupee', country: 'India', flag: '🇮🇳', popular: true },
+  { code: 'PHP', symbol: '₱', name: 'Philippine Peso', country: 'Philippines', flag: '🇵🇭', popular: true },
+  { code: 'USD', symbol: '$', name: 'US Dollar', country: 'United States', flag: '🇺🇸', popular: true },
+  { code: 'EUR', symbol: '€', name: 'Euro', country: 'European Union', flag: '🇪🇺', popular: true },
+  { code: 'GBP', symbol: '£', name: 'British Pound', country: 'United Kingdom', flag: '🇬🇧', popular: true },
+  { code: 'AED', symbol: 'AED', name: 'UAE Dirham', country: 'United Arab Emirates', flag: '🇦🇪', popular: true },
+  { code: 'SAR', symbol: 'SAR', name: 'Saudi Riyal', country: 'Saudi Arabia', flag: '🇸🇦', popular: true },
+  { code: 'BDT', symbol: '৳', name: 'Bangladeshi Taka', country: 'Bangladesh', flag: '🇧🇩', popular: true },
+  { code: 'PKR', symbol: '₨', name: 'Pakistani Rupee', country: 'Pakistan', flag: '🇵🇰', popular: true },
+  { code: 'NPR', symbol: 'रू', name: 'Nepalese Rupee', country: 'Nepal', flag: '🇳🇵', popular: true },
+  { code: 'CAD', symbol: 'CA$', name: 'Canadian Dollar', country: 'Canada', flag: '🇨🇦', popular: true },
+  { code: 'AUD', symbol: 'A$', name: 'Australian Dollar', country: 'Australia', flag: '🇦🇺', popular: true },
+  { code: 'JPY', symbol: '¥', name: 'Japanese Yen', country: 'Japan', flag: '🇯🇵', popular: true },
+  { code: 'SGD', symbol: 'S$', name: 'Singapore Dollar', country: 'Singapore', flag: '🇸🇬', popular: true },
+  { code: 'MYR', symbol: 'RM', name: 'Malaysian Ringgit', country: 'Malaysia', flag: '🇲🇾', popular: true },
+  { code: 'IDR', symbol: 'Rp', name: 'Indonesian Rupiah', country: 'Indonesia', flag: '🇮🇩', popular: true },
+
+  // Asia & Middle East
+  { code: 'AFN', symbol: '؋', name: 'Afghan Afghani', country: 'Afghanistan', flag: '🇦🇫' },
+  { code: 'AMD', symbol: '֏', name: 'Armenian Dram', country: 'Armenia', flag: '🇦🇲' },
+  { code: 'AZN', symbol: '₼', name: 'Azerbaijani Manat', country: 'Azerbaijan', flag: '🇦🇿' },
+  { code: 'BHD', symbol: 'BD', name: 'Bahraini Dinar', country: 'Bahrain', flag: '🇧🇭' },
+  { code: 'BND', symbol: 'B$', name: 'Brunei Dollar', country: 'Brunei', flag: '🇧🇳' },
+  { code: 'KHR', symbol: '៛', name: 'Cambodian Riel', country: 'Cambodia', flag: '🇰🇭' },
+  { code: 'CNY', symbol: '¥', name: 'Chinese Yuan', country: 'China', flag: '🇨🇳' },
+  { code: 'GEL', symbol: '₾', name: 'Georgian Lari', country: 'Georgia', flag: '🇬🇪' },
+  { code: 'HKD', symbol: 'HK$', name: 'Hong Kong Dollar', country: 'Hong Kong', flag: '🇭🇰' },
+  { code: 'IQD', symbol: 'IQD', name: 'Iraqi Dinar', country: 'Iraq', flag: '🇮🇶' },
+  { code: 'ILS', symbol: '₪', name: 'Israeli New Shekel', country: 'Israel', flag: '🇮🇱' },
+  { code: 'JOD', symbol: 'JD', name: 'Jordanian Dinar', country: 'Jordan', flag: '🇯🇴' },
+  { code: 'KZT', symbol: '₸', name: 'Kazakhstani Tenge', country: 'Kazakhstan', flag: '🇰🇿' },
+  { code: 'KWD', symbol: 'KD', name: 'Kuwaiti Dinar', country: 'Kuwait', flag: '🇰🇼' },
+  { code: 'KGS', symbol: 'som', name: 'Kyrgyzstani Som', country: 'Kyrgyzstan', flag: '🇰🇬' },
+  { code: 'LAK', symbol: '₭', name: 'Lao Kip', country: 'Laos', flag: '🇱🇦' },
+  { code: 'LBP', symbol: 'L£', name: 'Lebanese Pound', country: 'Lebanon', flag: '🇱🇧' },
+  { code: 'MVR', symbol: 'Rf', name: 'Maldivian Rufiyaa', country: 'Maldives', flag: '🇲🇻' },
+  { code: 'MNT', symbol: '₮', name: 'Mongolian Tugrik', country: 'Mongolia', flag: '🇲🇳' },
+  { code: 'MMK', symbol: 'K', name: 'Myanmar Kyat', country: 'Myanmar', flag: '🇲🇲' },
+  { code: 'OMR', symbol: 'OMR', name: 'Omani Rial', country: 'Oman', flag: '🇴🇲' },
+  { code: 'QAR', symbol: 'QR', name: 'Qatari Riyal', country: 'Qatar', flag: '🇶🇦' },
+  { code: 'KRW', symbol: '₩', name: 'South Korean Won', country: 'South Korea', flag: '🇰🇷' },
+  { code: 'LKR', symbol: 'Rs', name: 'Sri Lankan Rupee', country: 'Sri Lanka', flag: '🇱🇰' },
+  { code: 'TWD', symbol: 'NT$', name: 'New Taiwan Dollar', country: 'Taiwan', flag: '🇹🇼' },
+  { code: 'TJS', symbol: 'SM', name: 'Tajikistani Somoni', country: 'Tajikistan', flag: '🇹🇯' },
+  { code: 'THB', symbol: '฿', name: 'Thai Baht', country: 'Thailand', flag: '🇹🇭' },
+  { code: 'TRY', symbol: '₺', name: 'Turkish Lira', country: 'Turkey', flag: '🇹🇷' },
+  { code: 'TMT', symbol: 'TMT', name: 'Turkmenistani Manat', country: 'Turkmenistan', flag: '🇹🇲' },
+  { code: 'UZS', symbol: 'UZS', name: 'Uzbekistani Som', country: 'Uzbekistan', flag: '🇺🇿' },
+  { code: 'VND', symbol: '₫', name: 'Vietnamese Dong', country: 'Vietnam', flag: '🇻🇳' },
+  { code: 'YER', symbol: 'YR', name: 'Yemeni Rial', country: 'Yemen', flag: '🇾🇪' },
+
+  // Europe
+  { code: 'ALL', symbol: 'L', name: 'Albanian Lek', country: 'Albania', flag: '🇦🇱' },
+  { code: 'BAM', symbol: 'KM', name: 'Bosnia-Herzegovina Convertible Mark', country: 'Bosnia', flag: '🇧🇦' },
+  { code: 'BGN', symbol: 'лв', name: 'Bulgarian Lev', country: 'Bulgaria', flag: '🇧🇬' },
+  { code: 'CHF', symbol: 'CHF', name: 'Swiss Franc', country: 'Switzerland', flag: '🇨🇭' },
+  { code: 'CZK', symbol: 'Kč', name: 'Czech Koruna', country: 'Czech Republic', flag: '🇨🇿' },
+  { code: 'DKK', symbol: 'kr', name: 'Danish Krone', country: 'Denmark', flag: '🇩🇰' },
+  { code: 'HUF', symbol: 'Ft', name: 'Hungarian Forint', country: 'Hungary', flag: '🇭🇺' },
+  { code: 'ISK', symbol: 'kr', name: 'Icelandic Krona', country: 'Iceland', flag: '🇮🇸' },
+  { code: 'MDL', symbol: 'L', name: 'Moldovan Leu', country: 'Moldova', flag: '🇲🇩' },
+  { code: 'MKD', symbol: 'ден', name: 'Macedonian Denar', country: 'North Macedonia', flag: '🇲🇰' },
+  { code: 'NOK', symbol: 'kr', name: 'Norwegian Krone', country: 'Norway', flag: '🇳🇴' },
+  { code: 'PLN', symbol: 'zł', name: 'Polish Zloty', country: 'Poland', flag: '🇵🇱' },
+  { code: 'RON', symbol: 'lei', name: 'Romanian Leu', country: 'Romania', flag: '🇷🇴' },
+  { code: 'RSD', symbol: 'дин.', name: 'Serbian Dinar', country: 'Serbia', flag: '🇷🇸' },
+  { code: 'RUB', symbol: '₽', name: 'Russian Ruble', country: 'Russia', flag: '🇷🇺' },
+  { code: 'SEK', symbol: 'kr', name: 'Swedish Krona', country: 'Sweden', flag: '🇸🇪' },
+  { code: 'UAH', symbol: '₴', name: 'Ukrainian Hryvnia', country: 'Ukraine', flag: '🇺🇦' },
+
+  // Americas
+  { code: 'ARS', symbol: '$', name: 'Argentine Peso', country: 'Argentina', flag: '🇦🇷' },
+  { code: 'BOB', symbol: 'Bs.', name: 'Bolivian Boliviano', country: 'Bolivia', flag: '🇧🇴' },
+  { code: 'BRL', symbol: 'R$', name: 'Brazilian Real', country: 'Brazil', flag: '🇧🇷' },
+  { code: 'CLP', symbol: '$', name: 'Chilean Peso', country: 'Chile', flag: '🇨🇱' },
+  { code: 'COP', symbol: '$', name: 'Colombian Peso', country: 'Colombia', flag: '🇨🇴' },
+  { code: 'CRC', symbol: '₡', name: 'Costa Rican Colon', country: 'Costa Rica', flag: '🇨🇷' },
+  { code: 'DOP', symbol: 'RD$', name: 'Dominican Peso', country: 'Dominican Republic', flag: '🇩🇴' },
+  { code: 'GTQ', symbol: 'Q', name: 'Guatemalan Quetzal', country: 'Guatemala', flag: '🇬🇹' },
+  { code: 'HNL', symbol: 'L', name: 'Honduran Lempira', country: 'Honduras', flag: '🇭🇳' },
+  { code: 'JMD', symbol: 'J$', name: 'Jamaican Dollar', country: 'Jamaica', flag: '🇯🇲' },
+  { code: 'MXN', symbol: 'Mex$', name: 'Mexican Peso', country: 'Mexico', flag: '🇲🇽' },
+  { code: 'NIO', symbol: 'C$', name: 'Nicaraguan Cordoba', country: 'Nicaragua', flag: '🇳🇮' },
+  { code: 'PAB', symbol: 'B/.', name: 'Panamanian Balboa', country: 'Panama', flag: '🇵🇦' },
+  { code: 'PEN', symbol: 'S/.', name: 'Peruvian Sol', country: 'Peru', flag: '🇵🇪' },
+  { code: 'PYG', symbol: '₲', name: 'Paraguayan Guarani', country: 'Paraguay', flag: '🇵🇾' },
+  { code: 'TTD', symbol: 'TT$', name: 'Trinidad and Tobago Dollar', country: 'Trinidad', flag: '🇹🇹' },
+  { code: 'UYU', symbol: '$U', name: 'Uruguayan Peso', country: 'Uruguay', flag: '🇺🇾' },
+  { code: 'VES', symbol: 'Bs.S', name: 'Venezuelan Bolivar', country: 'Venezuela', flag: '🇻🇪' },
+
+  // Africa
+  { code: 'DZD', symbol: 'DA', name: 'Algerian Dinar', country: 'Algeria', flag: '🇩🇿' },
+  { code: 'AOA', symbol: 'Kz', name: 'Angolan Kwanza', country: 'Angola', flag: '🇦🇴' },
+  { code: 'BWP', symbol: 'P', name: 'Botswana Pula', country: 'Botswana', flag: '🇧🇼' },
+  { code: 'EGP', symbol: 'E£', name: 'Egyptian Pound', country: 'Egypt', flag: '🇪🇬' },
+  { code: 'ETB', symbol: 'Br', name: 'Ethiopian Birr', country: 'Ethiopia', flag: '🇪🇹' },
+  { code: 'GHS', symbol: 'GH₵', name: 'Ghanaian Cedi', country: 'Ghana', flag: '🇬🇭' },
+  { code: 'KES', symbol: 'KSh', name: 'Kenyan Shilling', country: 'Kenya', flag: '🇰🇪' },
+  { code: 'MAD', symbol: 'DH', name: 'Moroccan Dirham', country: 'Morocco', flag: '🇲🇦' },
+  { code: 'MUR', symbol: 'Rs', name: 'Mauritian Rupee', country: 'Mauritius', flag: '🇲🇺' },
+  { code: 'MZN', symbol: 'MT', name: 'Mozambican Metical', country: 'Mozambique', flag: '🇲🇿' },
+  { code: 'NGN', symbol: '₦', name: 'Nigerian Naira', country: 'Nigeria', flag: '🇳🇬' },
+  { code: 'RWF', symbol: 'FRw', name: 'Rwandan Franc', country: 'Rwanda', flag: '🇷🇼' },
+  { code: 'TZS', symbol: 'TSh', name: 'Tanzanian Shilling', country: 'Tanzania', flag: '🇹🇿' },
+  { code: 'UGX', symbol: 'USh', name: 'Ugandan Shilling', country: 'Uganda', flag: '🇺🇬' },
+  { code: 'ZAR', symbol: 'R', name: 'South African Rand', country: 'South Africa', flag: '🇿🇦' },
+  { code: 'ZMW', symbol: 'ZK', name: 'Zambian Kwacha', country: 'Zambia', flag: '🇿🇲' },
+
+  // Oceania
+  { code: 'FJD', symbol: 'FJ$', name: 'Fijian Dollar', country: 'Fiji', flag: '🇫🇯' },
+  { code: 'NZD', symbol: 'NZ$', name: 'New Zealand Dollar', country: 'New Zealand', flag: '🇳🇿' },
+  { code: 'PGK', symbol: 'K', name: 'Papua New Guinean Kina', country: 'Papua New Guinea', flag: '🇵🇬' }
+];
+
+export const DEFAULT_CURRENCY = {
+  code: 'INR',
+  symbol: '₹',
+  name: 'Indian Rupee',
+  country: 'India',
+  flag: '🇮🇳'
+};
+
+export const getCurrencySymbol = (budgetData) => {
+  if (budgetData && budgetData.currency && budgetData.currency.symbol) {
+    return budgetData.currency.symbol;
+  }
+  return '₹';
+};

@@ -1,3 +1,5 @@
+import { DEFAULT_CURRENCY } from './currencies';
+
 const STORAGE_KEY = 'pocket_budget_data_v1';
 
 export const DEFAULT_CATEGORIES = [
@@ -76,6 +78,7 @@ export const getInitialData = () => {
         if (!parsed.archivedCycles) parsed.archivedCycles = [];
         if (!parsed.transactions) parsed.transactions = [];
         if (!parsed.wishlist) parsed.wishlist = [];
+        if (!parsed.currency) parsed.currency = DEFAULT_CURRENCY;
         return parsed;
       }
     } catch (e) {
@@ -91,6 +94,7 @@ export const getInitialData = () => {
     isEmergencyUnlocked: false,
     fixedDeductions: [],
     categories: DEFAULT_CATEGORIES,
+    currency: DEFAULT_CURRENCY,
     archivedCycles: [],
     transactions: [],
     wishlist: []
@@ -194,6 +198,8 @@ export const calculateBudgetStats = (rawInput) => {
     cycleStartStr,
     cycleEndStr,
     currentCycleTx,
+    currency: data.currency || DEFAULT_CURRENCY,
+    currencySymbol: (data.currency && data.currency.symbol) ? data.currency.symbol : '₹',
     paydayAnchorDate: paydayDay
   };
 };

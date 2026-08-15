@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import WishlistCooloff from '../components/WishlistCooloff';
 import { PlusCircle } from 'lucide-react';
 
-export default function CooloffPage({ wishlist, onAddWishItem, onDeleteWishItem }) {
+export default function CooloffPage({ wishlist, onAddWishItem, onDeleteWishItem, currencySymbol = '₹' }) {
   const [showAddForm, setShowAddForm] = useState(false);
 
   return (
@@ -35,6 +35,7 @@ export default function CooloffPage({ wishlist, onAddWishItem, onDeleteWishItem 
         onDeleteWishItem={onDeleteWishItem}
         showAddForm={showAddForm}
         setShowAddForm={setShowAddForm}
+        currencySymbol={currencySymbol}
       />
     </div>
   );

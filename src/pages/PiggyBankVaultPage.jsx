@@ -6,7 +6,7 @@ export default function PiggyBankVaultPage({ budgetData, onBack }) {
   const { totalSaved, history } = calculatePiggyBankSavings(budgetData);
 
   return (
-    <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
+    <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out', paddingBottom: '80px' }}>
       {/* Page Header */}
       <div style={{ marginBottom: '14px' }}>
         <h2 style={{ fontSize: '17px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
@@ -14,29 +14,28 @@ export default function PiggyBankVaultPage({ budgetData, onBack }) {
         </h2>
       </div>
 
-      {/* Hero Savings Card */}
+      {/* Hero Piggy Balance Card */}
       <div className="ios-card" style={{
-        padding: '20px 16px',
-        marginBottom: '14px',
+        padding: '24px 20px',
+        marginBottom: '16px',
         textAlign: 'center',
         background: 'linear-gradient(135deg, rgba(52, 199, 89, 0.12) 0%, rgba(52, 199, 89, 0.03) 100%)',
         border: '1px solid rgba(52, 199, 89, 0.25)'
       }}>
         <div style={{
-          width: '46px',
-          height: '46px',
-          borderRadius: '14px',
+          width: '56px',
+          height: '56px',
+          borderRadius: '18px',
           background: 'var(--ios-green-bg)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          margin: '0 auto 10px',
-          fontSize: '24px'
+          fontSize: '28px',
+          margin: '0 auto 12px'
         }}>
           🐷
         </div>
-
-        <h3 style={{ fontSize: '17px', fontWeight: 800, margin: '0 0 2px', color: 'var(--text-primary)' }}>
+        <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.4px' }}>
           Piggy Savings Vault
         </h3>
         <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '0 0 12px' }}>
@@ -51,7 +50,7 @@ export default function PiggyBankVaultPage({ budgetData, onBack }) {
           lineHeight: 1,
           marginBottom: '4px'
         }}>
-          +₹{totalSaved}
+          +{currencySymbol}{totalSaved}
         </div>
         <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--ios-green)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
           Accumulated Vault Balance
@@ -118,7 +117,7 @@ export default function PiggyBankVaultPage({ budgetData, onBack }) {
                     )}
                   </div>
                   <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                    {isWithdrawal ? item.note : `Spent ₹${item.spent} of ₹${item.limit} daily limit`}
+                    {isWithdrawal ? item.note : `Spent ${currencySymbol}${item.spent} of ${currencySymbol}${item.limit} daily limit`}
                   </span>
                 </div>
 
@@ -130,7 +129,7 @@ export default function PiggyBankVaultPage({ budgetData, onBack }) {
                   alignItems: 'center',
                   gap: '2px'
                 }}>
-                  {isWithdrawal ? `-₹${item.spent}` : <><ArrowUpRight size={16} /> +₹{item.savedAmount}</>}
+                  {isWithdrawal ? `-${currencySymbol}${item.spent}` : <><ArrowUpRight size={16} /> +{currencySymbol}{item.savedAmount}</>}
                 </span>
               </div>
             );

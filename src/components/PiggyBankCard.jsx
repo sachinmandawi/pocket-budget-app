@@ -6,6 +6,8 @@ export default function PiggyBankCard({ budgetData, onClick }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { totalSaved, history } = calculatePiggyBankSavings(budgetData);
 
+  const currencySymbol = budgetData?.currency?.symbol || '₹';
+
   return (
     <div 
       onClick={onClick}
@@ -51,7 +53,7 @@ export default function PiggyBankCard({ budgetData, onClick }) {
             display: 'block',
             lineHeight: 1
           }}>
-            +₹{totalSaved}
+            +{currencySymbol}{totalSaved}
           </span>
           <span style={{ fontSize: '10px', color: 'var(--ios-green)', fontWeight: 700 }}>
             Total Saved
@@ -124,7 +126,7 @@ export default function PiggyBankCard({ budgetData, onClick }) {
                   )}
                 </div>
                 <span style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginTop: '2px' }}>
-                  Spent ₹{item.spent} of ₹{item.limit} limit
+                  Spent {currencySymbol}{item.spent} of {currencySymbol}{item.limit} limit
                 </span>
               </div>
 
@@ -136,7 +138,7 @@ export default function PiggyBankCard({ budgetData, onClick }) {
                 alignItems: 'center',
                 gap: '2px'
               }}>
-                <ArrowUpRight size={14} /> +₹{item.savedAmount}
+                <ArrowUpRight size={14} /> +{currencySymbol}{item.savedAmount}
               </span>
             </div>
           ))}

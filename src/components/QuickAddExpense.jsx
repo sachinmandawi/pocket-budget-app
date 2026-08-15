@@ -39,12 +39,14 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
   const isAllowanceOverDailySafe = spendSource === 'allowance' && hasEnteredAmount && !isAllowanceInsufficient && numAmt > todaysSafe && todaysSafe > 0;
   const isInsufficient = spendSource === 'piggy_bank' ? isPiggyInsufficient : isAllowanceInsufficient;
 
+  const currencySymbol = budgetData?.currency?.symbol || '₹';
+
   const handleSubmitCustom = (e) => {
     e.preventDefault();
     if (!amount || Number(amount) <= 0) return;
     if (isInsufficient) {
       const maxVal = spendSource === 'piggy_bank' ? availablePiggyBalance : availableAllowanceCash;
-      alert(`Insufficient balance! Max available: ₹${maxVal}`);
+      alert(`Insufficient balance! Max available: ${currencySymbol}${maxVal}`);
       return;
     }
 
@@ -59,36 +61,60 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
 
     setAmount('');
     setNote('');
+    setDate(new Date().toISOString().substring(0, 10));
     setSpendSource('allowance');
     setShowDatePicker(false);
-    if (onClose) onClose();
+    onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()} style={{ paddingBottom: '24px' }}>
-        <div className="modal-grab-handle" />
-
+    <div className="modal-overlay" style={{ alignItems: 'flex-end', padding: 0 }}>
+      <div 
+        className="modal-content" 
+        style={{ 
+          maxWidth: '500px', 
+          width: '100%', 
+          borderRadius: 'var(--radius-xl) var(--radius-xl) 0 0',
+          padding: '24px 20px',
+          animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+          maxHeight: '90vh',
+          overflowY: 'auto'
+        }}
+      >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
-            Log Expense
-          </h3>
+          <div>
+            <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+              Add Daily Expense
+            </h3>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>
+              Record your spend seamlessly
+            </p>
+          </div>
           <button 
-            onClick={onClose}
-            className="btn btn-secondary btn-sm"
-            style={{ width: '32px', height: '32px', padding: 0, borderRadius: '50%' }}
+            type="button"
+            onClick={onClose} 
+            className="btn-icon" 
+            style={{ 
+              background: 'var(--bg-card-subtle)', 
+              borderRadius: '50%',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
           >
-            <X size={18} />
+            <X size={18} color="var(--text-primary)" />
           </button>
         </div>
 
         <form onSubmit={handleSubmitCustom}>
-          {/* Spend Source Selector (Main Allowance vs Piggy Savings) */}
-          <div className="form-group" style={{ marginBottom: '16px' }}>
+          {/* Spend Source Selector */}
+          <div style={{ marginBottom: '16px' }}>
             <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
-              Pay From 👛
+              Deduct Funds From
             </span>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               <button
@@ -97,19 +123,23 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                 style={{
                   padding: '10px 8px',
                   borderRadius: 'var(--radius-md)',
-                  border: spendSource === 'allowance' ? '2px solid var(--ios-blue)' : '1px solid var(--border-subtle)',
+                  border: spendSource === 'allowance' ? '2px solid var(--ios-blue)' : '1px solid var(--border-medium)',
                   background: spendSource === 'allowance' ? 'var(--ios-blue-bg)' : 'var(--bg-card-subtle)',
-                  color: spendSource === 'allowance' ? 'var(--ios-blue)' : 'var(--text-secondary)',
+                  color: spendSource === 'allowance' ? 'var(--ios-blue)' : 'var(--text-primary)',
                   fontWeight: 800,
                   fontSize: '12px',
                   cursor: 'pointer',
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px'
+                  gap: '2px',
+                  transition: 'all 0.2s ease'
                 }}
               >
-                👛 Main Pocket Money
+                <span>👛 Pocket Money</span>
+                <span style={{ fontSize: '11px', opacity: 0.85, fontWeight: 700 }}>
+                  ({currencySymbol}{availableAllowanceCash})
+                </span>
               </button>
 
               <button
@@ -118,39 +148,44 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                 style={{
                   padding: '10px 8px',
                   borderRadius: 'var(--radius-md)',
-                  border: spendSource === 'piggy_bank' ? '2px solid var(--ios-green)' : '1px solid var(--border-subtle)',
+                  border: spendSource === 'piggy_bank' ? '2px solid var(--ios-green)' : '1px solid var(--border-medium)',
                   background: spendSource === 'piggy_bank' ? 'var(--ios-green-bg)' : 'var(--bg-card-subtle)',
-                  color: spendSource === 'piggy_bank' ? 'var(--ios-green)' : 'var(--text-secondary)',
+                  color: spendSource === 'piggy_bank' ? 'var(--ios-green)' : 'var(--text-primary)',
                   fontWeight: 800,
                   fontSize: '12px',
                   cursor: 'pointer',
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '4px'
+                  gap: '2px',
+                  transition: 'all 0.2s ease'
                 }}
               >
-                🐷 Piggy Savings
+                <span>🐷 Piggy Vault</span>
+                <span style={{ fontSize: '11px', opacity: 0.85, fontWeight: 700 }}>
+                  ({currencySymbol}{availablePiggyBalance})
+                </span>
               </button>
             </div>
 
-            {/* Small Compact Warnings for Insufficient Balance / Daily Over Limit */}
+            {/* Validation alerts */}
             {isPiggyInsufficient && (
               <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ios-red)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
-                ⚠️ Insufficient Vault balance (Max ₹{availablePiggyBalance})
+                ⚠️ Insufficient Vault balance (Max {currencySymbol}{availablePiggyBalance})
               </span>
             )}
             {isAllowanceInsufficient && (
               <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ios-red)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
-                ⚠️ Insufficient Pocket Money balance (Max ₹{availableAllowanceCash})
+                ⚠️ Insufficient Pocket Money balance (Max {currencySymbol}{availableAllowanceCash})
               </span>
             )}
             {isAllowanceOverDailySafe && (
               <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ios-orange)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
-                ⚠️ Exceeds daily safe limit (Safe Today: ₹{todaysSafe})
+                ⚠️ Exceeds daily safe limit (Safe Today: {currencySymbol}{todaysSafe})
               </span>
             )}
           </div>
+          
           {/* Hero Amount Input Box */}
           <div className="form-group" style={{ marginBottom: '16px' }}>
             <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
@@ -164,7 +199,7 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                 fontWeight: 800,
                 color: 'var(--ios-red)'
               }}>
-                ₹
+                {currencySymbol}
               </span>
               <input
                 type="number"

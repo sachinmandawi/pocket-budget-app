@@ -8,7 +8,8 @@ export default function ExpensesPage({
   onDeleteTransaction, 
   onOpenQuickAdd, 
   archivedCycles = [],
-  cyclePeriodLabel = 'Current Cycle'
+  cyclePeriodLabel = 'Current Cycle',
+  currencySymbol = '₹'
 }) {
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
@@ -43,6 +44,7 @@ export default function ExpensesPage({
         onDeleteTransaction={onDeleteTransaction}
         archivedCycles={archivedCycles}
         cyclePeriodLabel={cyclePeriodLabel}
+        currencySymbol={currencySymbol}
       />
     </div>
   );

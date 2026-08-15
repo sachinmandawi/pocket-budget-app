@@ -40,6 +40,14 @@ export default function WishlistCooloff({ wishlist, onAddWishItem, onDeleteWishI
               <Clock size={18} color="var(--ios-purple)" />
               New Impulse Delay Item
             </span>
+            <button 
+              type="button"
+              onClick={() => setShowAddForm(false)}
+              className="btn btn-secondary btn-sm"
+              style={{ width: '28px', height: '28px', padding: 0, borderRadius: '50%' }}
+            >
+              ✕
+            </button>
           </div>
 
           <div className="form-group">
@@ -56,7 +64,7 @@ export default function WishlistCooloff({ wishlist, onAddWishItem, onDeleteWishI
           </div>
 
           <div className="form-group">
-            <label className="form-label">Estimated Price (₹)</label>
+            <label className="form-label">Estimated Price ({currencySymbol})</label>
             <input
               type="number"
               required
@@ -165,7 +173,7 @@ export default function WishlistCooloff({ wishlist, onAddWishItem, onDeleteWishI
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <span style={{ fontWeight: 800, fontSize: '15px', color: 'var(--text-primary)' }}>
-                      ₹{item.amount}
+                      {currencySymbol}{item.amount}
                     </span>
                     <button 
                       onClick={() => onDeleteWishItem(item.id)}

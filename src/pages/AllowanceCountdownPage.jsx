@@ -173,7 +173,7 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
             Monthly Pocket Money
           </span>
           <strong style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-primary)', display: 'block', marginTop: '2px' }}>
-            ₹{stats?.monthlyAllowance || 0}
+            {stats?.currencySymbol || '₹'}{stats?.monthlyAllowance || 0}
           </strong>
         </div>
 
@@ -182,7 +182,7 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
             Daily Base Target
           </span>
           <strong style={{ fontSize: '20px', fontWeight: 800, color: 'var(--ios-blue)', display: 'block', marginTop: '2px' }}>
-            ₹{stats?.baseDailyTarget || 0}/day
+            {stats?.currencySymbol || '₹'}{stats?.baseDailyTarget || 0}/day
           </strong>
         </div>
       </div>

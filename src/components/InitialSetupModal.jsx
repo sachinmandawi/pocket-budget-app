@@ -139,13 +139,17 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
               borderRadius: 'var(--radius-sm)',
               background: activeTab === 'appearance' ? 'var(--bg-card)' : 'transparent',
               color: activeTab === 'appearance' ? 'var(--ios-blue)' : 'var(--text-secondary)',
-              fontWeight: activeTab === 'appearance' ? 700 : 500,
-              boxShadow: activeTab === 'appearance' ? 'var(--shadow-ios)' : 'none'
-            }}
-            onClick={() => setActiveTab('appearance')}
+            style={{ flex: 1, padding: '8px', fontSize: '12px', fontWeight: 700, borderRadius: 'var(--radius-sm)', border: 'none', background: activeTab === 'categories' ? 'var(--bg-card)' : 'transparent', color: activeTab === 'categories' ? 'var(--ios-blue)' : 'var(--text-secondary)' }}
           >
-            <Palette size={16} />
-            <span style={{ fontSize: '11px' }}>Theme</span>
+            Categories
+          </button>
+          <button
+            type="button"
+            className={`tab-btn ${activeTab === 'appearance' ? 'active' : ''}`}
+            onClick={() => setActiveTab('appearance')}
+            style={{ flex: 1, padding: '8px', fontSize: '12px', fontWeight: 700, borderRadius: 'var(--radius-sm)', border: 'none', background: activeTab === 'appearance' ? 'var(--bg-card)' : 'transparent', color: activeTab === 'appearance' ? 'var(--ios-blue)' : 'var(--text-secondary)' }}
+          >
+            Theme
           </button>
         </div>
 
@@ -154,7 +158,7 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
           {activeTab === 'allowance' && (
             <div>
               <div className="form-group">
-                <label className="form-label">Monthly Pocket Money (₹)</label>
+                <label className="form-label">Monthly Pocket Money ({currencySymbol})</label>
                 <input
                   type="number"
                   required
@@ -164,12 +168,12 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
                   onChange={e => setAllowance(e.target.value)}
                 />
                 <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                  Monthly pocket money (e.g. ₹1,500)
+                  Monthly pocket money (e.g. {currencySymbol}1,500)
                 </span>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Emergency Reserve (₹)</label>
+                <label className="form-label">Emergency Reserve ({currencySymbol})</label>
                 <input
                   type="number"
                   required
@@ -200,7 +204,7 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
                     >
                       <span style={{ fontSize: '13px', fontWeight: 600 }}>{item.title}</span>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontWeight: 800 }}>₹{item.amount}</span>
+                        <span style={{ fontWeight: 800 }}>{currencySymbol}{item.amount}</span>
                         <button type="button" onClick={() => handleRemoveFixed(item.id)} className="btn btn-secondary btn-sm" style={{ width: '28px', height: '28px', padding: 0 }}>
                           <Trash2 size={13} color="var(--ios-red)" />
                         </button>
@@ -220,7 +224,7 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
                   />
                   <input
                     type="number"
-                    placeholder="₹ Amount"
+                    placeholder={`${currencySymbol} Amount`}
                     className="form-input"
                     style={{ width: '90px', fontSize: '13px' }}
                     value={newFixedAmount}

@@ -4,6 +4,7 @@ import { DEFAULT_CATEGORIES } from '../utils/storage';
 
 export default function AnalyticsCharts({ categories = DEFAULT_CATEGORIES, stats }) {
   const { categoryTotals, totalSpentThisMonth, baseDailyTarget, currentDayNumber, totalDaysInMonth, monthlyAllowance = 1500 } = stats;
+  const currencySymbol = stats?.currencySymbol || '₹';
 
   const maxCatValue = Math.max(1, ...Object.values(categoryTotals));
   const avgDailySpend = currentDayNumber > 0 ? Math.round(totalSpentThisMonth / currentDayNumber) : 0;
@@ -17,7 +18,7 @@ export default function AnalyticsCharts({ categories = DEFAULT_CATEGORIES, stats
           Category Breakdown
         </span>
         <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--ios-blue)', background: 'var(--ios-blue-bg)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
-          Total: ₹{totalSpentThisMonth}
+          Total: {currencySymbol}{totalSpentThisMonth}
         </span>
       </div>
 
@@ -35,7 +36,7 @@ export default function AnalyticsCharts({ categories = DEFAULT_CATEGORIES, stats
                   <span style={{ fontSize: '16px' }}>{cat.icon}</span> {cat.name}
                 </span>
                 <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>
-                  ₹{spent} <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontWeight: 600 }}>({percentOfTotal}%)</span>
+                  {currencySymbol}{spent} <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontWeight: 600 }}>({percentOfTotal}%)</span>
                 </span>
               </div>
               <div className="progress-bar-bg" style={{ height: '8px' }}>
@@ -75,15 +76,15 @@ export default function AnalyticsCharts({ categories = DEFAULT_CATEGORIES, stats
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           <div style={{ background: 'var(--bg-card)', padding: '10px 12px', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
             <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', display: 'block', fontWeight: 600 }}>Daily Pace</span>
-            <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>₹{avgDailySpend}/day</span>
-            <span style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginTop: '2px' }}>Target: ₹{baseDailyTarget}/day</span>
+            <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>{currencySymbol}{avgDailySpend}/day</span>
+            <span style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginTop: '2px' }}>Target: {currencySymbol}{baseDailyTarget}/day</span>
           </div>
 
           <div style={{ background: 'var(--bg-card)', padding: '10px 12px', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
             <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', display: 'block', fontWeight: 600 }}>Est. Month</span>
-            <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>₹{projectedMonthSpend}</span>
+            <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>{currencySymbol}{projectedMonthSpend}</span>
             <span style={{ fontSize: '11px', color: projectedMonthSpend > monthlyAllowance ? 'var(--ios-red)' : 'var(--ios-green)', display: 'block', fontWeight: 700, marginTop: '2px' }}>
-              {projectedMonthSpend > monthlyAllowance ? `+₹${projectedMonthSpend - monthlyAllowance} Over` : `₹${monthlyAllowance - projectedMonthSpend} Save`}
+              {projectedMonthSpend > monthlyAllowance ? `+${currencySymbol}${projectedMonthSpend - monthlyAllowance} Over` : `${currencySymbol}${monthlyAllowance - projectedMonthSpend} Save`}
             </span>
           </div>
         </div>

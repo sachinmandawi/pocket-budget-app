@@ -29,6 +29,8 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
     statusText = 'Near Cap';
   }
 
+  const currencySymbol = stats.currencySymbol || stats.currency?.symbol || '₹';
+
   return (
     <div className="ios-card" style={{ padding: '20px 18px', marginBottom: '16px' }}>
       {/* Header Status Bar - Crisp Left & Right Alignment */}
@@ -84,7 +86,7 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
           letterSpacing: '-1px', 
           lineHeight: 1 
         }}>
-          ₹{Math.abs(todaysSafeRemaining)}
+          {currencySymbol}{Math.abs(todaysSafeRemaining)}
         </div>
       </div>
 
@@ -116,7 +118,7 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
           border: '1px solid var(--border-subtle)'
         }}>
           <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>Limit</span>
-          <strong style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>₹{todaysAllowedTotal}</strong>
+          <strong style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>{currencySymbol}{todaysAllowedTotal}</strong>
         </div>
 
         <div style={{
@@ -127,7 +129,7 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
           border: '1px solid var(--border-subtle)'
         }}>
           <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>Spent</span>
-          <strong style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-red)' }}>₹{spentToday}</strong>
+          <strong style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-red)' }}>{currencySymbol}{spentToday}</strong>
         </div>
 
         <div style={{
@@ -138,7 +140,7 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
           border: '1px solid var(--border-subtle)'
         }}>
           <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 700, textTransform: 'uppercase', display: 'block', marginBottom: '2px' }}>In Hand</span>
-          <strong style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-blue)' }}>₹{remainingTotalInHand}</strong>
+          <strong style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-blue)' }}>{currencySymbol}{remainingTotalInHand}</strong>
         </div>
       </div>
 

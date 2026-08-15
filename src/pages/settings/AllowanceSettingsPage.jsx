@@ -43,6 +43,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
     onBack();
   };
 
+  const currencySymbol = data?.currency?.symbol || '₹';
   const daySuffix = paydayAnchorDate === 1 ? 'st' : paydayAnchorDate === 2 ? 'nd' : paydayAnchorDate === 3 ? 'rd' : 'th';
 
   return (
@@ -50,7 +51,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
       <form onSubmit={handleSubmit} className="ios-card" style={{ marginBottom: '24px' }}>
         {/* Monthly Allowance Input */}
         <div className="form-group">
-          <label className="form-label">Monthly Pocket Money (₹)</label>
+          <label className="form-label">Monthly Pocket Money ({currencySymbol})</label>
           <input
             type="number"
             required
@@ -107,7 +108,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
 
         {/* Emergency Reserve Input */}
         <div className="form-group">
-          <label className="form-label">Emergency Reserve (₹)</label>
+          <label className="form-label">Emergency Reserve ({currencySymbol})</label>
           <input
             type="number"
             required
@@ -137,7 +138,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
                 >
                   <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{item.title}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontWeight: 800, fontSize: '13px', color: 'var(--ios-blue)' }}>₹{item.amount}</span>
+                    <span style={{ fontWeight: 800, fontSize: '13px', color: 'var(--ios-blue)' }}>{currencySymbol}{item.amount}</span>
                     <button type="button" onClick={() => handleRemoveFixed(item.id)} className="btn btn-secondary btn-sm" style={{ width: '28px', height: '28px', padding: 0 }}>
                       <Trash2 size={13} color="var(--ios-red)" />
                     </button>
@@ -158,7 +159,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
             />
             <input
               type="number"
-              placeholder="₹ Amount"
+              placeholder={`${currencySymbol} Amount`}
               className="form-input"
               style={{ fontSize: '13px' }}
               value={newFixedAmount}

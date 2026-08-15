@@ -172,7 +172,7 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
                   </div>
 
                   <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--ios-red)', letterSpacing: '-0.3px' }}>
-                    -₹{tx.amount}
+                    -{stats.currencySymbol || '₹'}{tx.amount}
                   </span>
                 </div>
               );

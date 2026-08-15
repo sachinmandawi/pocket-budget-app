@@ -18,6 +18,7 @@ import AppearanceSettingsPage from './pages/settings/AppearanceSettingsPage';
 import DataResetSettingsPage from './pages/settings/DataResetSettingsPage';
 import GithubSyncSettingsPage from './pages/settings/GithubSyncSettingsPage';
 import ReminderSettingsPage from './pages/settings/ReminderSettingsPage';
+import CurrencySettingsPage from './pages/settings/CurrencySettingsPage';
 import AllowanceCountdownPage from './pages/AllowanceCountdownPage';
 import PiggyBankVaultPage from './pages/PiggyBankVaultPage';
 
@@ -445,7 +446,20 @@ export default function App() {
         {/* SETTINGS SUB-PAGES ROUTING */}
         {activeSettingPage === 'settings_main' && (
           <SettingsMainPage 
+            budgetData={data}
             onNavigateSubPage={setActiveSettingPage}
+          />
+        )}
+
+        {activeSettingPage === 'settings_currency' && (
+          <CurrencySettingsPage 
+            data={data}
+            onSaveSettings={(newData) => {
+              setData(newData);
+              setActiveSettingPage(null);
+              setActiveTab('daily');
+            }}
+            onBack={() => setActiveSettingPage('settings_main')}
           />
         )}
 
@@ -552,6 +566,7 @@ export default function App() {
           <ExpensesPage 
             categories={data.categories}
             transactions={data.transactions || []}
+            currencySymbol={stats.currencySymbol}
             onDeleteTransaction={handleDeleteTransaction}
             onOpenQuickAdd={() => setIsQuickAddOpen(true)}
             onAddExpense={handleAddExpense}
@@ -563,6 +578,7 @@ export default function App() {
         {!activeSettingPage && activeTab === 'cooloff' && (
           <CooloffPage 
             wishlist={data.wishlist || []}
+            currencySymbol={stats.currencySymbol}
             onAddWishItem={handleAddWishItem}
             onDeleteWishItem={handleDeleteWishItem}
           />
@@ -572,6 +588,7 @@ export default function App() {
           <AnalyticsPage 
             stats={stats}
             categories={data.categories}
+            currencySymbol={stats.currencySymbol}
             reserveAmount={data.emergencyReserve || 0}
             isEmergencyUnlocked={data.isEmergencyUnlocked}
             onToggleEmergencyLock={handleToggleEmergencyLock}

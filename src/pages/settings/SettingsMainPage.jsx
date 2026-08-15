@@ -1,12 +1,21 @@
 import React from 'react';
-import { Wallet, Tag, Palette, RefreshCw, ChevronRight, Github, Bell, Clock, Mail } from 'lucide-react';
+import { Globe, Palette, RefreshCw, ChevronRight, Github, Bell, Mail } from 'lucide-react';
+import { DEFAULT_CURRENCY } from '../../utils/currencies';
 
-export default function SettingsMainPage({ onNavigateSubPage }) {
+export default function SettingsMainPage({ onNavigateSubPage, budgetData }) {
+  const currentCurr = budgetData?.currency || DEFAULT_CURRENCY;
+
   const menuItems = [
+    {
+      id: 'settings_currency',
+      title: 'Currency & Region',
+      subtitle: `${currentCurr.flag} ${currentCurr.code} (${currentCurr.symbol}) • ${currentCurr.country}`,
+      icon: <Globe size={20} color="var(--ios-blue)" />
+    },
     {
       id: 'settings_github',
       title: 'GitHub Cloud Sync',
-      subtitle: 'sachinmandawi/pocket-budget-db',
+      subtitle: 'Private database backup',
       icon: <Github size={20} color="var(--ios-blue)" />
     },
     {

@@ -3,7 +3,7 @@ import SurvivalHealthBar from '../components/SurvivalHealthBar';
 import EmergencyReserve from '../components/EmergencyReserve';
 import AnalyticsCharts from '../components/AnalyticsCharts';
 
-export default function AnalyticsPage({ stats, categories, reserveAmount, isEmergencyUnlocked, onToggleEmergencyLock }) {
+export default function AnalyticsPage({ stats, categories, reserveAmount, isEmergencyUnlocked, onToggleEmergencyLock, currencySymbol = '₹' }) {
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
       {/* Clean Page Title */}
@@ -22,6 +22,7 @@ export default function AnalyticsPage({ stats, categories, reserveAmount, isEmer
         isUnlocked={isEmergencyUnlocked}
         currentDay={stats.currentDayNumber}
         onToggleUnlock={onToggleEmergencyLock}
+        currencySymbol={currencySymbol}
       />
 
       {/* Category Breakdown & Burn Pace Forecast */}
