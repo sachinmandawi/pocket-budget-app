@@ -39,11 +39,8 @@ export default function SettingsMainPage({ onNavigateSubPage, budgetData }) {
   ];
 
   const handleOpenEmail = (e) => {
-    const isMobileOrCapacitor = window.Capacitor !== undefined || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (isMobileOrCapacitor) {
-      e.preventDefault();
-      window.location.href = "mailto:sachinmandawi@gmail.com?subject=Pocket%20Budget%20App%20Feedback";
-    }
+    // Direct intent to launch native Gmail / default mail application on mobile & desktop
+    window.location.href = "mailto:sachinmandawi@gmail.com?subject=Pocket%20Budget%20App%20Feedback";
   };
 
   return (
@@ -138,9 +135,7 @@ export default function SettingsMainPage({ onNavigateSubPage, budgetData }) {
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <a 
-            href="https://mail.google.com/mail/?view=cm&fs=1&to=sachinmandawi@gmail.com&su=Pocket%20Budget%20App%20Feedback"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="mailto:sachinmandawi@gmail.com?subject=Pocket%20Budget%20App%20Feedback"
             onClick={handleOpenEmail}
             className="btn btn-primary"
             style={{
