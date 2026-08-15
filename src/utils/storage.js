@@ -1,4 +1,4 @@
-import { DEFAULT_CURRENCY } from './currencies';
+import { DEFAULT_CURRENCY } from './currencies.js';
 
 const STORAGE_KEY = 'pocket_budget_data_v1';
 
@@ -64,25 +64,27 @@ export const getBillingCycleRange = (paydayDay = 1, referenceDate = new Date()) 
 };
 
 export const getInitialData = () => {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    try {
-      const parsed = JSON.parse(saved);
-      if (parsed && typeof parsed === 'object') {
-        if (parsed.categories && Array.isArray(parsed.categories)) {
-          parsed.categories = parsed.categories.filter(c => c && c.name && !c.name.toLowerCase().includes('cigarette') && !c.id.toLowerCase().includes('cigarette'));
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          if (parsed.categories && Array.isArray(parsed.categories)) {
+            parsed.categories = parsed.categories.filter(c => c && c.name && !c.name.toLowerCase().includes('cigarette') && !c.id.toLowerCase().includes('cigarette'));
+          }
+          if (parsed.monthlyAllowance === undefined) parsed.monthlyAllowance = 0;
+          if (parsed.emergencyReserve === undefined) parsed.emergencyReserve = 0;
+          if (!parsed.paydayAnchorDate) parsed.paydayAnchorDate = 1;
+          if (!parsed.archivedCycles) parsed.archivedCycles = [];
+          if (!parsed.transactions) parsed.transactions = [];
+          if (!parsed.wishlist) parsed.wishlist = [];
+          if (!parsed.currency) parsed.currency = DEFAULT_CURRENCY;
+          return parsed;
         }
-        if (parsed.monthlyAllowance === undefined) parsed.monthlyAllowance = 0;
-        if (parsed.emergencyReserve === undefined) parsed.emergencyReserve = 0;
-        if (!parsed.paydayAnchorDate) parsed.paydayAnchorDate = 1;
-        if (!parsed.archivedCycles) parsed.archivedCycles = [];
-        if (!parsed.transactions) parsed.transactions = [];
-        if (!parsed.wishlist) parsed.wishlist = [];
-        if (!parsed.currency) parsed.currency = DEFAULT_CURRENCY;
-        return parsed;
+      } catch (e) {
+        console.error('Failed to parse saved data', e);
       }
-    } catch (e) {
-      console.error('Failed to parse saved data', e);
     }
   }
 
@@ -102,8 +104,10 @@ export const getInitialData = () => {
 };
 
 export const saveData = (data) => {
-  if (data && typeof data === 'object') {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    if (data && typeof data === 'object') {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
   }
 };
 
