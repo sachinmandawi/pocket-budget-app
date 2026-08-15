@@ -280,7 +280,7 @@ export default function Sidebar({
           justifyContent: 'space-between'
         }}>
           <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontWeight: 600 }}>
-            Pocket Budget v1.0.0
+            Pocket Budget v1.1.0
           </span>
           <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--ios-green)', background: 'var(--ios-green-bg)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
             Active

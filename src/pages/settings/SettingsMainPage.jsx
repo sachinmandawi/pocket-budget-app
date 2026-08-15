@@ -124,7 +124,7 @@ export default function SettingsMainPage({ onNavigateSubPage, budgetData }) {
               Developer Support & Feedback
             </h3>
             <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0, fontWeight: 600 }}>
-              Made with ❤️ by Sachin Mandavi
+              Pocket Budget v1.1.0 • Made with ❤️ by Sachin Mandavi
             </p>
           </div>
         </div>

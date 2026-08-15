@@ -1,4 +1,4 @@
-// Pocket Budget v1.0.0 — Final Verified Native Android Release
+// Pocket Budget v1.1.0 — Global Multi-Currency Release
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
