@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Sparkles, Calendar, ShieldCheck, Zap } from 'lucide-react';
+import { Clock, Sparkles, Calendar, ShieldCheck, Zap, ArrowLeft } from 'lucide-react';
 
 const getOrdinalSuffix = (day) => {
   const d = Number(day || 1);
@@ -39,7 +39,6 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
         const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
         const minutes = Math.floor((diff / 1000 / 60) % 60);
         const seconds = Math.floor((diff / 1000) % 60);
-
         setTimeLeft({ days, hours, minutes, seconds });
       } else {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
@@ -57,12 +56,34 @@ export default function AllowanceCountdownPage({ stats, onBack }) {
   const cycleProgress = Math.min(100, Math.max(0, (currentDayNumber / totalDaysInMonth) * 100));
 
   return (
-    <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-      {/* Page Header */}
-      <div style={{ marginBottom: '14px' }}>
-        <h2 style={{ fontSize: '17px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
-          Next Payday Clock ⏱️
-        </h2>
+    <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out', paddingBottom: '80px' }}>
+      {/* Page Header with Back Button */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+        {onBack && (
+          <button 
+            type="button"
+            onClick={onBack}
+            className="btn-icon"
+            style={{ 
+              width: '34px',
+              height: '34px',
+              background: 'var(--bg-card-subtle)', 
+              borderRadius: '50%', 
+              border: 'none', 
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <ArrowLeft size={18} color="var(--text-primary)" />
+          </button>
+        )}
+        <div>
+          <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
+            Next Payday Clock ⏱️
+          </h2>
+        </div>
       </div>
 
       {/* Main Countdown Hero Card */}

@@ -1,17 +1,39 @@
-import React from 'react';
-import { Trophy, ArrowUpRight, Sparkles, History, ShieldCheck } from 'lucide-react';
+import { Trophy, ArrowUpRight, Sparkles, History, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { calculatePiggyBankSavings, formatDateReadable } from '../utils/storage';
 
 export default function PiggyBankVaultPage({ budgetData, onBack }) {
   const { totalSaved, history } = calculatePiggyBankSavings(budgetData);
+  const currencySymbol = budgetData?.currency?.symbol || '₹';
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out', paddingBottom: '80px' }}>
-      {/* Page Header */}
-      <div style={{ marginBottom: '14px' }}>
-        <h2 style={{ fontSize: '17px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
-          Piggy Savings 🐷
-        </h2>
+      {/* Page Header with Back Button */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+        {onBack && (
+          <button 
+            type="button"
+            onClick={onBack}
+            className="btn-icon"
+            style={{ 
+              width: '34px',
+              height: '34px',
+              background: 'var(--bg-card-subtle)', 
+              borderRadius: '50%', 
+              border: 'none', 
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <ArrowLeft size={18} color="var(--text-primary)" />
+          </button>
+        )}
+        <div>
+          <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
+            Piggy Savings Vault 🐷
+          </h2>
+        </div>
       </div>
 
       {/* Hero Piggy Balance Card */}
