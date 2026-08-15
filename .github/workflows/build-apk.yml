@@ -69,31 +69,40 @@ jobs:
           tag_name: v1.1.0
           name: "Pocket Budget v1.1.0 — Global Multi-Currency Release 🌍✨"
           body: |
-            # 📱 Pocket Budget v1.1.0 — Global Multi-Currency Release 🚀
+            # 📱 Pocket Budget v1.1.0 — Global Multi-Currency Release 🌍🚀
 
-            Welcome to **Pocket Budget v1.1.0**, featuring full **Global Multi-Currency Support** (100+ world currencies including 🇵🇭 PHP, 🇮🇳 INR, 🇺🇸 USD, 🇪🇺 EUR, 🇬🇧 GBP, etc.), an eye-catching minimal currency selector, and hardened stability!
-
-            ---
-
-            ### 🌍 New in v1.1.0:
-
-            - 💱 **100+ World Currencies**: Choose from over 100 country currencies with country search, instant switch, and live formatting across the entire app.
-            - 🎨 **Minimal & Eye-Catching Currency Settings**: Ultra-sleek UI with search filter, country names, bold symbol badges, and 1-tap instant save.
-            - 👛 **Spend Source Selection**: Choose whether an expense is deducted from your **Main Daily Allowance** or your **Piggy Bank Vault**.
-            - 🐷 **Piggy Bank Vault (Lifetime Savings)**: Leftover daily allowance builds up in your Piggy Bank Vault indefinitely across months — save for big goals!
-            - 🛡️ **Smart Insufficient Balance Alert**: Real-time balance validation prevents over-drawing with clear warnings when typing an amount.
-            - ⏱️ **Allowance Countdown**: Dedicated digital clock countdown tracking days, hours, minutes, and seconds until your next payday credit.
-            - 📱 **Ultra-Clean Left Sidebar**: 100% clutter-free navigation drawer with native Android status bar notch safe-area compatibility.
-            - 🔄 **Native Hardware Back Navigation**: Smooth Android hardware back button support with double-back to exit.
-            - 🔬 **Verified 10-Pass Deep Audit**: 44/44 automated assertions passed with 0 errors.
+            Welcome to **Pocket Budget v1.1.0**! This major update brings comprehensive **Global Multi-Country Currency Support**, allowing users worldwide to track their daily pocket expenses in their local currency.
 
             ---
 
-            ### ☁️ Private GitHub Cloud Sync Database (`pocket-budget-db`):
+            ### 🌍 What's New in v1.1.0:
 
-            - 🔒 **100% Private Data Ownership**: All transactions, piggy vault savings, and settings sync directly into your private GitHub repository (`pocket-budget-db`). No 3rd-party servers ever touch your financial data!
-            - ⚡ **Multi-Device Real-Time Auto-Sync**: Seamlessly log spends and sync budget stats across multiple phones, tablets, or web browsers instantly.
-            - 🔑 **1-Click Cloudflare OAuth Login**: Instant secure GitHub login integration without typing manual tokens!
+            - 🌐 **100+ World Currencies**: Full native support for over 100 country currencies, including:
+              - 🇵🇭 **PHP (₱)** — Philippine Peso
+              - 🇮🇳 **INR (₹)** — Indian Rupee
+              - 🇺🇸 **USD ($)** — US Dollar
+              - 🇪🇺 **EUR (€)** — Euro
+              - 🇬🇧 **GBP (£)** — British Pound
+              - 🇦🇪 **AED** — UAE Dirham
+              - 🇸🇦 **SAR** — Saudi Riyal
+              - 🇧🇩 **BDT (৳)** — Bangladeshi Taka
+              - 🇵🇰 **PKR (₨)** — Pakistani Rupee
+              - 🇳🇵 **NPR (₨)** — Nepalese Rupee
+              - 🇨🇦 **CAD ($)** — Canadian Dollar
+              - 🇦🇺 **AUD ($)** — Australian Dollar
+              - 🇯🇵 **JPY (¥)** — Japanese Yen
+              - 🇸🇬 **SGD ($)** — Singapore Dollar
+              - and 85+ more worldwide currencies!
+            - 🔍 **Instant Country & Currency Search**: Quickly find your currency by typing country name, currency code, or symbol.
+            - 🎨 **Minimal & Eye-Catching Currency Selector**: Ultra-clean, clutter-free settings interface with bold currency badges and 1-tap instant switch.
+            - ⚡ **Dynamic App-Wide Formatting**: Daily limit, remaining in-hand, piggy bank vault, charts, and transaction history dynamically adapt to your selected currency symbol.
+
+            ---
+
+            ### ☁️ Private GitHub Cloud Sync (`pocket-budget-db`):
+
+            - 🔒 **100% Private Data Ownership**: All transactions and multi-currency settings sync directly to your personal GitHub repository.
+            - ⚡ **Real-Time Cross-Device Sync**: Seamlessly access and manage your finances across all your devices.
           files: release-assets/PocketBudget-v1.1.0.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
