@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, LogOut, KeyRound, Sparkles, Download, Upload, FileJson } from 'lucide-react';
 import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub, fetchGitHubUser, mergeBudgetData, ensurePrivateRepoExists } from '../../utils/githubSync';
 import { formatLocalYMD } from '../../utils/storage';
+import { Capacitor } from '@capacitor/core';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
 
 export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData }) {
   const [config, setConfig] = useState(getGitHubConfig);
@@ -112,23 +115,42 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
     }
   };
 
-  // ---- Local Export: Download JSON File ----
-  const handleExport = () => {
+  // ---- Local Export: Native Android / Web Download JSON File ----
+  const handleExport = async () => {
     try {
       const filename = `pocket-budget-backup-${formatLocalYMD(new Date())}.json`;
       const jsonStr = JSON.stringify(budgetData, null, 2);
-      const blob = new Blob([jsonStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      setImportStatus({ type: 'success', text: `✅ Backup downloaded: ${filename}` });
+
+      if (Capacitor.isNativePlatform()) {
+        const writeRes = await Filesystem.writeFile({
+          path: filename,
+          data: jsonStr,
+          directory: Directory.Cache,
+          encoding: Encoding.UTF8
+        });
+
+        await Share.share({
+          title: 'Pocket Budget Backup',
+          text: `Pocket Budget backup file (${filename})`,
+          url: writeRes.uri,
+          dialogTitle: 'Save or Share Backup File'
+        });
+
+        setImportStatus({ type: 'success', text: `✅ Backup file generated! Choose where to save/share.` });
+      } else {
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        setImportStatus({ type: 'success', text: `✅ Backup downloaded: ${filename}` });
+      }
     } catch (err) {
-      setImportStatus({ type: 'error', text: '❌ Export failed. Please try again.' });
+      setImportStatus({ type: 'error', text: `❌ Export failed: ${err.message || 'Please try again'}` });
     }
   };
 
