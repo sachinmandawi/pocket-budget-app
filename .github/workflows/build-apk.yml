@@ -82,13 +82,26 @@ jobs:
           Download **`PocketBudget-v1.2.0.apk`** below to install the latest version on Android!
           EOF
 
-          if gh release view v1.2.0 >/dev/null 2>&1; then
-            echo "Release v1.2.0 exists. Updating assets and notes..."
-            gh release edit v1.2.0 --title "Pocket Budget v1.2.0 — Custom Multi-Currency Release 👛✨" --notes-file release-notes.md
-            gh release upload v1.2.0 release-assets/PocketBudget-v1.2.0.apk --clobber
-          else
-            echo "Creating new release v1.2.0..."
-            gh release create v1.2.0 release-assets/PocketBudget-v1.2.0.apk --title "Pocket Budget v1.2.0 — Custom Multi-Currency Release 👛✨" --notes-file release-notes.md
-          fi
+          upload_release() {
+            if gh release view v1.2.0 >/dev/null 2>&1; then
+              echo "Release v1.2.0 exists. Updating assets and notes..."
+              gh release edit v1.2.0 --title "Pocket Budget v1.2.0 — Custom Multi-Currency Release 👛✨" --notes-file release-notes.md || true
+              gh release upload v1.2.0 release-assets/PocketBudget-v1.2.0.apk --clobber
+            else
+              echo "Creating new release v1.2.0..."
+              gh release create v1.2.0 release-assets/PocketBudget-v1.2.0.apk --title "Pocket Budget v1.2.0 — Custom Multi-Currency Release 👛✨" --notes-file release-notes.md
+            fi
+          }
+
+          for i in 1 2 3 4 5; do
+            echo "Release attempt $i/5..."
+            if upload_release; then
+              echo "Successfully uploaded release v1.2.0!"
+              exit 0
+            fi
+            echo "Attempt $i failed, retrying in 5 seconds..."
+            sleep 5
+          done
+          exit 1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
