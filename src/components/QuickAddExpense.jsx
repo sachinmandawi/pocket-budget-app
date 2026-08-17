@@ -61,7 +61,7 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
 
     setAmount('');
     setNote('');
-    setDate(new Date().toISOString().substring(0, 10));
+    setDate(formatLocalYMD(new Date()));
     setSpendSource('allowance');
     setShowDatePicker(false);
     onClose();
