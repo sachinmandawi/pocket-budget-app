@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Clock, Plus, Trash2, Target, CheckCircle2 } from 'lucide-react';
 import { formatCurrencyAmount } from '../utils/currencies';
 
-export default function WishlistCooloff({ wishlist, onAddWishItem, onDeleteWishItem, showAddForm, setShowAddForm }) {
+export default function WishlistCooloff({ wishlist, onAddWishItem, onDeleteWishItem, showAddForm, setShowAddForm, currencySymbol = '₹' }) {
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
 

@@ -79,6 +79,7 @@ export const getInitialData = () => {
           if (!parsed.archivedCycles) parsed.archivedCycles = [];
           if (!parsed.transactions) parsed.transactions = [];
           if (!parsed.wishlist) parsed.wishlist = [];
+          if (!parsed.customCurrencies) parsed.customCurrencies = [];
           if (!parsed.currency) parsed.currency = DEFAULT_CURRENCY;
           return parsed;
         }
@@ -97,6 +98,7 @@ export const getInitialData = () => {
     fixedDeductions: [],
     categories: DEFAULT_CATEGORIES,
     currency: DEFAULT_CURRENCY,
+    customCurrencies: [],
     archivedCycles: [],
     transactions: [],
     wishlist: []

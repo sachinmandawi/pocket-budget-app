@@ -77,6 +77,7 @@ export const WORLD_CURRENCIES = [
   { code: 'CLP', symbol: '$', name: 'Chilean Peso', country: 'Chile', flag: '🇨🇱' },
   { code: 'COP', symbol: '$', name: 'Colombian Peso', country: 'Colombia', flag: '🇨🇴' },
   { code: 'CRC', symbol: '₡', name: 'Costa Rican Colon', country: 'Costa Rica', flag: '🇨🇷' },
+  { code: 'CUP', symbol: '$', name: 'Cuban Peso', country: 'Cuba', flag: '🇨🇺' },
   { code: 'DOP', symbol: 'RD$', name: 'Dominican Peso', country: 'Dominican Republic', flag: '🇩🇴' },
   { code: 'GTQ', symbol: 'Q', name: 'Guatemalan Quetzal', country: 'Guatemala', flag: '🇬🇹' },
   { code: 'HNL', symbol: 'L', name: 'Honduran Lempira', country: 'Honduras', flag: '🇭🇳' },

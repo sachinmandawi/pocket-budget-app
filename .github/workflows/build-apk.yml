@@ -47,11 +47,11 @@ jobs:
       - name: Copy Built APK Asset
         run: |
           mkdir -p release-assets
-          cp android/app/build/outputs/apk/debug/app-debug.apk release-assets/PocketBudget-v1.1.0.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk release-assets/PocketBudget-v1.2.0.apk
 
-      - name: Delete Old v1.1.0 Release if exists
+      - name: Delete Old v1.2.0 Release if exists
         run: |
-          gh release delete v1.1.0 --yes --cleanup-tag || true
+          gh release delete v1.2.0 --yes --cleanup-tag || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -61,48 +61,32 @@ jobs:
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/${{ github.repository }} \
-            -d '{"description":"📱 Smart, Self-Healing Daily Expense Tracker & Multi-Currency Allowance Manager with Piggy Bank Vault & Private Cloud Sync", "homepage":"https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.1.0"}'
+            -d '{"description":"📱 Smart, Self-Healing Daily Expense Tracker & Multi-Currency Allowance Manager with Custom Currency Creator & Private Cloud Sync", "homepage":"https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.2.0"}'
 
-      - name: Upload APK to GitHub Release v1.1.0
+      - name: Upload APK to GitHub Release v1.2.0
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.1.0
-          name: "Pocket Budget v1.1.0 — Global Multi-Currency Release 🌍✨"
+          tag_name: v1.2.0
+          name: "Pocket Budget v1.2.0 — Custom Multi-Currency & New Piggy Vault Logo 🐷✨"
           body: |
-            # 📱 Pocket Budget v1.1.0 — Global Multi-Currency Release 🌍🚀
+            # 📱 Pocket Budget v1.2.0 — Custom Multi-Currency & New Piggy Vault Logo 🚀
 
-            Welcome to **Pocket Budget v1.1.0**! This major update brings comprehensive **Global Multi-Country Currency Support**, allowing users worldwide to track their daily pocket expenses in their local currency.
-
-            ---
-
-            ### 🌍 What's New in v1.1.0:
-
-            - 🌐 **100+ World Currencies**: Full native support for over 100 country currencies, including:
-              - 🇵🇭 **PHP (₱)** — Philippine Peso
-              - 🇮🇳 **INR (₹)** — Indian Rupee
-              - 🇺🇸 **USD ($)** — US Dollar
-              - 🇪🇺 **EUR (€)** — Euro
-              - 🇬🇧 **GBP (£)** — British Pound
-              - 🇦🇪 **AED** — UAE Dirham
-              - 🇸🇦 **SAR** — Saudi Riyal
-              - 🇧🇩 **BDT (৳)** — Bangladeshi Taka
-              - 🇵🇰 **PKR (₨)** — Pakistani Rupee
-              - 🇳🇵 **NPR (₨)** — Nepalese Rupee
-              - 🇨🇦 **CAD ($)** — Canadian Dollar
-              - 🇦🇺 **AUD ($)** — Australian Dollar
-              - 🇯🇵 **JPY (¥)** — Japanese Yen
-              - 🇸🇬 **SGD ($)** — Singapore Dollar
-              - and 85+ more worldwide currencies!
-            - 🔍 **Instant Country & Currency Search**: Quickly find your currency by typing country name, currency code, or symbol.
-            - 🎨 **Minimal & Eye-Catching Currency Selector**: Ultra-clean, clutter-free settings interface with bold currency badges and 1-tap instant switch.
-            - ⚡ **Dynamic App-Wide Formatting**: Daily limit, remaining in-hand, piggy bank vault, charts, and transaction history dynamically adapt to your selected currency symbol.
+            Welcome to **Pocket Budget v1.2.0**! This release brings powerful **Custom Currency Creation**, full support for **Cuban Peso (CUP)**, and a **brand-new modern Piggy Bank Vault app logo & splash screen** across Web & Android.
 
             ---
 
-            ### ☁️ Private GitHub Cloud Sync (`pocket-budget-db`):
+            ### ✨ What's New in v1.2.0:
 
-            - 🔒 **100% Private Data Ownership**: All transactions and multi-currency settings sync directly to your personal GitHub repository.
-            - ⚡ **Real-Time Cross-Device Sync**: Seamlessly access and manage your finances across all your devices.
-          files: release-assets/PocketBudget-v1.1.0.apk
+            - 🛠️ **Custom Currency Creator**: Set any custom currency symbol (e.g. `$MN`, `CU$`, `₱`, `₿`, `zł`, `pts`), custom ISO code, custom country/wallet name, and custom emoji!
+            - 🇨🇺 **Cuba (CUP) Currency Added**: Added native Cuban Peso support based on user feedback.
+            - 🐷 **Brand New App Logo & Icons**: Fresh, modern iOS-style 3D Piggy Vault app icon across Web, PWA, Android Launcher icons, and Native Splash Screens.
+            - ⚡ **Instant Currency Sync**: One-tap selection instantly updates the daily gauge, limits, transactions, wishlist, and piggy vault.
+            - 🧹 **Ultra-Clean, Uncluttered UI**: Redesigned settings modal with minimalist aesthetics.
+
+            ---
+
+            ### 📲 Download APK:
+            Download **`PocketBudget-v1.2.0.apk`** below to install the latest version on Android!
+          files: release-assets/PocketBudget-v1.2.0.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

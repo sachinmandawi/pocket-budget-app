@@ -4,6 +4,7 @@ import { DEFAULT_CATEGORIES } from '../utils/storage';
 
 export default function InitialSetupModal({ data, onSaveSettings, isOpen, initialTab = 'allowance', onClose, isDarkMode, onToggleDarkMode, onResetDemo }) {
   const [activeTab, setActiveTab] = useState(initialTab);
+  const currencySymbol = data?.currency?.symbol || '₹';
 
   // Sync activeTab whenever modal opens with initialTab prop
   useEffect(() => {
@@ -139,17 +140,13 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
               borderRadius: 'var(--radius-sm)',
               background: activeTab === 'appearance' ? 'var(--bg-card)' : 'transparent',
               color: activeTab === 'appearance' ? 'var(--ios-blue)' : 'var(--text-secondary)',
-            style={{ flex: 1, padding: '8px', fontSize: '12px', fontWeight: 700, borderRadius: 'var(--radius-sm)', border: 'none', background: activeTab === 'categories' ? 'var(--bg-card)' : 'transparent', color: activeTab === 'categories' ? 'var(--ios-blue)' : 'var(--text-secondary)' }}
-          >
-            Categories
-          </button>
-          <button
-            type="button"
-            className={`tab-btn ${activeTab === 'appearance' ? 'active' : ''}`}
+              fontWeight: activeTab === 'appearance' ? 700 : 500,
+              boxShadow: activeTab === 'appearance' ? 'var(--shadow-ios)' : 'none'
+            }}
             onClick={() => setActiveTab('appearance')}
-            style={{ flex: 1, padding: '8px', fontSize: '12px', fontWeight: 700, borderRadius: 'var(--radius-sm)', border: 'none', background: activeTab === 'appearance' ? 'var(--bg-card)' : 'transparent', color: activeTab === 'appearance' ? 'var(--ios-blue)' : 'var(--text-secondary)' }}
           >
-            Theme
+            <Moon size={16} />
+            <span style={{ fontSize: '11px' }}>Theme</span>
           </button>
         </div>
 
@@ -158,7 +155,7 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
           {activeTab === 'allowance' && (
             <div>
               <div className="form-group">
-                <label className="form-label">Monthly Pocket Money ({currencySymbol})</label>
+                <label className="form-label">Monthly Pocket Money ({data?.currency?.symbol || '₹'})</label>
                 <input
                   type="number"
                   required

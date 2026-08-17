@@ -18,7 +18,7 @@ export default function PiggyBankCard({ budgetData, onNavigateVault }) {
         marginBottom: '16px',
         background: 'linear-gradient(135deg, rgba(52, 199, 89, 0.08) 0%, rgba(52, 199, 89, 0.02) 100%)',
         border: '1px solid rgba(52, 199, 89, 0.2)',
-        cursor: onClick ? 'pointer' : 'default'
+        cursor: onNavigateVault ? 'pointer' : 'default'
       }}
     >
       {/* Header Row */}
