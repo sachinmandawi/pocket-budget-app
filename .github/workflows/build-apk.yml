@@ -49,12 +49,6 @@ jobs:
           mkdir -p release-assets
           cp android/app/build/outputs/apk/debug/app-debug.apk release-assets/PocketBudget-v1.2.0.apk
 
-      - name: Delete Old v1.2.0 Release if exists
-        run: |
-          gh release delete v1.2.0 --yes --cleanup-tag || true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Update Repository About Description & Homepage
         run: |
           curl -X PATCH \
@@ -62,31 +56,39 @@ jobs:
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/${{ github.repository }} \
             -d '{"description":"📱 Smart, Self-Healing Daily Expense Tracker & Multi-Currency Allowance Manager with Custom Currency Creator & Private Cloud Sync", "homepage":"https://github.com/sachinmandawi/pocket-budget-app/releases/tag/v1.2.0"}'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload APK to GitHub Release v1.2.0
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v1.2.0
-          name: "Pocket Budget v1.2.0 — Custom Multi-Currency & New Piggy Vault Logo 🐷✨"
-          body: |
-            # 📱 Pocket Budget v1.2.0 — Custom Multi-Currency & New Piggy Vault Logo 🚀
+      - name: Create or Update GitHub Release v1.2.0
+        run: |
+          cat << 'EOF' > release-notes.md
+          # 📱 Pocket Budget v1.2.0 — Custom Multi-Currency Release 👛🚀
 
-            Welcome to **Pocket Budget v1.2.0**! This release brings powerful **Custom Currency Creation**, full support for **Cuban Peso (CUP)**, and a **brand-new modern Piggy Bank Vault app logo & splash screen** across Web & Android.
+          Welcome to **Pocket Budget v1.2.0**! This release brings powerful **Custom Currency Creation**, full support for **Cuban Peso (CUP)**, and performance optimizations with the classic beloved Pocket Budget wallet branding.
 
-            ---
+          ---
 
-            ### ✨ What's New in v1.2.0:
+          ### ✨ What's New in v1.2.0:
 
-            - 🛠️ **Custom Currency Creator**: Set any custom currency symbol (e.g. `$MN`, `CU$`, `₱`, `₿`, `zł`, `pts`), custom ISO code, custom country/wallet name, and custom emoji!
-            - 🇨🇺 **Cuba (CUP) Currency Added**: Added native Cuban Peso support based on user feedback.
-            - 🐷 **Brand New App Logo & Icons**: Fresh, modern iOS-style 3D Piggy Vault app icon across Web, PWA, Android Launcher icons, and Native Splash Screens.
-            - ⚡ **Instant Currency Sync**: One-tap selection instantly updates the daily gauge, limits, transactions, wishlist, and piggy vault.
-            - 🧹 **Ultra-Clean, Uncluttered UI**: Redesigned settings modal with minimalist aesthetics.
+          - 🛠️ **Custom Currency Creator**: Set any custom currency symbol (e.g. `$MN`, `CU$`, `₱`, `₿`, `zł`, `pts`), custom ISO code, custom country/wallet name, and custom emoji!
+          - 🇨🇺 **Cuba (CUP) Currency Added**: Added native Cuban Peso support based on user feedback.
+          - ⚡ **Instant Currency Sync**: One-tap selection instantly updates daily gauge, limits, transactions, wishlist, and piggy vault.
+          - 🧹 **Ultra-Clean, Uncluttered UI**: Redesigned settings modal with minimalist Apple iOS aesthetics.
+          - 👛 **Iconic Pocket Budget Branding**: Retained the clean, familiar classic wallet logo.
 
-            ---
+          ---
 
-            ### 📲 Download APK:
-            Download **`PocketBudget-v1.2.0.apk`** below to install the latest version on Android!
-          files: release-assets/PocketBudget-v1.2.0.apk
+          ### 📲 Download APK:
+          Download **`PocketBudget-v1.2.0.apk`** below to install the latest version on Android!
+          EOF
+
+          if gh release view v1.2.0 >/dev/null 2>&1; then
+            echo "Release v1.2.0 exists. Updating assets and notes..."
+            gh release edit v1.2.0 --title "Pocket Budget v1.2.0 — Custom Multi-Currency Release 👛✨" --notes-file release-notes.md
+            gh release upload v1.2.0 release-assets/PocketBudget-v1.2.0.apk --clobber
+          else
+            echo "Creating new release v1.2.0..."
+            gh release create v1.2.0 release-assets/PocketBudget-v1.2.0.apk --title "Pocket Budget v1.2.0 — Custom Multi-Currency Release 👛✨" --notes-file release-notes.md
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
