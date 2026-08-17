@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, LogOut, KeyRound, Sparkles } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, LogOut, KeyRound, Sparkles, Download, Upload, FileJson } from 'lucide-react';
 import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub, fetchGitHubUser, mergeBudgetData, ensurePrivateRepoExists } from '../../utils/githubSync';
+import { formatLocalYMD } from '../../utils/storage';
 
 export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData }) {
   const [config, setConfig] = useState(getGitHubConfig);
   const [tokenInput, setTokenInput] = useState('');
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncStatusMsg, setSyncStatusMsg] = useState(null);
+  const [importStatus, setImportStatus] = useState(null);
+  const importFileRef = useRef(null);
 
   const isConfigured = Boolean(config.owner && config.repo && config.token);
 
@@ -107,6 +110,65 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
     } else {
       setSyncStatusMsg({ type: 'error', text: `❌ Pull failed: ${res.error}` });
     }
+  };
+
+  // ---- Local Export: Download JSON File ----
+  const handleExport = () => {
+    try {
+      const filename = `pocket-budget-backup-${formatLocalYMD(new Date())}.json`;
+      const jsonStr = JSON.stringify(budgetData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setImportStatus({ type: 'success', text: `✅ Backup downloaded: ${filename}` });
+    } catch (err) {
+      setImportStatus({ type: 'error', text: '❌ Export failed. Please try again.' });
+    }
+  };
+
+  // ---- Local Import: Upload JSON File ----
+  const handleImportFile = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.name.endsWith('.json')) {
+      setImportStatus({ type: 'error', text: '❌ Please select a valid .json backup file.' });
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const parsed = JSON.parse(ev.target.result);
+        if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.transactions)) {
+          setImportStatus({ type: 'error', text: '❌ Invalid backup file format.' });
+          return;
+        }
+        const txCount = parsed.transactions.length;
+        const confirmed = window.confirm(
+          `Import this backup?\n\n` +
+          `📦 File: ${file.name}\n` +
+          `📋 Transactions: ${txCount}\n` +
+          `💰 Allowance: ${parsed.currency?.symbol || '₹'}${parsed.monthlyAllowance || 0}\n\n` +
+          `⚠️ This will REPLACE your current data!`
+        );
+        if (confirmed) {
+          onUpdateBudgetData(parsed);
+          setImportStatus({ type: 'success', text: `✅ Data imported! ${txCount} transactions restored.` });
+        } else {
+          setImportStatus({ type: 'info', text: 'Import cancelled.' });
+        }
+      } catch {
+        setImportStatus({ type: 'error', text: '❌ Could not read the file. Make sure it is a valid JSON backup.' });
+      }
+      // Reset file input so same file can be selected again
+      if (importFileRef.current) importFileRef.current.value = '';
+    };
+    reader.readAsText(file);
   };
 
   return (
@@ -305,6 +367,111 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
           {syncStatusMsg.text}
         </div>
       )}
+
+      {/* ---- Local Import / Export Card ---- */}
+      <div className="ios-card" style={{ marginTop: '16px' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+          <div style={{
+            width: '40px', height: '40px', borderRadius: '12px',
+            background: 'var(--bg-card-subtle)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            border: '1px solid var(--border-subtle)'
+          }}>
+            <FileJson size={22} color="var(--ios-green)" />
+          </div>
+          <div>
+            <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0, letterSpacing: '-0.3px', color: 'var(--text-primary)' }}>
+              Local Backup
+            </h3>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>
+              Export or import your data as a JSON file
+            </p>
+          </div>
+        </div>
+
+        {/* Info note */}
+        <div style={{
+          background: 'var(--ios-blue-bg)',
+          borderRadius: 'var(--radius-md)',
+          padding: '10px 12px',
+          marginBottom: '14px',
+          fontSize: '12px',
+          color: 'var(--ios-blue)',
+          fontWeight: 600,
+          lineHeight: 1.5
+        }}>
+          💡 Use Export to save a backup file on your device. Use Import to restore data from a previous backup.
+        </div>
+
+        {/* Action Buttons */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          {/* Export Button */}
+          <button
+            onClick={handleExport}
+            className="btn btn-primary"
+            style={{
+              padding: '12px',
+              fontSize: '13px',
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              background: 'var(--ios-green)',
+              boxShadow: '0 3px 10px rgba(52,199,89,0.3)'
+            }}
+          >
+            <Download size={16} /> Export JSON
+          </button>
+
+          {/* Import Button */}
+          <button
+            onClick={() => importFileRef.current?.click()}
+            className="btn btn-secondary"
+            style={{
+              padding: '12px',
+              fontSize: '13px',
+              fontWeight: 800,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px'
+            }}
+          >
+            <Upload size={16} /> Import JSON
+          </button>
+
+          {/* Hidden file input */}
+          <input
+            ref={importFileRef}
+            type="file"
+            accept=".json,application/json"
+            style={{ display: 'none' }}
+            onChange={handleImportFile}
+          />
+        </div>
+
+        {/* Export filename preview */}
+        <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', textAlign: 'center', marginTop: '12px', margin: '12px 0 0' }}>
+          📁 Backup file: pocket-budget-backup-{formatLocalYMD(new Date())}.json
+        </p>
+
+        {/* Import/Export Status */}
+        {importStatus && (
+          <div style={{
+            marginTop: '12px',
+            padding: '10px 12px',
+            borderRadius: 'var(--radius-md)',
+            background: importStatus.type === 'success' ? 'var(--ios-green-bg)' : importStatus.type === 'info' ? 'var(--ios-blue-bg)' : 'var(--ios-red-bg)',
+            color: importStatus.type === 'success' ? 'var(--ios-green)' : importStatus.type === 'info' ? 'var(--ios-blue)' : 'var(--ios-red)',
+            fontSize: '13px',
+            fontWeight: 800
+          }}>
+            {importStatus.text}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
