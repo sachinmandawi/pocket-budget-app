@@ -241,9 +241,8 @@ export const calculatePiggyBankSavings = (data) => {
   const history = [];
   let accumulatedSaved = 0;
 
-  const allDates = Array.from(datesMap.keys()).sort();
-  const startDateStr = allDates.length > 0 ? allDates[0] : stats.cycleStartStr;
-  
+  // Only calculate unspent daily savings from the current active cycle's start date
+  const startDateStr = stats.cycleStartStr;
   const startDate = new Date(startDateStr);
   const todayDate = new Date(todayStr);
 
@@ -271,6 +270,21 @@ export const calculatePiggyBankSavings = (data) => {
       });
     }
   }
+
+  // Add past archived cycles savings (Lifetime vault)
+  (data.archivedCycles || []).forEach(cycle => {
+    if (cycle && cycle.savedAmount) {
+      accumulatedSaved += Number(cycle.savedAmount || 0);
+      history.push({
+        type: 'deposit',
+        date: cycle.cycleEndStr || cycle.date || 'Past Cycle',
+        spent: Number(cycle.totalSpent || 0),
+        limit: Number(cycle.allowance || 0),
+        savedAmount: Math.round(Number(cycle.savedAmount || 0)),
+        isCycleClose: true
+      });
+    }
+  });
 
   // Include direct Piggy Bank spend transactions in history
   transactions.forEach(tx => {
