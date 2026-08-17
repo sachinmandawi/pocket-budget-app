@@ -22,6 +22,15 @@ export const PRESET_SPENDS = [
   { label: 'Recharge 1-Month', amount: 199, category: 'recharge', icon: '📱' }
 ];
 
+export const formatLocalYMD = (d = new Date()) => {
+  const dateObj = typeof d === 'string' ? new Date(d) : d;
+  if (!dateObj || isNaN(dateObj.getTime())) return '';
+  const y = dateObj.getFullYear();
+  const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+
 export const formatDateReadable = (dateStr) => {
   if (!dateStr) return '';
   const parts = String(dateStr).split('T')[0].split('-');
@@ -116,12 +125,12 @@ export const saveData = (data) => {
 export const calculateBudgetStats = (rawInput) => {
   const data = (rawInput && typeof rawInput === 'object') ? rawInput : getInitialData();
   const now = new Date();
-  const todayStr = now.toISOString().substring(0, 10);
+  const todayStr = formatLocalYMD(now);
   const paydayDay = Number(data.paydayAnchorDate || 1);
 
   const { cycleStartDate, cycleEndDate } = getBillingCycleRange(paydayDay, now);
-  const cycleStartStr = cycleStartDate.toISOString().substring(0, 10);
-  const cycleEndStr = cycleEndDate.toISOString().substring(0, 10);
+  const cycleStartStr = formatLocalYMD(cycleStartDate);
+  const cycleEndStr = formatLocalYMD(cycleEndDate);
 
   const diffTime = Math.abs(cycleEndDate - cycleStartDate);
   const totalDaysInCycle = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -219,7 +228,7 @@ export const calculatePiggyBankSavings = (data) => {
     return { totalSaved: 0, accumulatedSaved: 0, totalPiggySpent: 0, history: [] };
   }
 
-  const todayStr = new Date().toISOString().substring(0, 10);
+  const todayStr = formatLocalYMD(new Date());
   const baseDailyTarget = stats.baseDailyTarget;
 
   const transactions = data.transactions || [];
@@ -243,15 +252,10 @@ export const calculatePiggyBankSavings = (data) => {
 
   // Only calculate unspent daily savings from the current active cycle's start date
   const startDateStr = stats.cycleStartStr;
-  const startDate = new Date(startDateStr);
-  const todayDate = new Date(todayStr);
-
-  const formatLocalYMD = (d) => {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`;
-  };
+  const [sy, sm, sd] = startDateStr.split('-').map(Number);
+  const [ty, tm, td] = todayStr.split('-').map(Number);
+  const startDate = new Date(sy, sm - 1, sd);
+  const todayDate = new Date(ty, tm - 1, td);
 
   for (let d = new Date(startDate); d < todayDate; d.setDate(d.getDate() + 1)) {
     const dStr = formatLocalYMD(d);

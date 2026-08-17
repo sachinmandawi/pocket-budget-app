@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import DailyGauge from '../components/DailyGauge';
-import { DEFAULT_CATEGORIES } from '../utils/storage';
+import { DEFAULT_CATEGORIES, formatLocalYMD } from '../utils/storage';
 import { getGitHubConfig } from '../utils/githubSync';
 import { formatCurrencyAmount } from '../utils/currencies';
 import { Cloud, X, ArrowRight } from 'lucide-react';
 
 export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, transactions = [] }) {
-  const todayStr = new Date().toISOString().substring(0, 10);
+  const todayStr = formatLocalYMD(new Date());
   const todayTx = transactions.filter(tx => tx.date === todayStr);
 
   const [showGithubBanner, setShowGithubBanner] = useState(() => {

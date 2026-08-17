@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
+import { formatLocalYMD } from '../utils/storage';
 
 export default function InteractiveCalendar({ selectedDate, onSelectDate, paydayDay = 1 }) {
   const initialDate = selectedDate ? new Date(selectedDate) : new Date();
@@ -27,7 +28,7 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
     setViewDate(new Date(year, month + 1, 1));
   };
 
-  const todayStr = new Date().toISOString().substring(0, 10);
+  const todayStr = formatLocalYMD(new Date());
 
   const calendarCells = [];
 

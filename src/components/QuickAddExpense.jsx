@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, CheckCircle2, Calendar as CalendarIcon, AlertCircle } from 'lucide-react';
-import { DEFAULT_CATEGORIES, formatDateReadable, calculatePiggyBankSavings, calculateBudgetStats } from '../utils/storage';
+import { DEFAULT_CATEGORIES, formatDateReadable, formatLocalYMD, calculatePiggyBankSavings, calculateBudgetStats } from '../utils/storage';
 import CustomDropdown from './CustomDropdown';
 import InteractiveCalendar from './InteractiveCalendar';
 
@@ -8,7 +8,7 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState(categories[0]?.id || 'chai_snacks');
   const [note, setNote] = useState('');
-  const [date, setDate] = useState(new Date().toISOString().substring(0, 10));
+  const [date, setDate] = useState(formatLocalYMD(new Date()));
   const [spendSource, setSpendSource] = useState('allowance');
   const [showDatePicker, setShowDatePicker] = useState(false);
 
