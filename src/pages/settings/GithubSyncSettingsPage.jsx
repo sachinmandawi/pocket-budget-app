@@ -390,20 +390,6 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
           </div>
         </div>
 
-        {/* Info note */}
-        <div style={{
-          background: 'var(--ios-blue-bg)',
-          borderRadius: 'var(--radius-md)',
-          padding: '10px 12px',
-          marginBottom: '14px',
-          fontSize: '12px',
-          color: 'var(--ios-blue)',
-          fontWeight: 600,
-          lineHeight: 1.5
-        }}>
-          💡 Use Export to save a backup file on your device. Use Import to restore data from a previous backup.
-        </div>
-
         {/* Action Buttons */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
           {/* Export Button */}
@@ -452,10 +438,6 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
           />
         </div>
 
-        {/* Export filename preview */}
-        <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', textAlign: 'center', marginTop: '12px', margin: '12px 0 0' }}>
-          📁 Backup file: pocket-budget-backup-{formatLocalYMD(new Date())}.json
-        </p>
 
         {/* Import/Export Status */}
         {importStatus && (
