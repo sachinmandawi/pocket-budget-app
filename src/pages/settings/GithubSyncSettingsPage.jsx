@@ -54,17 +54,17 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
 
       setSyncStatusMsg({ type: 'info', text: '📥 Merging offline and cloud databases...' });
       const res = await pullFromGitHub(newConfig);
-      setIsSyncing(false);
 
       if (res.success && res.data) {
         const mergedData = mergeBudgetData(budgetData, res.data);
         onUpdateBudgetData(mergedData);
-        pushToGitHub(mergedData, newConfig);
+        await pushToGitHub(mergedData, newConfig);
         setSyncStatusMsg({ type: 'success', text: `✅ Connected as @${username} & Smart Merged!` });
       } else {
-        pushToGitHub(budgetData, newConfig);
+        await pushToGitHub(budgetData, newConfig);
         setSyncStatusMsg({ type: 'success', text: `✅ Connected as @${username} & Database Initialized!` });
       }
+      setIsSyncing(false);
     } else {
       setIsSyncing(false);
       setSyncStatusMsg({ type: 'error', text: '❌ Invalid Token. Please check and try again.' });

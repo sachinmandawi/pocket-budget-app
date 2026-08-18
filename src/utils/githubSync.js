@@ -51,11 +51,12 @@ export const fetchGitHubUser = async (token) => {
 
 // Smart 2-Way Merge Helper (Combines offline local entries + cloud entries seamlessly)
 export const mergeBudgetData = (localData, cloudData) => {
+  if (!cloudData && !localData) return null;
   if (!cloudData) return localData;
   if (!localData) return cloudData;
 
-  const localTx = localData.transactions || [];
-  const cloudTx = cloudData.transactions || [];
+  const localTx = Array.isArray(localData.transactions) ? localData.transactions : [];
+  const cloudTx = Array.isArray(cloudData.transactions) ? cloudData.transactions : [];
 
   // Map transactions by unique ID to prevent duplicates
   const txMap = new Map();
@@ -69,13 +70,30 @@ export const mergeBudgetData = (localData, cloudData) => {
   (cloudData.categories || []).forEach(c => { if (c && c.id) catMap.set(c.id, c); });
   (localData.categories || []).forEach(c => { if (c && c.id) catMap.set(c.id, c); });
 
+  // Merge wishlist
+  const wishMap = new Map();
+  (cloudData.wishlist || []).forEach(w => { if (w && w.id) wishMap.set(w.id, w); });
+  (localData.wishlist || []).forEach(w => { if (w && w.id) wishMap.set(w.id, w); });
+
+  // Merge custom currencies
+  const currMap = new Map();
+  (cloudData.customCurrencies || []).forEach(c => { if (c && c.code) currMap.set(c.code, c); });
+  (localData.customCurrencies || []).forEach(c => { if (c && c.code) currMap.set(c.code, c); });
+
   return {
     ...cloudData,
     ...localData,
-    budgetLimit: localData.budgetLimit || cloudData.budgetLimit || 1500,
-    cycleType: localData.cycleType || cloudData.cycleType || 'monthly',
+    monthlyAllowance: Number(localData.monthlyAllowance || cloudData.monthlyAllowance || 0),
+    paydayAnchorDate: Number(localData.paydayAnchorDate || cloudData.paydayAnchorDate || 1),
+    emergencyReserve: Number(localData.emergencyReserve || cloudData.emergencyReserve || 0),
+    isEmergencyUnlocked: Boolean(localData.isEmergencyUnlocked ?? cloudData.isEmergencyUnlocked ?? false),
+    fixedDeductions: Array.isArray(localData.fixedDeductions) && localData.fixedDeductions.length > 0 ? localData.fixedDeductions : (cloudData.fixedDeductions || []),
+    currency: localData.currency || cloudData.currency || { code: 'INR', symbol: '₹', name: 'Indian Rupee', country: 'India', flag: '🇮🇳' },
     categories: Array.from(catMap.values()),
-    transactions: mergedTransactions
+    transactions: mergedTransactions,
+    wishlist: Array.from(wishMap.values()),
+    customCurrencies: Array.from(currMap.values()),
+    archivedCycles: Array.isArray(localData.archivedCycles) && localData.archivedCycles.length > 0 ? localData.archivedCycles : (cloudData.archivedCycles || [])
   };
 };
 

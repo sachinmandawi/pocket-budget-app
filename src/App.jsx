@@ -503,8 +503,6 @@ export default function App() {
             budgetData={data}
             onUpdateBudgetData={(newData) => {
               setData(newData);
-              setActiveSettingPage(null);
-              setActiveTab('daily');
             }}
             onBack={() => setActiveSettingPage('settings_main')}
           />
