@@ -1,4 +1,4 @@
-// Pocket Budget v1.2.0 — Custom Multi-Currency & New Piggy Vault Logo Release
+// Pocket Budget v1.3.0 — In-App Auto-Update & Local Backup Release
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
