@@ -62,35 +62,29 @@ jobs:
       - name: Create or Update GitHub Release v1.3.0
         run: |
           cat << 'EOF' > release-notes.md
-          # 📱 Pocket Budget v1.3.0 — In-App Auto-Update & 1-Click Local Backup Release 🚀✨
+          # 📱 Pocket Budget v1.3.0 🚀✨
 
-          Welcome to **Pocket Budget v1.3.0**! This major update introduces seamless **In-App Auto-Updates**, **1-Click Local Backup (Export & Import JSON)**, full **Timezone-Safe IST Date Tracking**, and a **100% Native Glassmorphic iOS UI** with zero browser alerts.
-
-          ---
-
-          ### ✨ What's New in v1.3.0:
-
-          - 🚀 **In-App Auto-Updates**: Pocket Budget now checks GitHub Releases automatically on launch and lets you update with 1-tap!
-          - 💾 **1-Click Local Backup**: Export & Import your entire database as a JSON file directly on your device, Google Drive, or WhatsApp without needing GitHub tokens.
-          - ☁️ **Enhanced Private Cloud Sync**: Automatic database repository creation with detailed real-time sync feedback.
-          - 🛡️ **Full IST Timezone Safety**: Accurate local date handling with `formatLocalYMD` across midnight and month transitions.
-          - 🎨 **Sleek Native iOS Modals**: Replaced all default browser alerts with custom Apple-style glassmorphic modals.
-          - ⚡ **Performance & Build Optimizations**: Deeply audited with 3,500+ passing automated tests.
+          ### ✨ What's New:
+          - 🚀 **In-App Updates**: 1-tap direct update notifications on launch
+          - 💾 **1-Click Local Backup**: Export & import data as JSON without tokens
+          - ☁️ **Smarter Cloud Sync**: Auto-creates private database with live feedback
+          - 🛡️ **Timezone Precision**: 100% accurate date math across midnight
+          - 🎨 **Clean iOS Modals**: Modern glassmorphic dialogs & smooth toasts
 
           ---
 
           ### 📲 Download APK:
-          Download **`PocketBudget-v1.3.0.apk`** below to install the latest version on Android!
+          Download **`PocketBudget-v1.3.0.apk`** below to install!
           EOF
 
           upload_release() {
             if gh release view v1.3.0 >/dev/null 2>&1; then
               echo "Release v1.3.0 exists. Updating assets and notes..."
-              gh release edit v1.3.0 --title "Pocket Budget v1.3.0 — In-App Auto-Update & Local Backup Release 🚀✨" --notes-file release-notes.md || true
+              gh release edit v1.3.0 --title "Pocket Budget v1.3.0 — In-App Updates & Local Backup 🚀✨" --notes-file release-notes.md || true
               gh release upload v1.3.0 release-assets/PocketBudget-v1.3.0.apk --clobber
             else
               echo "Creating new release v1.3.0..."
-              gh release create v1.3.0 release-assets/PocketBudget-v1.3.0.apk --title "Pocket Budget v1.3.0 — In-App Auto-Update & Local Backup Release 🚀✨" --notes-file release-notes.md
+              gh release create v1.3.0 release-assets/PocketBudget-v1.3.0.apk --title "Pocket Budget v1.3.0 — In-App Updates & Local Backup 🚀✨" --notes-file release-notes.md
             fi
           }
 
