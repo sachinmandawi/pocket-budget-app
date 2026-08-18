@@ -45,8 +45,6 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
     e.preventDefault();
     if (!amount || Number(amount) <= 0) return;
     if (isInsufficient) {
-      const maxVal = spendSource === 'piggy_bank' ? availablePiggyBalance : availableAllowanceCash;
-      alert(`Insufficient balance! Max available: ${currencySymbol}${maxVal}`);
       return;
     }
 

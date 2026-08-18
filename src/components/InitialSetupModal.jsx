@@ -54,7 +54,6 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
 
   const handleRemoveCategory = (id) => {
     if (categories.length <= 1) {
-      alert('Must have at least one category!');
       return;
     }
     setCategories(categories.filter(c => c.id !== id));

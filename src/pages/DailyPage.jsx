@@ -27,7 +27,8 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
   };
 
   const getCategoryInfo = (catId) => {
-    return DEFAULT_CATEGORIES.find(c => c.id === catId) || { name: 'Other', icon: '🏷️', color: '#2563eb' };
+    const activeCats = budgetData?.categories || DEFAULT_CATEGORIES;
+    return activeCats.find(c => c.id === catId) || DEFAULT_CATEGORIES.find(c => c.id === catId) || { name: 'Other', icon: '🏷️', color: '#2563eb' };
   };
 
   return (

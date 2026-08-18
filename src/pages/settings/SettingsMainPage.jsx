@@ -1,9 +1,30 @@
-import React from 'react';
-import { Globe, Palette, RefreshCw, ChevronRight, Github, Bell, Mail } from 'lucide-react';
+import React, { useState } from 'react';
+import { Globe, Palette, RefreshCw, ChevronRight, Github, Bell, Mail, DownloadCloud, CheckCircle2 } from 'lucide-react';
 import { DEFAULT_CURRENCY } from '../../utils/currencies';
+import { CURRENT_APP_VERSION } from '../../utils/versionCheck';
 
-export default function SettingsMainPage({ onNavigateSubPage, budgetData }) {
+export default function SettingsMainPage({ onNavigateSubPage, budgetData, onCheckForUpdates }) {
   const currentCurr = budgetData?.currency || DEFAULT_CURRENCY;
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const [updateStatus, setUpdateStatus] = useState(null);
+
+  const handleUpdateCheckClick = async () => {
+    if (checkingUpdate) return;
+    setCheckingUpdate(true);
+    setUpdateStatus(null);
+    try {
+      const res = await onCheckForUpdates?.();
+      if (res && !res.hasUpdate) {
+        setUpdateStatus('Latest version installed ✅');
+        setTimeout(() => setUpdateStatus(null), 3500);
+      }
+    } catch (e) {
+      setUpdateStatus('Check failed');
+      setTimeout(() => setUpdateStatus(null), 3000);
+    } finally {
+      setCheckingUpdate(false);
+    }
+  };
 
   const menuItems = [
     {
@@ -15,7 +36,7 @@ export default function SettingsMainPage({ onNavigateSubPage, budgetData }) {
     {
       id: 'settings_github',
       title: 'GitHub Cloud Sync',
-      subtitle: 'Private database backup',
+      subtitle: 'Private database backup & local export',
       icon: <Github size={20} color="var(--ios-blue)" />
     },
     {
@@ -93,6 +114,55 @@ export default function SettingsMainPage({ onNavigateSubPage, budgetData }) {
             <ChevronRight size={18} color="var(--text-tertiary)" />
           </div>
         ))}
+
+        {/* Check for App Updates Item */}
+        <div
+          onClick={handleUpdateCheckClick}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '10px 10px',
+            borderRadius: 'var(--radius-md)',
+            cursor: checkingUpdate ? 'wait' : 'pointer',
+            borderTop: '1px solid var(--border-subtle)',
+            transition: 'background 0.15s ease'
+          }}
+          className="menu-item-hover"
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{
+              width: '34px',
+              height: '34px',
+              borderRadius: '8px',
+              background: 'var(--bg-card-subtle)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <DownloadCloud size={20} color="var(--ios-blue)" />
+            </div>
+            <div>
+              <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                App Updates
+              </p>
+              <p style={{ fontSize: '11px', color: updateStatus ? 'var(--ios-green)' : 'var(--text-secondary)', margin: 0, fontWeight: updateStatus ? 700 : 500 }}>
+                {checkingUpdate ? 'Checking GitHub...' : updateStatus || `Version ${CURRENT_APP_VERSION} installed`}
+              </p>
+            </div>
+          </div>
+
+          <span style={{
+            fontSize: '11px',
+            fontWeight: 800,
+            color: 'var(--ios-blue)',
+            background: 'var(--ios-blue-bg)',
+            padding: '3px 8px',
+            borderRadius: 'var(--radius-full)'
+          }}>
+            {checkingUpdate ? 'Checking...' : 'Check'}
+          </span>
+        </div>
       </div>
 
       {/* Premium Developer Support & Feedback Card */}

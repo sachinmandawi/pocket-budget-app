@@ -11,6 +11,7 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState('');
   const [editIcon, setEditIcon] = useState('');
+  const [errorMsg, setErrorMsg] = useState(null);
 
   const presetColors = ['#2563eb', '#10b981', '#ef4444', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4'];
 
@@ -27,7 +28,8 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
 
   const handleRemoveCategory = (id) => {
     if (categories.length <= 1) {
-      alert('Must keep at least one category!');
+      setErrorMsg('Must keep at least one category!');
+      setTimeout(() => setErrorMsg(null), 3000);
       return;
     }
     setCategories(categories.filter(c => c.id !== id));
@@ -271,6 +273,21 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
             </button>
           </div>
         </div>
+
+        {errorMsg && (
+          <div style={{
+            marginBottom: '12px',
+            padding: '10px 14px',
+            borderRadius: 'var(--radius-md)',
+            background: 'var(--ios-red-bg)',
+            color: 'var(--ios-red)',
+            fontSize: '12px',
+            fontWeight: 700,
+            textAlign: 'center'
+          }}>
+            ⚠️ {errorMsg}
+          </div>
+        )}
 
         <button type="submit" className="btn btn-primary" style={{ width: '100%', padding: '14px', fontSize: '14px' }}>
           <Save size={16} /> Save Changes

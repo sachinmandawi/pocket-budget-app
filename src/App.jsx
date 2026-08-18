@@ -21,9 +21,11 @@ import ReminderSettingsPage from './pages/settings/ReminderSettingsPage';
 import CurrencySettingsPage from './pages/settings/CurrencySettingsPage';
 import AllowanceCountdownPage from './pages/AllowanceCountdownPage';
 import PiggyBankVaultPage from './pages/PiggyBankVaultPage';
+import AppUpdateModal from './components/AppUpdateModal';
 
 import { getInitialData, saveData, calculateBudgetStats } from './utils/storage';
 import { pushToGitHub, pullFromGitHub, getGitHubConfig, mergeBudgetData } from './utils/githubSync';
+import { checkForAppUpdate, CURRENT_APP_VERSION } from './utils/versionCheck';
 import { App as CapApp } from '@capacitor/app';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { LayoutDashboard, ReceiptText, Clock, BarChart3, LogOut, CheckCircle2 } from 'lucide-react';
@@ -40,6 +42,10 @@ export default function App() {
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // GitHub Releases In-App Update State
+  const [updateInfo, setUpdateInfo] = useState(null);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   // 1-Time Welcome Onboarding Carousel State
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -64,6 +70,34 @@ export default function App() {
   const handleStartOnboardingSetup = () => {
     setShowOnboarding(false);
     setActiveSettingPage('settings_allowance');
+  };
+
+  // Auto-check GitHub Releases for latest APK version (2.5s after launch)
+  useEffect(() => {
+    let isMounted = true;
+    const timer = setTimeout(async () => {
+      try {
+        const info = await checkForAppUpdate();
+        if (isMounted && info && info.hasUpdate) {
+          setUpdateInfo(info);
+          setShowUpdateModal(true);
+        }
+      } catch (e) {}
+    }, 2500);
+    return () => {
+      isMounted = false;
+      clearTimeout(timer);
+    };
+  }, []);
+
+  const handleManualCheckUpdates = async () => {
+    const info = await checkForAppUpdate();
+    if (info && info.hasUpdate) {
+      setUpdateInfo(info);
+      setShowUpdateModal(true);
+      return { hasUpdate: true, version: info.latestVersion };
+    }
+    return { hasUpdate: false, currentVersion: CURRENT_APP_VERSION };
   };
 
   // Double Back To Exit State
@@ -448,6 +482,7 @@ export default function App() {
           <SettingsMainPage 
             budgetData={data}
             onNavigateSubPage={setActiveSettingPage}
+            onCheckForUpdates={handleManualCheckUpdates}
           />
         )}
 
@@ -610,6 +645,13 @@ export default function App() {
         isOpen={showOnboarding && !showSplash}
         onClose={() => setShowOnboarding(false)}
         onStartSetup={handleStartOnboardingSetup}
+      />
+
+      {/* GitHub Releases In-App Update Modal */}
+      <AppUpdateModal 
+        isOpen={showUpdateModal}
+        updateInfo={updateInfo}
+        onClose={() => setShowUpdateModal(false)}
       />
       {/* Sleek Compact Bottom Auto-Sync Toast Pill */}
       {syncToastMsg && (

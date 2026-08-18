@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, LogOut, KeyRound, Sparkles, Download, Upload, FileJson } from 'lucide-react';
+import { CloudUpload, CloudDownload, ShieldCheck, Github, AlertCircle, LogOut, KeyRound, Sparkles, Download, Upload, FileJson, AlertTriangle, CheckCircle2, X } from 'lucide-react';
 import { getGitHubConfig, saveGitHubConfig, pushToGitHub, pullFromGitHub, fetchGitHubUser, mergeBudgetData, ensurePrivateRepoExists } from '../../utils/githubSync';
 import { formatLocalYMD } from '../../utils/storage';
 import { Capacitor } from '@capacitor/core';
@@ -12,6 +12,7 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncStatusMsg, setSyncStatusMsg] = useState(null);
   const [importStatus, setImportStatus] = useState(null);
+  const [pendingImport, setPendingImport] = useState(null);
   const importFileRef = useRef(null);
 
   const isConfigured = Boolean(config.owner && config.repo && config.token);
@@ -171,26 +172,27 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
           return;
         }
         const txCount = parsed.transactions.length;
-        const confirmed = window.confirm(
-          `Import this backup?\n\n` +
-          `📦 File: ${file.name}\n` +
-          `📋 Transactions: ${txCount}\n` +
-          `💰 Allowance: ${parsed.currency?.symbol || '₹'}${parsed.monthlyAllowance || 0}\n\n` +
-          `⚠️ This will REPLACE your current data!`
-        );
-        if (confirmed) {
-          onUpdateBudgetData(parsed);
-          setImportStatus({ type: 'success', text: `✅ Data imported! ${txCount} transactions restored.` });
-        } else {
-          setImportStatus({ type: 'info', text: 'Import cancelled.' });
-        }
+        setPendingImport({
+          fileName: file.name,
+          txCount,
+          allowance: parsed.monthlyAllowance || 0,
+          currencySymbol: parsed.currency?.symbol || '₹',
+          data: parsed
+        });
       } catch {
         setImportStatus({ type: 'error', text: '❌ Could not read the file. Make sure it is a valid JSON backup.' });
       }
-      // Reset file input so same file can be selected again
       if (importFileRef.current) importFileRef.current.value = '';
     };
     reader.readAsText(file);
+  };
+
+  const handleConfirmImport = () => {
+    if (pendingImport?.data) {
+      onUpdateBudgetData(pendingImport.data);
+      setImportStatus({ type: 'success', text: `✅ Data imported! ${pendingImport.txCount} transactions restored.` });
+    }
+    setPendingImport(null);
   };
 
   return (
@@ -476,6 +478,137 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
           </div>
         )}
       </div>
+
+      {/* Premium iOS Import Confirmation Modal */}
+      {pendingImport && (
+        <div 
+          className="modal-overlay" 
+          onClick={() => setPendingImport(null)}
+          style={{ 
+            animation: 'fadeIn 0.15s ease-out', 
+            zIndex: 9999, 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            padding: '16px' 
+          }}
+        >
+          <div 
+            onClick={e => e.stopPropagation()}
+            style={{ 
+              width: '100%',
+              maxWidth: '340px', 
+              padding: '24px 20px', 
+              textAlign: 'center', 
+              borderRadius: '24px',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-medium)',
+              boxShadow: 'var(--shadow-lg)',
+              animation: 'slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+            }}
+          >
+            {/* Top Icon */}
+            <div style={{
+              width: '52px',
+              height: '52px',
+              borderRadius: '16px',
+              background: 'var(--ios-blue-bg)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 14px',
+              border: '1px solid rgba(37, 99, 235, 0.25)',
+              boxShadow: '0 6px 16px rgba(37, 99, 235, 0.15)'
+            }}>
+              <Upload size={26} color="var(--ios-blue)" />
+            </div>
+
+            <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 6px', lineHeight: 1.2 }}>
+              Import Backup?
+            </h3>
+
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '0 0 14px', fontWeight: 500 }}>
+              Verify backup details before restoring
+            </p>
+
+            {/* Backup Details Summary Card */}
+            <div style={{
+              background: 'var(--bg-card-subtle)',
+              borderRadius: 'var(--radius-md)',
+              padding: '12px 14px',
+              marginBottom: '14px',
+              textAlign: 'left',
+              border: '1px solid var(--border-subtle)'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '12px' }}>
+                <span style={{ color: 'var(--text-tertiary)', fontWeight: 600 }}>File</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 700, maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {pendingImport.fileName}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '12px' }}>
+                <span style={{ color: 'var(--text-tertiary)', fontWeight: 600 }}>Transactions</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 800 }}>
+                  {pendingImport.txCount} records
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+                <span style={{ color: 'var(--text-tertiary)', fontWeight: 600 }}>Pocket Money</span>
+                <span style={{ color: 'var(--ios-blue)', fontWeight: 800 }}>
+                  {pendingImport.currencySymbol}{pendingImport.allowance}
+                </span>
+              </div>
+            </div>
+
+            {/* Warning Note */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: 'var(--ios-orange-bg)',
+              color: 'var(--ios-orange)',
+              padding: '8px 10px',
+              borderRadius: 'var(--radius-sm)',
+              fontSize: '11px',
+              fontWeight: 700,
+              marginBottom: '18px',
+              textAlign: 'left'
+            }}>
+              <AlertTriangle size={14} style={{ flexShrink: 0 }} />
+              <span>This will replace your current local data.</span>
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button 
+                type="button"
+                onClick={() => setPendingImport(null)}
+                className="btn btn-secondary"
+                style={{ flex: 1, padding: '11px', fontSize: '13px', fontWeight: 700 }}
+              >
+                Cancel
+              </button>
+
+              <button 
+                type="button"
+                onClick={handleConfirmImport}
+                className="btn btn-primary"
+                style={{
+                  flex: 1.3,
+                  padding: '11px',
+                  fontSize: '13px',
+                  fontWeight: 800,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px'
+                }}
+              >
+                <CheckCircle2 size={16} /> Import Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
