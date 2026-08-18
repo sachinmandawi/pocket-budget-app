@@ -131,14 +131,23 @@ export const ensurePrivateRepoExists = async (configOverride = null) => {
       });
 
       if (createRes.ok || createRes.status === 201) {
+        // Give GitHub a brief moment to initialize the repo and main branch
+        await new Promise(resolve => setTimeout(resolve, 800));
         return { success: true, created: true };
       } else {
-        const errData = await createRes.json();
-        return { success: false, error: errData.message || 'Auto-creation of private repository failed' };
+        const errData = await createRes.json().catch(() => ({}));
+        return {
+          success: false,
+          error: errData.message || 'Cannot create private repository. Make sure your token has "repo" scope checked.'
+        };
       }
     }
 
-    return { success: false, error: `GitHub check failed with status ${checkRes.status}` };
+    if (checkRes.status === 401 || checkRes.status === 403) {
+      return { success: false, error: 'GitHub Token invalid or missing "repo" scope permission.' };
+    }
+
+    return { success: false, error: `GitHub check failed (status ${checkRes.status})` };
   } catch (err) {
     return { success: false, error: err.message };
   }
@@ -152,7 +161,10 @@ export const pushToGitHub = async (budgetData, configOverride = null) => {
   }
 
   // Ensure private repo exists automatically
-  await ensurePrivateRepoExists(config);
+  const repoRes = await ensurePrivateRepoExists(config);
+  if (!repoRes.success && !repoRes.created) {
+    return { success: false, error: repoRes.error || 'Private repository pocket-budget-db not accessible. Ensure your token has "repo" scope.' };
+  }
 
   const url = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${config.filename}`;
   
@@ -168,8 +180,8 @@ export const pushToGitHub = async (budgetData, configOverride = null) => {
       }
     });
     if (getRes.ok) {
-      const fileInfo = await getRes.json();
-      sha = fileInfo.sha;
+      const fileInfo = await getRes.json().catch(() => ({}));
+      sha = fileInfo.sha || null;
     }
 
     const body = {
@@ -197,7 +209,7 @@ export const pushToGitHub = async (budgetData, configOverride = null) => {
         }
       });
       if (freshGetRes.ok) {
-        const freshFileInfo = await freshGetRes.json();
+        const freshFileInfo = await freshGetRes.json().catch(() => ({}));
         body.sha = freshFileInfo.sha;
         putRes = await fetch(url, {
           method: 'PUT',
@@ -211,15 +223,18 @@ export const pushToGitHub = async (budgetData, configOverride = null) => {
       }
     }
 
-    if (putRes.ok) {
-      const resData = await putRes.json();
+    if (putRes.ok || putRes.status === 201 || putRes.status === 200) {
+      const resData = await putRes.json().catch(() => ({}));
       const newSha = resData.content?.sha || sha;
       const now = new Date().toISOString();
       saveGitHubConfig({ ...config, sha: newSha, lastSyncTime: now });
       return { success: true, sha: newSha, time: now };
     } else {
-      const errData = await putRes.json();
-      return { success: false, error: errData.message || 'Push failed' };
+      const errData = await putRes.json().catch(() => ({}));
+      if (putRes.status === 404) {
+        return { success: false, error: 'Database repository not found. Please ensure your GitHub token has "repo" permission.' };
+      }
+      return { success: false, error: errData.message || `Push failed (Status ${putRes.status})` };
     }
   } catch (err) {
     return { success: false, error: err.message };
@@ -245,7 +260,10 @@ export const pullFromGitHub = async (configOverride = null) => {
 
     if (!res.ok) {
       if (res.status === 404) {
-        return { success: false, error: 'Database file not found in repo' };
+        return { success: false, error: 'Cloud database is empty. Please tap "Push to Cloud" first to upload your data.' };
+      }
+      if (res.status === 401 || res.status === 403) {
+        return { success: false, error: 'Access denied. Please check your GitHub token and "repo" permissions.' };
       }
       return { success: false, error: `GitHub fetch failed: ${res.statusText}` };
     }
