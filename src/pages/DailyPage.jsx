@@ -5,7 +5,7 @@ import { getGitHubConfig } from '../utils/githubSync';
 import { formatCurrencyAmount } from '../utils/currencies';
 import { Cloud, X, ArrowRight } from 'lucide-react';
 
-export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, transactions = [] }) {
+export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, transactions = [], budgetData }) {
   const todayStr = formatLocalYMD(new Date());
   const todayTx = transactions.filter(tx => tx.date === todayStr);
 

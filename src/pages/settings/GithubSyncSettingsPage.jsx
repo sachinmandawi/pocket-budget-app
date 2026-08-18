@@ -479,7 +479,7 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
         )}
       </div>
 
-      {/* Premium iOS Import Confirmation Modal */}
+      {/* Compact iOS Import Confirmation Modal */}
       {pendingImport && (
         <div 
           className="modal-overlay" 
@@ -496,94 +496,69 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
             onClick={e => e.stopPropagation()}
             style={{ 
               width: '100%',
-              maxWidth: '340px', 
-              padding: '24px 20px', 
+              maxWidth: '280px', 
+              padding: '18px 16px', 
               textAlign: 'center', 
-              borderRadius: '24px',
+              borderRadius: '20px',
               background: 'var(--bg-card)',
               border: '1px solid var(--border-medium)',
               boxShadow: 'var(--shadow-lg)',
               animation: 'slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
             }}
           >
-            {/* Top Icon */}
+            {/* Compact Icon */}
             <div style={{
-              width: '52px',
-              height: '52px',
-              borderRadius: '16px',
+              width: '40px',
+              height: '40px',
+              borderRadius: '12px',
               background: 'var(--ios-blue-bg)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 14px',
-              border: '1px solid rgba(37, 99, 235, 0.25)',
-              boxShadow: '0 6px 16px rgba(37, 99, 235, 0.15)'
+              margin: '0 auto 10px',
+              border: '1px solid rgba(37, 99, 235, 0.2)'
             }}>
-              <Upload size={26} color="var(--ios-blue)" />
+              <Upload size={20} color="var(--ios-blue)" />
             </div>
 
-            <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 6px', lineHeight: 1.2 }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 4px', lineHeight: 1.2 }}>
               Import Backup?
             </h3>
 
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '0 0 14px', fontWeight: 500 }}>
-              Verify backup details before restoring
+            <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '0 0 12px' }}>
+              Restore data from selected file
             </p>
 
-            {/* Backup Details Summary Card */}
+            {/* Compact Info Row */}
             <div style={{
               background: 'var(--bg-card-subtle)',
-              borderRadius: 'var(--radius-md)',
-              padding: '12px 14px',
-              marginBottom: '14px',
+              borderRadius: 'var(--radius-sm)',
+              padding: '8px 10px',
+              marginBottom: '10px',
               textAlign: 'left',
-              border: '1px solid var(--border-subtle)'
+              fontSize: '11px'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '12px' }}>
-                <span style={{ color: 'var(--text-tertiary)', fontWeight: 600 }}>File</span>
-                <span style={{ color: 'var(--text-primary)', fontWeight: 700, maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {pendingImport.fileName}
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <span style={{ color: 'var(--text-tertiary)' }}>Transactions</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{pendingImport.txCount} records</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '12px' }}>
-                <span style={{ color: 'var(--text-tertiary)', fontWeight: 600 }}>Transactions</span>
-                <span style={{ color: 'var(--text-primary)', fontWeight: 800 }}>
-                  {pendingImport.txCount} records
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-                <span style={{ color: 'var(--text-tertiary)', fontWeight: 600 }}>Pocket Money</span>
-                <span style={{ color: 'var(--ios-blue)', fontWeight: 800 }}>
-                  {pendingImport.currencySymbol}{pendingImport.allowance}
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: 'var(--text-tertiary)' }}>Pocket Money</span>
+                <span style={{ color: 'var(--ios-blue)', fontWeight: 800 }}>{pendingImport.currencySymbol}{pendingImport.allowance}</span>
               </div>
             </div>
 
-            {/* Warning Note */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              background: 'var(--ios-orange-bg)',
-              color: 'var(--ios-orange)',
-              padding: '8px 10px',
-              borderRadius: 'var(--radius-sm)',
-              fontSize: '11px',
-              fontWeight: 700,
-              marginBottom: '18px',
-              textAlign: 'left'
-            }}>
-              <AlertTriangle size={14} style={{ flexShrink: 0 }} />
-              <span>This will replace your current local data.</span>
-            </div>
+            <p style={{ fontSize: '10px', color: 'var(--ios-orange)', fontWeight: 700, margin: '0 0 14px' }}>
+              ⚠️ This will replace current local data
+            </p>
 
             {/* Actions */}
             <div style={{ display: 'flex', gap: '8px' }}>
               <button 
                 type="button"
                 onClick={() => setPendingImport(null)}
-                className="btn btn-secondary"
-                style={{ flex: 1, padding: '11px', fontSize: '13px', fontWeight: 700 }}
+                className="btn btn-secondary btn-sm"
+                style={{ flex: 1, padding: '9px', fontSize: '12px', fontWeight: 700 }}
               >
                 Cancel
               </button>
@@ -591,19 +566,19 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
               <button 
                 type="button"
                 onClick={handleConfirmImport}
-                className="btn btn-primary"
+                className="btn btn-primary btn-sm"
                 style={{
-                  flex: 1.3,
-                  padding: '11px',
-                  fontSize: '13px',
+                  flex: 1.2,
+                  padding: '9px',
+                  fontSize: '12px',
                   fontWeight: 800,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '6px'
+                  gap: '4px'
                 }}
               >
-                <CheckCircle2 size={16} /> Import Now
+                <CheckCircle2 size={14} /> Import Now
               </button>
             </div>
           </div>
