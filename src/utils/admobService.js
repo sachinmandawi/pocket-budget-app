@@ -1,6 +1,6 @@
 ﻿// Google AdMob Service Utility for Pocket Budget
 import { Capacitor } from '@capacitor/core';
-import { AdMob, BannerAdSize, BannerAdPosition } from '@capacitor-community/admob';
+import { AdMob, BannerAdSize, BannerAdPosition, BannerAdPluginEvents, InterstitialAdPluginEvents, RewardAdPluginEvents } from '@capacitor-community/admob';
 
 // Live Production Ad Unit IDs provided by User
 export const ADMOB_IDS = {
@@ -26,6 +26,27 @@ export const initAdMob = async () => {
   if (isAdMobInitialized) return;
 
   try {
+    // Register AdMob event listeners for real-time tracking
+    AdMob.addListener(BannerAdPluginEvents.Loaded, () => {
+      console.log('[AdMob] ✅ Banner Ad Loaded & Displayed!');
+    });
+
+    AdMob.addListener(BannerAdPluginEvents.FailedToLoad, (err) => {
+      console.warn('[AdMob] ⚠️ Banner Ad Failed To Load (Usually pending AdMob new unit propagation):', err);
+    });
+
+    AdMob.addListener(BannerAdPluginEvents.AdImpression, () => {
+      console.log('[AdMob] 💰 Banner Ad Impression Recorded!');
+    });
+
+    AdMob.addListener(InterstitialAdPluginEvents.Loaded, () => {
+      console.log('[AdMob] ✅ Interstitial Ad Preloaded!');
+    });
+
+    AdMob.addListener(InterstitialAdPluginEvents.FailedToLoad, (err) => {
+      console.warn('[AdMob] ⚠️ Interstitial Failed To Load:', err);
+    });
+
     await AdMob.initialize({
       requestTrackingAuthorization: true,
       testingDevices: []
@@ -69,7 +90,7 @@ export const showStickyBanner = async () => {
 };
 
 /**
- * Hide Bottom Banner Ad (e.g. when full modal is opened if desired)
+ * Hide Bottom Banner Ad
  */
 export const hideStickyBanner = async () => {
   if (!Capacitor.isNativePlatform() || !isBannerShowing) return;
