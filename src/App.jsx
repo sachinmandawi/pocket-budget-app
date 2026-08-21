@@ -22,7 +22,6 @@ import CurrencySettingsPage from './pages/settings/CurrencySettingsPage';
 import AllowanceCountdownPage from './pages/AllowanceCountdownPage';
 import PiggyBankVaultPage from './pages/PiggyBankVaultPage';
 import AppUpdateModal from './components/AppUpdateModal';
-import { initAdMob, showStickyBanner, showSmartInterstitial } from './utils/admobService';
 
 import { getInitialData, saveData, calculateBudgetStats } from './utils/storage';
 import { pushToGitHub, pullFromGitHub, getGitHubConfig, saveGitHubConfig, fetchGitHubUser, mergeBudgetData } from './utils/githubSync';
@@ -92,13 +91,6 @@ export default function App() {
       isMounted = false;
       clearTimeout(timer);
     };
-  }, []);
-
-  // Google AdMob: Initialize SDK and Display Bottom Banner Ad on Android
-  useEffect(() => {
-    initAdMob().then(() => {
-      showStickyBanner();
-    }).catch(() => {});
   }, []);
 
   const handleManualCheckUpdates = async () => {
@@ -395,9 +387,6 @@ export default function App() {
       ]
     };
     setData(updated);
-
-    // Trigger Smart Interstitial Ad
-    showSmartInterstitial().catch(() => {});
   };
 
   const handleDeleteTransaction = (id) => {
