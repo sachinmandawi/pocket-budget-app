@@ -25,7 +25,6 @@ export default function SplashScreen({ fadeOut }) {
           height: '84px', 
           borderRadius: '22px', 
           objectFit: 'contain',
-          boxShadow: '0 12px 35px rgba(37, 99, 235, 0.15)',
           marginBottom: '20px',
           animation: 'pulseLogo 1.5s ease-in-out infinite alternate'
         }} 

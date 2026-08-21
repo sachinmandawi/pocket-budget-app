@@ -82,8 +82,23 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
             <Sliders size={18} color="var(--ios-blue)" />
             Settings
           </h3>
-          <button onClick={onClose} className="btn btn-secondary btn-sm" style={{ width: '32px', height: '32px', padding: 0 }}>
-            <X size={16} />
+          <button 
+            type="button"
+            onClick={onClose} 
+            style={{
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--text-tertiary)',
+              padding: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 'var(--radius-sm)'
+            }}
+            title="Close"
+          >
+            <X size={18} />
           </button>
         </div>
 
@@ -93,24 +108,24 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
           gridTemplateColumns: 'repeat(3, 1fr)',
           gap: '4px',
           background: 'var(--bg-card-subtle)',
-          padding: '4px',
-          borderRadius: 'var(--radius-md)',
-          marginBottom: '20px'
+          padding: '3px',
+          borderRadius: 'var(--radius-sm)',
+          marginBottom: '16px'
         }}>
           <button
             type="button"
             className="nav-item"
             style={{
-              padding: '8px 4px',
+              padding: '6px 4px',
               borderRadius: 'var(--radius-sm)',
               background: activeTab === 'allowance' ? 'var(--bg-card)' : 'transparent',
-              color: activeTab === 'allowance' ? 'var(--ios-blue)' : 'var(--text-secondary)',
-              fontWeight: activeTab === 'allowance' ? 700 : 500,
-              boxShadow: activeTab === 'allowance' ? 'var(--shadow-ios)' : 'none'
+              color: activeTab === 'allowance' ? 'var(--text-primary)' : 'var(--text-tertiary)',
+              fontWeight: activeTab === 'allowance' ? 600 : 400,
+              border: activeTab === 'allowance' ? '1px solid var(--border-subtle)' : '1px solid transparent'
             }}
             onClick={() => setActiveTab('allowance')}
           >
-            <Wallet size={16} />
+            <Wallet size={14} />
             <span style={{ fontSize: '11px' }}>Pocket Money</span>
           </button>
 
@@ -118,16 +133,16 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
             type="button"
             className="nav-item"
             style={{
-              padding: '8px 4px',
+              padding: '6px 4px',
               borderRadius: 'var(--radius-sm)',
               background: activeTab === 'categories' ? 'var(--bg-card)' : 'transparent',
-              color: activeTab === 'categories' ? 'var(--ios-blue)' : 'var(--text-secondary)',
-              fontWeight: activeTab === 'categories' ? 700 : 500,
-              boxShadow: activeTab === 'categories' ? 'var(--shadow-ios)' : 'none'
+              color: activeTab === 'categories' ? 'var(--text-primary)' : 'var(--text-tertiary)',
+              fontWeight: activeTab === 'categories' ? 600 : 400,
+              border: activeTab === 'categories' ? '1px solid var(--border-subtle)' : '1px solid transparent'
             }}
             onClick={() => setActiveTab('categories')}
           >
-            <Tag size={16} />
+            <Tag size={14} />
             <span style={{ fontSize: '11px' }}>Categories</span>
           </button>
 
@@ -135,16 +150,16 @@ export default function InitialSetupModal({ data, onSaveSettings, isOpen, initia
             type="button"
             className="nav-item"
             style={{
-              padding: '8px 4px',
+              padding: '6px 4px',
               borderRadius: 'var(--radius-sm)',
               background: activeTab === 'appearance' ? 'var(--bg-card)' : 'transparent',
-              color: activeTab === 'appearance' ? 'var(--ios-blue)' : 'var(--text-secondary)',
-              fontWeight: activeTab === 'appearance' ? 700 : 500,
-              boxShadow: activeTab === 'appearance' ? 'var(--shadow-ios)' : 'none'
+              color: activeTab === 'appearance' ? 'var(--text-primary)' : 'var(--text-tertiary)',
+              fontWeight: activeTab === 'appearance' ? 600 : 400,
+              border: activeTab === 'appearance' ? '1px solid var(--border-subtle)' : '1px solid transparent'
             }}
             onClick={() => setActiveTab('appearance')}
           >
-            <Moon size={16} />
+            <Moon size={14} />
             <span style={{ fontSize: '11px' }}>Theme</span>
           </button>
         </div>

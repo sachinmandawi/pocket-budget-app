@@ -21,7 +21,11 @@ export default function CustomDropdown({
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, []);
 
   const handleSelect = (val) => {
@@ -49,50 +53,49 @@ export default function CustomDropdown({
           fontWeight: 600,
           cursor: 'pointer',
           transition: 'all 0.2s ease',
-          boxShadow: isOpen ? '0 0 0 3px var(--ios-blue-bg)' : 'none'
+          boxShadow: isOpen ? '0 0 0 2px var(--border-medium)' : 'none'
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          {icon && <span>{icon}</span>}
-          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, flex: 1, marginRight: '6px' }}>
+          {icon && <span style={{ flexShrink: 0 }}>{icon}</span>}
+          <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
             {selectedOption ? selectedOption.label : placeholder}
           </span>
         </div>
 
         <ChevronDown 
-          size={16} 
+          size={15} 
           color="var(--text-tertiary)" 
           style={{ 
+            flexShrink: 0,
             transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)', 
-            transition: 'transform 0.2s ease',
-            shrink: 0 
+            transition: 'transform 0.15s ease'
           }} 
         />
       </button>
 
-      {/* Floating Card Popup Container (Strict overflow:hidden to prevent scrollbar bleeding) */}
+      {/* Floating Card Popup Container */}
       {isOpen && (
         <div
           style={{
             position: 'absolute',
-            top: 'calc(100% + 6px)',
+            top: 'calc(100% + 4px)',
             left: 0,
             right: 0,
             zIndex: 150,
             background: 'var(--bg-card)',
-            border: '1px solid var(--border-bright)',
-            borderRadius: 'var(--radius-md)',
-            boxShadow: '0 16px 40px rgba(0, 0, 0, 0.25)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-sm)',
+            boxShadow: 'var(--shadow-card)',
             overflow: 'hidden',
             animation: 'fadeIn 0.15s ease-out'
           }}
         >
-          {/* Inner Scrollable List with Inset Scrollbar */}
+          {/* Inner Scrollable List */}
           <div style={{
-            maxHeight: '240px',
+            maxHeight: '220px',
             overflowY: 'auto',
-            padding: '6px',
-            paddingRight: '4px'
+            padding: '4px'
           }} className="custom-scrollbar">
             {options.map((opt) => {
               const isSelected = String(opt.value) === String(value);
@@ -104,26 +107,28 @@ export default function CustomDropdown({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '10px 12px',
+                    padding: '8px 10px',
                     borderRadius: 'var(--radius-sm)',
-                    fontSize: '13px',
-                    fontWeight: isSelected ? 700 : 500,
-                    color: isSelected ? 'var(--ios-blue)' : 'var(--text-primary)',
-                    background: isSelected ? 'var(--ios-blue-bg)' : 'transparent',
+                    fontSize: '12px',
+                    fontWeight: isSelected ? 600 : 400,
+                    color: 'var(--text-primary)',
+                    background: isSelected ? 'var(--bg-card-subtle)' : 'transparent',
                     cursor: 'pointer',
-                    transition: 'background 0.15s ease',
-                    marginBottom: '2px'
+                    transition: 'background 0.1s ease',
+                    marginBottom: '1px'
                   }}
                   className="menu-item-hover"
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {opt.icon && <span>{opt.icon}</span>}
                     <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {opt.label}
                     </span>
                   </div>
 
-                  {isSelected && <Check size={16} color="var(--ios-blue)" />}
+                  {isSelected && (
+                    <Check size={13} color="var(--text-primary)" strokeWidth={2.5} />
+                  )}
                 </div>
               );
             })}

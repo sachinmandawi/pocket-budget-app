@@ -80,16 +80,48 @@ export const mergeBudgetData = (localData, cloudData) => {
   (cloudData.customCurrencies || []).forEach(c => { if (c && c.code) currMap.set(c.code, c); });
   (localData.customCurrencies || []).forEach(c => { if (c && c.code) currMap.set(c.code, c); });
 
+  const isLocalEmpty = localTx.length === 0 && Number(localData.monthlyAllowance || 0) === 0;
+  const isCloudEmpty = cloudTx.length === 0 && Number(cloudData.monthlyAllowance || 0) === 0;
+
+  let effectiveMonthlyAllowance = Number(localData.monthlyAllowance || 0);
+  let effectivePayday = Number(localData.paydayAnchorDate || 1);
+  let effectiveReserve = Number(localData.emergencyReserve || 0);
+  let effectiveCategories = Array.from(catMap.values());
+  let effectiveCurrency = localData.currency || { code: 'INR', symbol: '₹', name: 'Indian Rupee', country: 'India', flag: '🇮🇳' };
+  let effectiveDarkMode = Boolean(localData.isDarkMode ?? cloudData.isDarkMode ?? false);
+
+  if (isLocalEmpty && !isCloudEmpty) {
+    // Local app is fresh/empty: Hydrate 100% directly from Cloud
+    effectiveMonthlyAllowance = Number(cloudData.monthlyAllowance || 0);
+    effectivePayday = Number(cloudData.paydayAnchorDate || 1);
+    effectiveReserve = Number(cloudData.emergencyReserve || 0);
+    effectiveCategories = Array.isArray(cloudData.categories) && cloudData.categories.length > 0 ? cloudData.categories : Array.from(catMap.values());
+    effectiveCurrency = cloudData.currency || effectiveCurrency;
+    effectiveDarkMode = Boolean(cloudData.isDarkMode ?? false);
+  } else if (!isLocalEmpty && isCloudEmpty) {
+    // Cloud is fresh/empty: Keep local configuration
+    effectiveMonthlyAllowance = Number(localData.monthlyAllowance || 0);
+    effectivePayday = Number(localData.paydayAnchorDate || 1);
+  } else {
+    // Both sides have data: If local payday is 1 and cloud has a custom payday, preserve cloud payday
+    effectiveMonthlyAllowance = Number(localData.monthlyAllowance || cloudData.monthlyAllowance || 0);
+    effectivePayday = (localData.paydayAnchorDate && localData.paydayAnchorDate !== 1) 
+      ? Number(localData.paydayAnchorDate) 
+      : Number(cloudData.paydayAnchorDate || localData.paydayAnchorDate || 1);
+    effectiveReserve = Number(localData.emergencyReserve || cloudData.emergencyReserve || 0);
+  }
+
   return {
     ...cloudData,
     ...localData,
-    monthlyAllowance: Number(localData.monthlyAllowance || cloudData.monthlyAllowance || 0),
-    paydayAnchorDate: Number(localData.paydayAnchorDate || cloudData.paydayAnchorDate || 1),
-    emergencyReserve: Number(localData.emergencyReserve || cloudData.emergencyReserve || 0),
+    monthlyAllowance: effectiveMonthlyAllowance,
+    paydayAnchorDate: effectivePayday,
+    emergencyReserve: effectiveReserve,
     isEmergencyUnlocked: Boolean(localData.isEmergencyUnlocked ?? cloudData.isEmergencyUnlocked ?? false),
+    isDarkMode: effectiveDarkMode,
     fixedDeductions: Array.isArray(localData.fixedDeductions) && localData.fixedDeductions.length > 0 ? localData.fixedDeductions : (cloudData.fixedDeductions || []),
-    currency: localData.currency || cloudData.currency || { code: 'INR', symbol: '₹', name: 'Indian Rupee', country: 'India', flag: '🇮🇳' },
-    categories: Array.from(catMap.values()),
+    currency: effectiveCurrency,
+    categories: effectiveCategories,
     transactions: mergedTransactions,
     wishlist: Array.from(wishMap.values()),
     customCurrencies: Array.from(currMap.values()),

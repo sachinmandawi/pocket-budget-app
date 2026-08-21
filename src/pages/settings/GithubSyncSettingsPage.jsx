@@ -190,51 +190,30 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
   const handleConfirmImport = () => {
     if (pendingImport?.data) {
       onUpdateBudgetData(pendingImport.data);
-      setImportStatus({ type: 'success', text: `✅ Data imported! ${pendingImport.txCount} transactions restored.` });
+      setImportStatus({ type: 'success', text: `✅ Data imported!` });
     }
     setPendingImport(null);
   };
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-      <div className="ios-card">
+      <div className="notion-card">
         {/* Header Branding Row */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '12px',
-              background: 'var(--bg-card-subtle)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '1px solid var(--border-subtle)'
-            }}>
-              <Github size={22} color="var(--ios-blue)" />
-            </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Github size={18} color="var(--text-primary)" />
             <div>
-              <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0, letterSpacing: '-0.3px', color: 'var(--text-primary)' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: 600, margin: 0, color: 'var(--text-primary)' }}>
                 GitHub Cloud Sync
               </h3>
-              <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>
+              <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', margin: 0 }}>
                 Private Automated Database Backup
               </p>
             </div>
           </div>
 
-          <span style={{
-            fontSize: '11px',
-            fontWeight: 800,
-            background: isConfigured ? 'var(--ios-green-bg)' : 'var(--ios-orange-bg)',
-            color: isConfigured ? 'var(--ios-green)' : 'var(--ios-orange)',
-            padding: '4px 10px',
-            borderRadius: 'var(--radius-full)',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px'
-          }}>
-            {isConfigured ? <ShieldCheck size={13} /> : <AlertCircle size={13} />}
+          <span className={`notion-tag ${isConfigured ? 'notion-tag-green' : 'notion-tag-orange'}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+            {isConfigured ? <ShieldCheck size={11} /> : <AlertCircle size={11} />}
             {isConfigured ? 'Connected' : 'Not Configured'}
           </span>
         </div>
@@ -243,196 +222,152 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
         {isConfigured ? (
           <div style={{
             background: 'var(--bg-card-subtle)',
-            borderRadius: 'var(--radius-md)',
-            padding: '12px 14px',
-            marginBottom: '16px',
+            borderRadius: 'var(--radius-sm)',
+            padding: '10px 12px',
+            marginBottom: '14px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             border: '1px solid var(--border-subtle)'
           }}>
             <div>
-              <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-tertiary)', textTransform: 'uppercase', display: 'block' }}>
+              <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', display: 'block' }}>
                 Connected Repository
               </span>
-              <strong style={{ fontSize: '14px', color: 'var(--text-primary)', fontWeight: 800 }}>
+              <strong style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600 }}>
                 {config.owner} / {config.repo}
               </strong>
             </div>
             <button
               onClick={handleDisconnect}
+              className="notion-tag notion-tag-red"
               style={{
-                background: 'var(--ios-red-bg)',
                 border: 'none',
-                color: 'var(--ios-red)',
-                padding: '4px 10px',
-                borderRadius: 'var(--radius-full)',
-                fontSize: '11px',
-                fontWeight: 700,
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '4px'
+                gap: '3px',
+                fontSize: '11px'
               }}
             >
-              <LogOut size={12} /> Disconnect
+              <LogOut size={11} /> Disconnect
             </button>
           </div>
         ) : (
           <form onSubmit={handleConnectToken} style={{ marginBottom: '16px' }}>
-            <div style={{ marginBottom: '10px' }}>
+            <div style={{ marginBottom: '12px' }}>
               <label style={{
                 fontSize: '11px',
-                fontWeight: 800,
-                color: 'var(--text-tertiary)',
-                textTransform: 'uppercase',
-                marginBottom: '6px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
+                fontWeight: 600,
+                color: 'var(--text-secondary)',
+                display: 'block',
+                marginBottom: '4px'
               }}>
-                <KeyRound size={12} /> GitHub Personal Access Token
+                GitHub Personal Access Token (PAT)
               </label>
               <input
                 type="password"
-                placeholder="Paste token (e.g. ghp_xxxxxxxxxxxx)"
+                required
+                placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
                 value={tokenInput}
-                onChange={(e) => setTokenInput(e.target.value)}
-                className="ios-input"
-                style={{
-                  width: '100%',
-                  padding: '12px 14px',
-                  fontSize: '13px',
-                  fontWeight: 600
-                }}
+                onChange={e => setTokenInput(e.target.value)}
+                className="form-input"
+                style={{ fontSize: '13px', fontFamily: 'monospace', width: '100%' }}
               />
+              <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', marginTop: '4px', display: 'block' }}>
+                Auto-detects your GitHub account & creates a private "pocket-budget-db" repo
+              </span>
             </div>
 
             <button
               type="submit"
               disabled={isSyncing || !tokenInput.trim()}
               className="btn btn-primary"
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                fontSize: '13px',
-                fontWeight: 800,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                opacity: !tokenInput.trim() ? 0.5 : 1
-              }}
+              style={{ width: '100%', padding: '10px', fontSize: '13px', fontWeight: 600 }}
             >
-              <Sparkles size={16} /> Connect & Sync GitHub
+              {isSyncing ? 'Connecting...' : 'Connect GitHub & Sync'}
             </button>
           </form>
         )}
 
-        {/* Dual Manual Action Buttons */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-          <button 
-            onClick={handlePushNow}
-            disabled={isSyncing || !isConfigured}
-            className="btn btn-primary"
-            style={{
-              padding: '12px',
-              fontSize: '13px',
-              fontWeight: 800,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              opacity: !isConfigured ? 0.4 : 1
-            }}
-          >
-            <CloudUpload size={16} /> Push to Cloud
-          </button>
+        {/* Sync Actions Grid */}
+        {isConfigured && (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '10px' }}>
+              <button
+                onClick={handlePullNow}
+                disabled={isSyncing}
+                className="btn btn-secondary"
+                style={{ padding: '9px', fontSize: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+              >
+                <CloudDownload size={14} /> {isSyncing ? 'Syncing...' : 'Pull from Cloud'}
+              </button>
 
-          <button 
-            onClick={handlePullNow}
-            disabled={isSyncing || !isConfigured}
-            className="btn btn-secondary"
-            style={{
-              padding: '12px',
-              fontSize: '13px',
-              fontWeight: 800,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              opacity: !isConfigured ? 0.4 : 1
-            }}
-          >
-            <CloudDownload size={16} /> Pull from Cloud
-          </button>
-        </div>
+              <button
+                onClick={handlePushNow}
+                disabled={isSyncing}
+                className="btn btn-primary"
+                style={{ padding: '9px', fontSize: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+              >
+                <CloudUpload size={14} /> {isSyncing ? 'Syncing...' : 'Push to Cloud'}
+              </button>
+            </div>
 
-        {config.lastSyncTime && (
-          <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', textAlign: 'center', marginTop: '14px', margin: '14px 0 0' }}>
-            Last Synced: {new Date(config.lastSyncTime).toLocaleString()}
-          </p>
+            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', textAlign: 'center' }}>
+              Last Synced: {config.lastSyncTime ? new Date(config.lastSyncTime).toLocaleString() : 'Not yet synced in this session'}
+            </div>
+          </div>
         )}
       </div>
 
-      {/* Sync Status Feedback Toast */}
+      {/* Sync Status Banner */}
       {syncStatusMsg && (
-        <div style={{
-          padding: '12px 14px',
-          borderRadius: 'var(--radius-md)',
-          background: syncStatusMsg.type === 'success' ? 'var(--ios-green-bg)' : syncStatusMsg.type === 'info' ? 'var(--ios-blue-bg)' : 'var(--ios-red-bg)',
-          color: syncStatusMsg.type === 'success' ? 'var(--ios-green)' : syncStatusMsg.type === 'info' ? 'var(--ios-blue)' : 'var(--ios-red)',
-          fontSize: '13px',
-          fontWeight: 800,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px'
-        }}>
+        <div 
+          className="notion-callout"
+          style={{
+            marginTop: '12px',
+            background: syncStatusMsg.type === 'success' ? 'var(--notion-green-bg)' : syncStatusMsg.type === 'info' ? 'var(--notion-blue-bg)' : 'var(--notion-red-bg)',
+            color: syncStatusMsg.type === 'success' ? 'var(--notion-green-text)' : syncStatusMsg.type === 'info' ? 'var(--notion-blue-text)' : 'var(--notion-red-text)',
+            fontSize: '12px',
+            fontWeight: 600
+          }}
+        >
           {syncStatusMsg.text}
         </div>
       )}
 
       {/* ---- Local Import / Export Card ---- */}
-      <div className="ios-card" style={{ marginTop: '16px' }}>
+      <div className="notion-card" style={{ marginTop: '14px' }}>
         {/* Header */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-          <div style={{
-            width: '40px', height: '40px', borderRadius: '12px',
-            background: 'var(--bg-card-subtle)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            border: '1px solid var(--border-subtle)'
-          }}>
-            <FileJson size={22} color="var(--ios-green)" />
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+          <FileJson size={18} color="var(--notion-green-text)" />
           <div>
-            <h3 style={{ fontSize: '16px', fontWeight: 800, margin: 0, letterSpacing: '-0.3px', color: 'var(--text-primary)' }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 600, margin: 0, color: 'var(--text-primary)' }}>
               Local Backup
             </h3>
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>
+            <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', margin: 0 }}>
               Export or import your data as a JSON file
             </p>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
           {/* Export Button */}
           <button
             onClick={handleExport}
             className="btn btn-primary"
             style={{
-              padding: '12px',
-              fontSize: '13px',
-              fontWeight: 800,
+              padding: '10px',
+              fontSize: '12px',
+              fontWeight: 600,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '6px',
-              background: 'var(--ios-green)',
-              boxShadow: '0 3px 10px rgba(52,199,89,0.3)'
+              gap: '6px'
             }}
           >
-            <Download size={16} /> Export JSON
+            <Download size={14} /> Export JSON
           </button>
 
           {/* Import Button */}
@@ -440,16 +375,16 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
             onClick={() => importFileRef.current?.click()}
             className="btn btn-secondary"
             style={{
-              padding: '12px',
-              fontSize: '13px',
-              fontWeight: 800,
+              padding: '10px',
+              fontSize: '12px',
+              fontWeight: 600,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '6px'
             }}
           >
-            <Upload size={16} /> Import JSON
+            <Upload size={14} /> Import JSON
           </button>
 
           {/* Hidden file input */}
@@ -462,24 +397,24 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
           />
         </div>
 
-
         {/* Import/Export Status */}
         {importStatus && (
-          <div style={{
-            marginTop: '12px',
-            padding: '10px 12px',
-            borderRadius: 'var(--radius-md)',
-            background: importStatus.type === 'success' ? 'var(--ios-green-bg)' : importStatus.type === 'info' ? 'var(--ios-blue-bg)' : 'var(--ios-red-bg)',
-            color: importStatus.type === 'success' ? 'var(--ios-green)' : importStatus.type === 'info' ? 'var(--ios-blue)' : 'var(--ios-red)',
-            fontSize: '13px',
-            fontWeight: 800
-          }}>
+          <div 
+            className="notion-callout"
+            style={{
+              marginTop: '10px',
+              background: importStatus.type === 'success' ? 'var(--notion-green-bg)' : importStatus.type === 'info' ? 'var(--notion-blue-bg)' : 'var(--notion-red-bg)',
+              color: importStatus.type === 'success' ? 'var(--notion-green-text)' : importStatus.type === 'info' ? 'var(--notion-blue-text)' : 'var(--notion-red-text)',
+              fontSize: '11px',
+              fontWeight: 600
+            }}
+          >
             {importStatus.text}
           </div>
         )}
       </div>
 
-      {/* Compact iOS Import Confirmation Modal */}
+      {/* Compact Import Confirmation Modal */}
       {pendingImport && (
         <div 
           className="modal-overlay" 
@@ -499,33 +434,33 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
               maxWidth: '280px', 
               padding: '18px 16px', 
               textAlign: 'center', 
-              borderRadius: '20px',
+              borderRadius: '12px',
               background: 'var(--bg-card)',
-              border: '1px solid var(--border-medium)',
-              boxShadow: 'var(--shadow-lg)',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: 'none',
               animation: 'slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
             }}
           >
             {/* Compact Icon */}
             <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '12px',
-              background: 'var(--ios-blue-bg)',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              background: 'var(--bg-card-subtle)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 10px',
-              border: '1px solid rgba(37, 99, 235, 0.2)'
+              margin: '0 auto 8px',
+              border: '1px solid var(--border-subtle)'
             }}>
-              <Upload size={20} color="var(--ios-blue)" />
+              <Upload size={16} color="var(--text-primary)" />
             </div>
 
-            <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 4px', lineHeight: 1.2 }}>
+            <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', margin: '0 0 2px', lineHeight: 1.2 }}>
               Import Backup?
             </h3>
 
-            <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '0 0 12px' }}>
+            <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', margin: '0 0 10px' }}>
               Restore data from selected file
             </p>
 
@@ -536,29 +471,30 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
               padding: '8px 10px',
               marginBottom: '10px',
               textAlign: 'left',
-              fontSize: '11px'
+              fontSize: '11px',
+              border: '1px solid var(--border-subtle)'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '3px' }}>
                 <span style={{ color: 'var(--text-tertiary)' }}>Transactions</span>
-                <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{pendingImport.txCount} records</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{pendingImport.txCount} records</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-tertiary)' }}>Pocket Money</span>
-                <span style={{ color: 'var(--ios-blue)', fontWeight: 800 }}>{pendingImport.currencySymbol}{pendingImport.allowance}</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{pendingImport.currencySymbol}{pendingImport.allowance}</span>
               </div>
             </div>
 
-            <p style={{ fontSize: '10px', color: 'var(--ios-orange)', fontWeight: 700, margin: '0 0 14px' }}>
+            <p style={{ fontSize: '10px', color: 'var(--notion-orange-text)', fontWeight: 600, margin: '0 0 12px' }}>
               ⚠️ This will replace current local data
             </p>
 
             {/* Actions */}
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '6px' }}>
               <button 
                 type="button"
                 onClick={() => setPendingImport(null)}
                 className="btn btn-secondary btn-sm"
-                style={{ flex: 1, padding: '9px', fontSize: '12px', fontWeight: 700 }}
+                style={{ flex: 1, padding: '8px', fontSize: '12px', fontWeight: 600 }}
               >
                 Cancel
               </button>
@@ -569,16 +505,16 @@ export default function GithubSyncSettingsPage({ budgetData, onUpdateBudgetData 
                 className="btn btn-primary btn-sm"
                 style={{
                   flex: 1.2,
-                  padding: '9px',
+                  padding: '8px',
                   fontSize: '12px',
-                  fontWeight: 800,
+                  fontWeight: 600,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '4px'
                 }}
               >
-                <CheckCircle2 size={14} /> Import Now
+                <CheckCircle2 size={13} /> Import Now
               </button>
             </div>
           </div>

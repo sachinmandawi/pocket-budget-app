@@ -5,35 +5,31 @@ export default function Navbar({ onToggleSidebar }) {
   return (
     <div className="app-header-wrapper">
       <header className="app-header">
-        {/* Brand / Left Section */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Hamburger Menu Button for Left Drawer Sidebar */}
+        {/* Brand Header */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Hamburger Menu Button */}
           <button 
             type="button"
             onClick={onToggleSidebar}
             className="btn btn-secondary btn-sm"
-            style={{ width: '36px', height: '36px', padding: 0, borderRadius: '10px' }}
+            style={{ width: '32px', height: '32px', padding: 0, borderRadius: 'var(--radius-sm)' }}
             title="Open Navigation Menu"
           >
-            <Menu size={18} color="var(--ios-blue)" />
+            <Menu size={16} color="var(--text-primary)" />
           </button>
 
           <h1 
             style={{ 
-              fontSize: '18px', 
-              fontWeight: 800, 
+              fontSize: '16px', 
+              fontWeight: 600, 
               color: 'var(--text-primary)', 
-              letterSpacing: '-0.5px',
+              letterSpacing: '-0.3px',
               margin: 0,
               lineHeight: 1
             }}
           >
             Pocket Budget
           </h1>
-        </div>
-
-        {/* Header Right Section */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         </div>
       </header>
     </div>

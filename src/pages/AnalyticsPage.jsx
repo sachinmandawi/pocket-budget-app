@@ -6,10 +6,11 @@ import AnalyticsCharts from '../components/AnalyticsCharts';
 export default function AnalyticsPage({ stats, categories, reserveAmount, isEmergencyUnlocked, onToggleEmergencyLock, currencySymbol = '₹' }) {
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-      {/* Clean Page Title */}
-      <div style={{ marginBottom: '14px' }}>
-        <h2 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px', margin: 0 }}>
-          Monthly Expense Summary 📊
+      {/* Page Header */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+        <span style={{ fontSize: '20px' }}>📊</span>
+        <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+          Monthly Expense Summary
         </h2>
       </div>
 

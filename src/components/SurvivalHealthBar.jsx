@@ -4,16 +4,13 @@ import { HeartPulse, ShieldAlert } from 'lucide-react';
 export default function SurvivalHealthBar({ stats }) {
   const { healthScore = 100, isFastBurn = false, currentDayNumber = 1 } = stats || {};
 
-  let hpColor = 'var(--ios-green)';
-  let hpBg = 'var(--ios-green-bg)';
+  let hpTag = 'notion-tag-green';
   let hpTitle = 'Budget Health';
 
   if (healthScore < 40) {
-    hpColor = 'var(--ios-red)';
-    hpBg = 'var(--ios-red-bg)';
+    hpTag = 'notion-tag-red';
   } else if (healthScore < 70) {
-    hpColor = 'var(--ios-orange)';
-    hpBg = 'var(--ios-orange-bg)';
+    hpTag = 'notion-tag-orange';
   }
 
   const badges = [
@@ -24,44 +21,31 @@ export default function SurvivalHealthBar({ stats }) {
   ];
 
   return (
-    <div className="ios-card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-        <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <HeartPulse size={16} color={hpColor} />
-          {hpTitle}
-        </span>
-        <span style={{ 
-          fontSize: '11px', 
-          fontWeight: 800, 
-          color: hpColor,
-          background: hpBg,
-          padding: '2px 8px',
-          borderRadius: 'var(--radius-full)'
-        }}>
+    <div className="notion-card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <HeartPulse size={15} color="var(--text-primary)" />
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+            {hpTitle}
+          </span>
+        </div>
+        <span className={`notion-tag ${hpTag}`}>
           {healthScore}%
         </span>
       </div>
 
-      <div className="progress-bar-bg" style={{ height: '8px', marginBottom: '12px' }}>
+      <div className="progress-bar-bg" style={{ height: '5px', marginBottom: '10px', borderRadius: '3px' }}>
         <div 
           className="progress-bar-fill"
-          style={{ width: `${healthScore}%`, backgroundColor: hpColor }}
+          style={{ width: `${healthScore}%`, backgroundColor: healthScore < 40 ? 'var(--notion-red-text)' : healthScore < 70 ? 'var(--notion-orange-text)' : 'var(--notion-green-text)', borderRadius: '3px' }}
         />
       </div>
 
       {isFastBurn && (
-        <div style={{
-          background: 'var(--ios-red-bg)',
-          borderRadius: 'var(--radius-md)',
-          padding: '10px 12px',
-          marginBottom: '10px',
-          display: 'flex',
-          gap: '8px',
-          alignItems: 'center'
-        }}>
-          <ShieldAlert size={16} color="var(--ios-red)" />
-          <p style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ios-red)' }}>
-            Fast Burn Alert: High spending rate
+        <div className="notion-callout" style={{ marginBottom: '8px' }}>
+          <ShieldAlert size={15} color="var(--notion-red-text)" />
+          <p style={{ fontSize: '11px', fontWeight: 600, color: 'var(--notion-red-text)', margin: 0 }}>
+            ⚠️ High Spend Alert: Spending faster than daily target
           </p>
         </div>
       )}

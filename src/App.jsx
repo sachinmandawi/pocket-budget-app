@@ -24,7 +24,7 @@ import PiggyBankVaultPage from './pages/PiggyBankVaultPage';
 import AppUpdateModal from './components/AppUpdateModal';
 
 import { getInitialData, saveData, calculateBudgetStats } from './utils/storage';
-import { pushToGitHub, pullFromGitHub, getGitHubConfig, mergeBudgetData } from './utils/githubSync';
+import { pushToGitHub, pullFromGitHub, getGitHubConfig, saveGitHubConfig, fetchGitHubUser, mergeBudgetData } from './utils/githubSync';
 import { checkForAppUpdate, CURRENT_APP_VERSION } from './utils/versionCheck';
 import { App as CapApp } from '@capacitor/app';
 import { LocalNotifications } from '@capacitor/local-notifications';
@@ -40,7 +40,10 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('daily');
   const [activeSettingPage, setActiveSettingPage] = useState(null);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const init = getInitialData();
+    return Boolean(init?.isDarkMode);
+  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // GitHub Releases In-App Update State
@@ -237,14 +240,69 @@ export default function App() {
     };
   }, []);
 
-  // Toggle Dark Mode
+  // Synchronize Dark Mode Class & LocalStorage
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark-theme');
+      localStorage.setItem('pocket_budget_theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark-theme');
+      localStorage.setItem('pocket_budget_theme', 'light');
     }
   }, [isDarkMode]);
+
+  // Sync if data.isDarkMode changes externally (e.g. from cloud pull)
+  useEffect(() => {
+    if (data && typeof data.isDarkMode === 'boolean' && data.isDarkMode !== isDarkMode) {
+      setIsDarkMode(data.isDarkMode);
+    }
+  }, [data?.isDarkMode]);
+
+  const handleToggleDarkMode = (newMode) => {
+    const nextMode = typeof newMode === 'boolean' ? newMode : !isDarkMode;
+    setIsDarkMode(nextMode);
+    setData(prev => {
+      const updated = { ...prev, isDarkMode: nextMode };
+      saveData(updated);
+      return updated;
+    });
+  };
+
+  // Synchronize Daily Spend Reminder with Capacitor LocalNotifications
+  useEffect(() => {
+    const syncLocalNotificationSchedule = async () => {
+      const reminder = data?.reminderSettings;
+      try {
+        await LocalNotifications.cancel({ notifications: [{ id: 1001 }] });
+
+        if (reminder && reminder.enabled !== false) {
+          const timeStr = reminder.time || '20:00';
+          const [hStr, mStr] = timeStr.split(':');
+          const hour = parseInt(hStr || '20', 10);
+          const minute = parseInt(mStr || '0', 10);
+
+          await LocalNotifications.schedule({
+            notifications: [
+              {
+                id: 1001,
+                title: 'Pocket Budget Reminder 🔔',
+                body: "Did you record today's spends? Tap to keep your budget on track!",
+                schedule: {
+                  on: {
+                    hour,
+                    minute
+                  },
+                  allowWhileIdle: true
+                }
+              }
+            ]
+          });
+        }
+      } catch (e) {}
+    };
+
+    syncLocalNotificationSchedule();
+  }, [data?.reminderSettings]);
 
   // Floating Auto-Sync Toast State
   const [syncToastMsg, setSyncToastMsg] = useState(null);
@@ -334,7 +392,16 @@ export default function App() {
   const handleDeleteTransaction = (id) => {
     const updated = {
       ...data,
-      transactions: data.transactions.filter(tx => tx.id !== id)
+      transactions: (data.transactions || []).filter(tx => tx.id !== id)
+    };
+    setData(updated);
+  };
+
+  const handleEditTransaction = (updatedTx) => {
+    if (!updatedTx || !updatedTx.id) return;
+    const updated = {
+      ...data,
+      transactions: (data.transactions || []).map(tx => tx.id === updatedTx.id ? { ...tx, ...updatedTx } : tx)
     };
     setData(updated);
   };
@@ -353,6 +420,14 @@ export default function App() {
     });
   };
 
+  const handleEditWishItem = (updatedItem) => {
+    if (!updatedItem || !updatedItem.id) return;
+    setData({
+      ...data,
+      wishlist: (data.wishlist || []).map(w => w.id === updatedItem.id ? { ...w, ...updatedItem } : w)
+    });
+  };
+
   const handleToggleEmergencyLock = () => {
     setData({
       ...data,
@@ -366,6 +441,7 @@ export default function App() {
       paydayAnchorDate: 1,
       emergencyReserve: 0,
       isEmergencyUnlocked: false,
+      isDarkMode: isDarkMode,
       fixedDeductions: [],
       categories: data.categories,
       archivedCycles: [],
@@ -393,21 +469,22 @@ export default function App() {
         textAlign: 'center'
       }}>
         <div style={{
-          width: '72px',
-          height: '72px',
-          borderRadius: '20px',
-          background: 'var(--ios-green-bg)',
+          width: '56px',
+          height: '56px',
+          borderRadius: 'var(--radius-sm)',
+          background: 'var(--bg-card-subtle)',
+          border: '1px solid var(--border-subtle)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          marginBottom: '16px'
+          marginBottom: '14px'
         }}>
-          <CheckCircle2 size={36} color="var(--ios-green)" />
+          <CheckCircle2 size={28} color="var(--notion-green-text)" />
         </div>
-        <h2 style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '6px' }}>
+        <h2 style={{ fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px' }}>
           App Closed Successfully
         </h2>
-        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '24px' }}>
+        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '20px' }}>
           On mobile APK / PWA, the app exits to your phone home screen.
         </p>
         <button 
@@ -433,21 +510,21 @@ export default function App() {
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 9999,
-          background: 'rgba(15, 23, 42, 0.92)',
-          color: '#ffffff',
-          padding: '10px 20px',
+          background: 'var(--bg-card)',
+          color: 'var(--text-primary)',
+          padding: '6px 14px',
           borderRadius: 'var(--radius-full)',
-          fontSize: '13px',
-          fontWeight: 700,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
-          backdropFilter: 'blur(8px)',
+          fontSize: '12px',
+          fontWeight: 600,
+          boxShadow: 'none',
+          border: '1px solid var(--border-medium)',
           animation: 'fadeIn 0.2s ease-out',
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
+          gap: '6px',
           whiteSpace: 'nowrap'
         }}>
-          <LogOut size={14} color="var(--ios-orange)" />
+          <LogOut size={13} color="var(--notion-orange-text)" />
           <span>Press back again to exit</span>
         </div>
       )}
@@ -553,7 +630,7 @@ export default function App() {
         {activeSettingPage === 'settings_appearance' && (
           <AppearanceSettingsPage 
             isDarkMode={isDarkMode}
-            onToggleDarkMode={() => setIsDarkMode(!isDarkMode)}
+            onToggleDarkMode={handleToggleDarkMode}
             onBack={() => setActiveSettingPage('settings_main')}
           />
         )}
@@ -592,6 +669,8 @@ export default function App() {
             budgetData={data}
             onNavigateToPage={setActiveSettingPage}
             onOpenQuickAdd={() => setIsQuickAddOpen(true)} 
+            onEditTransaction={handleEditTransaction}
+            onDeleteTransaction={handleDeleteTransaction}
           />
         )}
 
@@ -601,6 +680,7 @@ export default function App() {
             transactions={data.transactions || []}
             currencySymbol={stats.currencySymbol}
             onDeleteTransaction={handleDeleteTransaction}
+            onEditTransaction={handleEditTransaction}
             onOpenQuickAdd={() => setIsQuickAddOpen(true)}
             onAddExpense={handleAddExpense}
             archivedCycles={data.archivedCycles || []}
@@ -614,6 +694,7 @@ export default function App() {
             currencySymbol={stats.currencySymbol}
             onAddWishItem={handleAddWishItem}
             onDeleteWishItem={handleDeleteWishItem}
+            onEditWishItem={handleEditWishItem}
           />
         )}
 
@@ -659,15 +740,14 @@ export default function App() {
           left: '50%',
           transform: 'translateX(-50%)',
           zIndex: 9999,
-          background: 'rgba(24, 24, 27, 0.92)',
-          color: '#ffffff',
-          padding: '8px 16px',
+          background: 'var(--bg-card)',
+          color: 'var(--text-primary)',
+          padding: '6px 14px',
           borderRadius: 'var(--radius-full)',
           fontSize: '12px',
-          fontWeight: 700,
-          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
-          backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
+          fontWeight: 600,
+          boxShadow: 'none',
+          border: '1px solid var(--border-medium)',
           display: 'flex',
           alignItems: 'center',
           gap: '6px',

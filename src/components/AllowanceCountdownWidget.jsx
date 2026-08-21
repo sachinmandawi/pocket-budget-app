@@ -47,51 +47,24 @@ export default function AllowanceCountdownWidget({ stats, onClick }) {
   return (
     <div 
       onClick={onClick}
-      className="ios-card" 
+      className="notion-card" 
       style={{
-        padding: '16px 18px',
-        marginBottom: '16px',
-        background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-subtle) 100%)',
-        border: '1px solid var(--border-subtle)',
+        padding: '14px 16px',
+        marginBottom: '12px',
         cursor: onClick ? 'pointer' : 'default'
       }}
     >
       {/* Header Row */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '10px',
-            background: 'var(--ios-blue-bg)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <Clock size={16} color="var(--ios-blue)" />
-          </div>
-          <div>
-            <h4 style={{ fontSize: '13px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.2px' }}>
-              Pocket Money Countdown
-            </h4>
-            <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-              Time until next pocket money credit
-            </span>
-          </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Clock size={15} color="var(--text-primary)" />
+          <h4 style={{ fontSize: '13px', fontWeight: 600, margin: 0, color: 'var(--text-primary)' }}>
+            Pocket Money Countdown
+          </h4>
         </div>
 
-        <span style={{
-          fontSize: '10px',
-          fontWeight: 800,
-          background: 'var(--ios-blue-bg)',
-          color: 'var(--ios-blue)',
-          padding: '3px 8px',
-          borderRadius: 'var(--radius-full)',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '3px'
-        }}>
-          <Sparkles size={11} /> Day {currentDayNumber}/{totalDaysInMonth}
+        <span className="notion-tag notion-tag-gray" style={{ display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+          <Sparkles size={10} /> Day {currentDayNumber}/{totalDaysInMonth}
         </span>
       </div>
 
@@ -110,7 +83,7 @@ export default function AllowanceCountdownWidget({ stats, onClick }) {
           textAlign: 'center',
           border: '1px solid var(--border-subtle)'
         }}>
-          <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--ios-blue)', display: 'block', lineHeight: 1 }}>
+          <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', display: 'block', lineHeight: 1 }}>
             {String(timeLeft.days).padStart(2, '0')}
           </span>
           <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '2px', display: 'block' }}>
@@ -158,7 +131,7 @@ export default function AllowanceCountdownWidget({ stats, onClick }) {
           textAlign: 'center',
           border: '1px solid var(--border-subtle)'
         }}>
-          <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--ios-green)', display: 'block', lineHeight: 1 }}>
+          <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--notion-green-text)', display: 'block', lineHeight: 1 }}>
             {String(timeLeft.seconds).padStart(2, '0')}
           </span>
           <span style={{ fontSize: '9px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '2px', display: 'block' }}>
@@ -169,12 +142,12 @@ export default function AllowanceCountdownWidget({ stats, onClick }) {
 
       {/* Cycle Progress Bar */}
       <div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '4px' }}>
           <span>Month Cycle Progress</span>
-          <span>{Math.round(cycleProgress)}% Complete</span>
+          <span className="notion-tag notion-tag-gray" style={{ fontSize: '9px', padding: '1px 4px' }}>{Math.round(cycleProgress)}%</span>
         </div>
-        <div className="progress-bar-bg" style={{ height: '6px' }}>
-          <div className="progress-bar-fill" style={{ width: `${cycleProgress}%`, backgroundColor: 'var(--ios-blue)' }} />
+        <div className="progress-bar-bg" style={{ height: '5px', borderRadius: '3px' }}>
+          <div className="progress-bar-fill" style={{ width: `${cycleProgress}%`, backgroundColor: 'var(--text-primary)', borderRadius: '3px' }} />
         </div>
       </div>
     </div>

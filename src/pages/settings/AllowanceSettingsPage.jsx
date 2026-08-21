@@ -48,7 +48,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-      <form onSubmit={handleSubmit} className="ios-card" style={{ marginBottom: '24px' }}>
+      <form onSubmit={handleSubmit} className="notion-card" style={{ marginBottom: '24px' }}>
         {/* Monthly Allowance Input */}
         <div className="form-group">
           <label className="form-label">Monthly Pocket Money ({currencySymbol})</label>
@@ -56,7 +56,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
             type="number"
             required
             className="form-input"
-            style={{ fontSize: '16px', fontWeight: 700, color: 'var(--ios-blue)' }}
+            style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}
             value={allowance}
             onChange={e => setAllowance(e.target.value)}
           />
@@ -72,25 +72,25 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
               justifyContent: 'space-between',
               padding: '12px 14px',
               background: 'var(--bg-card-subtle)',
-              borderRadius: 'var(--radius-md)',
+              borderRadius: 'var(--radius-sm)',
               border: '1px solid var(--border-subtle)',
               cursor: 'pointer'
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Calendar size={16} color="var(--ios-blue)" />
+              <Calendar size={15} color="var(--text-primary)" />
               <div>
                 <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', display: 'block', fontWeight: 600 }}>
                   Credit Payday Date
                 </span>
-                <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-blue)' }}>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
                   {paydayAnchorDate}{daySuffix} of every month
                 </span>
               </div>
             </div>
 
-            <button type="button" className="btn btn-secondary btn-sm" style={{ padding: '4px 10px', fontSize: '12px' }}>
-              {showCalendar ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            <button type="button" className="btn btn-secondary btn-sm" style={{ padding: '4px 10px', fontSize: '11px' }}>
+              {showCalendar ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
               {showCalendar ? 'Close' : 'Change Date'}
             </button>
           </div>
@@ -113,7 +113,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
             type="number"
             required
             className="form-input"
-            style={{ fontSize: '16px', fontWeight: 700 }}
+            style={{ fontSize: '16px', fontWeight: 600 }}
             value={emergency}
             onChange={e => setEmergency(e.target.value)}
           />
@@ -123,7 +123,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
         <div className="form-group">
           <label className="form-label">Monthly Fixed Bills (Recharge / Pass)</label>
           {fixedDeductions.length > 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '10px' }}>
               {fixedDeductions.map(item => (
                 <div 
                   key={item.id}
@@ -131,16 +131,17 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    padding: '10px 12px',
+                    padding: '8px 10px',
                     background: 'var(--bg-card-subtle)',
-                    borderRadius: 'var(--radius-md)'
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1px solid var(--border-subtle)'
                   }}
                 >
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>{item.title}</span>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>{item.title}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontWeight: 800, fontSize: '13px', color: 'var(--ios-blue)' }}>{currencySymbol}{item.amount}</span>
-                    <button type="button" onClick={() => handleRemoveFixed(item.id)} className="btn btn-secondary btn-sm" style={{ width: '28px', height: '28px', padding: 0 }}>
-                      <Trash2 size={13} color="var(--ios-red)" />
+                    <span style={{ fontWeight: 600, fontSize: '12px', color: 'var(--text-primary)' }}>{currencySymbol}{item.amount}</span>
+                    <button type="button" onClick={() => handleRemoveFixed(item.id)} className="btn btn-secondary btn-sm" style={{ width: '26px', height: '26px', padding: 0 }}>
+                      <Trash2 size={12} color="var(--notion-red-text)" />
                     </button>
                   </div>
                 </div>

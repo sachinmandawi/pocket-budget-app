@@ -15,6 +15,29 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('pocket_budget_data_v1');
+          var isDark = false;
+          if (saved) {
+            var parsed = JSON.parse(saved);
+            if (parsed && typeof parsed.isDarkMode === 'boolean') {
+              isDark = parsed.isDarkMode;
+            }
+          }
+          if (!isDark) {
+            var themeKey = localStorage.getItem('pocket_budget_theme');
+            if (themeKey === 'dark') isDark = true;
+          }
+          if (isDark) {
+            document.documentElement.classList.add('dark-theme');
+          } else {
+            document.documentElement.classList.remove('dark-theme');
+          }
+        } catch(e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

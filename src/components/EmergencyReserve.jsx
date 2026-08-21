@@ -4,40 +4,36 @@ import { formatCurrencyAmount } from '../utils/currencies';
 
 export default function EmergencyReserve({ reserveAmount, isUnlocked, currentDay, onToggleUnlock, currencySymbol = '₹' }) {
   return (
-    <div className="ios-card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-        <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <HeartHandshake size={16} color="var(--ios-orange)" />
-          Emergency Reserve Vault
-        </span>
+    <div className="notion-card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <HeartHandshake size={15} color="var(--text-primary)" />
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+            Emergency Fund
+          </span>
+        </div>
 
-        <span style={{
-          fontSize: '10px',
-          fontWeight: 700,
-          background: isUnlocked ? 'var(--ios-green-bg)' : 'var(--ios-orange-bg)',
-          color: isUnlocked ? 'var(--ios-green)' : 'var(--ios-orange)',
-          padding: '3px 8px',
-          borderRadius: 'var(--radius-full)'
-        }}>
-          {isUnlocked ? 'Unlocked' : 'Locked (Day 25)'}
+        <span className={`notion-tag ${isUnlocked ? 'notion-tag-green' : 'notion-tag-orange'}`}>
+          {isUnlocked ? 'Unlocked' : 'Locked till Day 25'}
         </span>
       </div>
 
       <div style={{ 
-        background: isUnlocked ? 'var(--ios-green-bg)' : 'var(--ios-orange-bg)', 
+        background: 'var(--bg-card-subtle)', 
         padding: '10px 12px', 
-        borderRadius: 'var(--radius-md)',
+        borderRadius: 'var(--radius-sm)',
+        border: '1px solid var(--border-subtle)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {isUnlocked ? <Unlock size={16} color="var(--ios-green)" /> : <Lock size={16} color="var(--ios-orange)" />}
+          <span style={{ fontSize: '16px' }}>{isUnlocked ? '🔓' : '🔒'}</span>
           <div>
-            <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>
+            <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
               {formatCurrencyAmount(currencySymbol, reserveAmount)}
             </span>
-            <span style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', lineHeight: 1 }}>
+            <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', display: 'block', lineHeight: 1 }}>
               {isUnlocked ? 'Reserve Unlocked' : 'Emergency Fund'}
             </span>
           </div>
@@ -46,9 +42,9 @@ export default function EmergencyReserve({ reserveAmount, isUnlocked, currentDay
         <button 
           onClick={onToggleUnlock}
           className="btn btn-secondary btn-sm"
-          style={{ padding: '6px 12px', fontSize: '12px', borderRadius: 'var(--radius-full)' }}
+          style={{ padding: '4px 10px', fontSize: '11px' }}
         >
-          {isUnlocked ? <Lock size={13} /> : <Unlock size={13} />}
+          {isUnlocked ? <Lock size={12} /> : <Unlock size={12} />}
           {isUnlocked ? 'Lock' : 'Unlock'}
         </button>
       </div>

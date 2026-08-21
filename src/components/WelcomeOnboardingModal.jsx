@@ -55,7 +55,7 @@ export default function WelcomeOnboardingModal({ isOpen, onClose, onStartSetup }
       subtitle: 'Unused daily budget accumulates! 🪙',
       highlights: [
         { icon: '🏦', title: 'Lifetime Savings', desc: 'Saved money carries over month to month' },
-        { icon: '👛', title: 'Dual Spend Source', desc: 'Spend from Main Budget or Piggy Vault' }
+        { icon: '👛', title: 'Dual Spend Source', desc: 'Spend from Main Budget or Piggy Bank' }
       ]
     },
     {
@@ -113,6 +113,7 @@ export default function WelcomeOnboardingModal({ isOpen, onClose, onStartSetup }
   return (
     <div 
       className="modal-overlay" 
+      onClick={handleComplete}
       style={{ 
         animation: 'fadeIn 0.2s ease-out', 
         zIndex: 99999, 
@@ -125,13 +126,13 @@ export default function WelcomeOnboardingModal({ isOpen, onClose, onStartSetup }
         onClick={e => e.stopPropagation()}
         style={{
           width: '100%',
-          maxWidth: '310px',
-          padding: '18px 16px',
+          maxWidth: '280px',
+          padding: '16px',
           textAlign: 'center',
-          borderRadius: '24px',
+          borderRadius: '12px',
           background: 'var(--bg-card)',
-          border: '1px solid var(--border-medium)',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: 'none',
           animation: 'slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
           position: 'relative'
         }}
@@ -141,56 +142,56 @@ export default function WelcomeOnboardingModal({ isOpen, onClose, onStartSetup }
           onClick={handleComplete}
           style={{
             position: 'absolute',
-            top: '12px',
-            right: '12px',
-            background: 'var(--bg-card-subtle)',
+            top: '10px',
+            right: '10px',
+            background: 'transparent',
             border: 'none',
-            borderRadius: '50%',
-            width: '26px',
-            height: '26px',
+            cursor: 'pointer',
+            color: 'var(--text-tertiary)',
+            padding: '4px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            cursor: 'pointer',
-            color: 'var(--text-tertiary)'
+            borderRadius: 'var(--radius-sm)'
           }}
+          title="Close"
         >
-          <X size={14} />
+          <X size={15} />
         </button>
 
         {/* Animated Slide Content */}
         <div key={slide.id} style={{ animation: 'fadeIn 0.15s ease-out' }}>
           {slide.icon}
 
-          <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '2px', letterSpacing: '-0.3px' }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>
             {slide.title}
           </h3>
 
-          <p style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '14px', lineHeight: 1.3 }}>
+          <p style={{ fontSize: '11px', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '12px', lineHeight: 1.3 }}>
             {slide.subtitle}
           </p>
 
           {/* Compact Feature Highlight Cards */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '14px', textAlign: 'left' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '12px', textAlign: 'left' }}>
             {slide.highlights.map((h, i) => (
               <div 
                 key={i}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px',
-                  padding: '7px 10px',
+                  gap: '6px',
+                  padding: '6px 8px',
                   background: 'var(--bg-card-subtle)',
-                  borderRadius: '10px',
+                  borderRadius: 'var(--radius-sm)',
                   border: '1px solid var(--border-subtle)'
                 }}
               >
-                <span style={{ fontSize: '15px', lineHeight: 1, flexShrink: 0 }}>{h.icon}</span>
+                <span style={{ fontSize: '14px', lineHeight: 1, flexShrink: 0 }}>{h.icon}</span>
                 <div>
-                  <h4 style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-primary)', margin: 0, lineHeight: 1.2 }}>
+                  <h4 style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-primary)', margin: 0, lineHeight: 1.2 }}>
                     {h.title}
                   </h4>
-                  <p style={{ fontSize: '10px', color: 'var(--text-tertiary)', margin: 0, lineHeight: 1.2, fontWeight: 500 }}>
+                  <p style={{ fontSize: '10px', color: 'var(--text-tertiary)', margin: 0, lineHeight: 1.2, fontWeight: 400 }}>
                     {h.desc}
                   </p>
                 </div>
@@ -200,58 +201,55 @@ export default function WelcomeOnboardingModal({ isOpen, onClose, onStartSetup }
         </div>
 
         {/* Carousel Pagination Dots */}
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '5px', marginBottom: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '4px', marginBottom: '12px' }}>
           {slides.map((_, i) => (
             <div 
               key={i}
               onClick={() => setCurrentSlide(i)}
               style={{
-                width: i === currentSlide ? '18px' : '6px',
-                height: '6px',
+                width: i === currentSlide ? '14px' : '5px',
+                height: '5px',
                 borderRadius: '3px',
-                background: i === currentSlide ? 'var(--ios-blue)' : 'var(--border-medium)',
+                background: i === currentSlide ? 'var(--text-primary)' : 'var(--border-medium)',
                 cursor: 'pointer',
-                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                transition: 'all 0.15s ease'
               }}
             />
           ))}
         </div>
 
         {/* Compact Action Controls */}
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '6px' }}>
           {currentSlide > 0 && (
             <button
               type="button"
               onClick={handlePrev}
-              className="btn btn-secondary"
-              style={{ flex: 1, padding: '9px', fontSize: '12px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px' }}
+              className="btn btn-secondary btn-sm"
+              style={{ flex: 1, padding: '8px', fontSize: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2px' }}
             >
-              <ChevronLeft size={14} /> Back
+              <ChevronLeft size={13} /> Back
             </button>
           )}
 
           <button
             type="button"
             onClick={handleNext}
-            className="btn btn-primary"
+            className="btn btn-primary btn-sm"
             style={{
               flex: 2,
-              padding: '9px',
+              padding: '8px',
               fontSize: '12px',
-              fontWeight: 800,
+              fontWeight: 600,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '4px',
-              background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-              borderRadius: 'var(--radius-full)',
-              boxShadow: '0 3px 10px rgba(37, 99, 235, 0.3)'
+              gap: '4px'
             }}
           >
             {currentSlide === slides.length - 1 ? (
-              <>🚀 Set Pocket Money <ArrowRight size={14} /></>
+              <>Set Budget <ArrowRight size={13} /></>
             ) : (
-              <>Next <ChevronRight size={14} /></>
+              <>Next <ChevronRight size={13} /></>
             )}
           </button>
         </div>

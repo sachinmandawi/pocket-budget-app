@@ -12,19 +12,21 @@ export default function AnalyticsCharts({ categories = DEFAULT_CATEGORIES, stats
   const projectedMonthSpend = Math.round(avgDailySpend * totalDaysInMonth);
 
   return (
-    <div className="ios-card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-        <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <PieChart size={16} color="var(--ios-blue)" />
-          Category Breakdown
-        </span>
-        <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--ios-blue)', background: 'var(--ios-blue-bg)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
+    <div className="notion-card" style={{ marginBottom: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <PieChart size={15} color="var(--text-primary)" />
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+            Category Breakdown
+          </span>
+        </div>
+        <span className="notion-tag notion-tag-gray">
           Total: {formatCurrencyAmount(currencySymbol, totalSpentThisMonth)}
         </span>
       </div>
 
       {/* Category Progress Bars */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '18px' }}>
         {categories.map(cat => {
           const spent = categoryTotals[cat.id] || 0;
           const percentOfTotal = totalSpentThisMonth > 0 ? Math.round((spent / totalSpentThisMonth) * 100) : 0;
@@ -32,18 +34,18 @@ export default function AnalyticsCharts({ categories = DEFAULT_CATEGORIES, stats
 
           return (
             <div key={cat.id}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', marginBottom: '6px' }}>
-                <span style={{ color: 'var(--text-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '16px' }}>{cat.icon}</span> {cat.name}
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '14px' }}>{cat.icon}</span> {cat.name}
                 </span>
-                <span style={{ fontWeight: 800, color: 'var(--text-primary)' }}>
-                  {formatCurrencyAmount(currencySymbol, spent)} <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontWeight: 600 }}>({percentOfTotal}%)</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                  {formatCurrencyAmount(currencySymbol, spent)} <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 500 }}>({percentOfTotal}%)</span>
                 </span>
               </div>
-              <div className="progress-bar-bg" style={{ height: '8px' }}>
+              <div className="progress-bar-bg" style={{ height: '5px', borderRadius: '3px' }}>
                 <div 
                   className="progress-bar-fill" 
-                  style={{ width: `${barWidth}%`, backgroundColor: cat.color || '#2563eb' }} 
+                  style={{ width: `${barWidth}%`, backgroundColor: cat.color || 'var(--text-primary)', borderRadius: '3px' }} 
                 />
               </div>
             </div>
@@ -55,37 +57,106 @@ export default function AnalyticsCharts({ categories = DEFAULT_CATEGORIES, stats
       <div style={{
         background: 'var(--bg-card-subtle)',
         border: '1px solid var(--border-subtle)',
-        borderRadius: 'var(--radius-md)',
-        padding: '14px'
+        borderRadius: 'var(--radius-sm)',
+        padding: '12px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <TrendingDown size={16} color="var(--ios-blue)" /> Pace Forecast
-          </span>
-          <span style={{
-            fontSize: '11px',
-            fontWeight: 800,
-            color: projectedMonthSpend > monthlyAllowance ? 'var(--ios-red)' : 'var(--ios-green)',
-            background: projectedMonthSpend > monthlyAllowance ? 'var(--ios-red-bg)' : 'var(--ios-green-bg)',
-            padding: '3px 10px',
-            borderRadius: 'var(--radius-full)'
-          }}>
-            {projectedMonthSpend > monthlyAllowance ? 'Over Pace' : 'On Track'}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <TrendingDown size={14} color="var(--text-primary)" />
+            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
+              Monthly Forecast
+            </span>
+          </div>
+          <span className={`notion-tag ${projectedMonthSpend > monthlyAllowance ? 'notion-tag-red' : 'notion-tag-green'}`}>
+            {projectedMonthSpend > monthlyAllowance ? 'Over Budget' : 'On Track'}
           </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-          <div style={{ background: 'var(--bg-card)', padding: '10px 12px', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', display: 'block', fontWeight: 600 }}>Daily Pace</span>
-            <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>{formatCurrencyAmount(currencySymbol, avgDailySpend)}/day</span>
-            <span style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginTop: '2px' }}>Target: {formatCurrencyAmount(currencySymbol, baseDailyTarget)}/day</span>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+          <div style={{ 
+            background: 'var(--bg-card)', 
+            padding: '10px 12px', 
+            borderRadius: 'var(--radius-sm)', 
+            border: '1px solid var(--border-subtle)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            minHeight: '82px'
+          }}>
+            <div>
+              <span style={{ 
+                fontSize: '10px', 
+                color: 'var(--text-tertiary)', 
+                display: 'block', 
+                fontWeight: 600, 
+                textTransform: 'uppercase',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}>
+                Daily Average
+              </span>
+              <span style={{ 
+                fontSize: '16px', 
+                fontWeight: 700, 
+                color: 'var(--text-primary)',
+                display: 'block',
+                marginTop: '4px',
+                lineHeight: 1.1
+              }}>
+                {formatCurrencyAmount(currencySymbol, avgDailySpend)}/day
+              </span>
+            </div>
+            <span style={{ fontSize: '10px', color: 'var(--text-secondary)', display: 'block', marginTop: '6px', whiteSpace: 'nowrap' }}>
+              Daily Target: {formatCurrencyAmount(currencySymbol, baseDailyTarget)}/day
+            </span>
           </div>
 
-          <div style={{ background: 'var(--bg-card)', padding: '10px 12px', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-            <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', display: 'block', fontWeight: 600 }}>Est. Month</span>
-            <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)' }}>{formatCurrencyAmount(currencySymbol, projectedMonthSpend)}</span>
-            <span style={{ fontSize: '11px', color: projectedMonthSpend > monthlyAllowance ? 'var(--ios-red)' : 'var(--ios-green)', display: 'block', fontWeight: 700, marginTop: '2px' }}>
-              {projectedMonthSpend > monthlyAllowance ? `+${formatCurrencyAmount(currencySymbol, projectedMonthSpend - monthlyAllowance)} Over` : `${formatCurrencyAmount(currencySymbol, monthlyAllowance - projectedMonthSpend)} Save`}
+          <div style={{ 
+            background: 'var(--bg-card)', 
+            padding: '10px 12px', 
+            borderRadius: 'var(--radius-sm)', 
+            border: '1px solid var(--border-subtle)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            minHeight: '82px'
+          }}>
+            <div>
+              <span style={{ 
+                fontSize: '10px', 
+                color: 'var(--text-tertiary)', 
+                display: 'block', 
+                fontWeight: 600, 
+                textTransform: 'uppercase',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis'
+              }}>
+                Monthly Estimate
+              </span>
+              <span style={{ 
+                fontSize: '16px', 
+                fontWeight: 700, 
+                color: 'var(--text-primary)',
+                display: 'block',
+                marginTop: '4px',
+                lineHeight: 1.1
+              }}>
+                {formatCurrencyAmount(currencySymbol, projectedMonthSpend)}
+              </span>
+            </div>
+            <span style={{ 
+              fontSize: '10px', 
+              color: projectedMonthSpend > monthlyAllowance ? 'var(--notion-red-text)' : 'var(--notion-green-text)', 
+              display: 'block', 
+              fontWeight: 600, 
+              marginTop: '6px',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }}>
+              {projectedMonthSpend > monthlyAllowance ? `+${formatCurrencyAmount(currencySymbol, projectedMonthSpend - monthlyAllowance)} Overspend` : `${formatCurrencyAmount(currencySymbol, monthlyAllowance - projectedMonthSpend)} Savings`}
             </span>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Check, Save, Plus, Trash2, X } from 'lucide-react';
+import { Search, Check, Plus, Trash2, Edit2, X } from 'lucide-react';
 import { WORLD_CURRENCIES, DEFAULT_CURRENCY } from '../../utils/currencies';
 
 export default function CurrencySettingsPage({ data, onSaveSettings, onBack }) {
@@ -9,12 +9,13 @@ export default function CurrencySettingsPage({ data, onSaveSettings, onBack }) {
   const [selectedCurrency, setSelectedCurrency] = useState(currentCurrency);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCustomCurrency, setEditingCustomCurrency] = useState(null);
 
   // Minimal Custom Form State
   const [symbol, setSymbol] = useState('$');
   const [code, setCode] = useState('USD');
   const [name, setName] = useState('United States');
-  const [flag, setFlag] = useState('🇺🇸');
+  const [flag, setFlag] = useState('🪙');
 
   const allCurrencies = useMemo(() => {
     return [...customCurrencies, ...WORLD_CURRENCIES];
@@ -39,38 +40,76 @@ export default function CurrencySettingsPage({ data, onSaveSettings, onBack }) {
     });
   };
 
-  const handleSave = () => {
-    onSaveSettings({
-      ...data,
-      currency: selectedCurrency
-    });
-    if (onBack) onBack();
+  const handleStartAdd = () => {
+    setEditingCustomCurrency(null);
+    setSymbol('$');
+    setCode('USD');
+    setName('Custom Currency');
+    setFlag('🪙');
+    setIsModalOpen(true);
   };
 
-  const handleAddCustom = (e) => {
+  const handleStartEdit = (curr) => {
+    setEditingCustomCurrency(curr);
+    setSymbol(curr.symbol || '$');
+    setCode(curr.code || 'USD');
+    setName(curr.name || curr.country || '');
+    setFlag(curr.flag || '🪙');
+    setIsModalOpen(true);
+  };
+
+  const handleSaveCustom = (e) => {
     e.preventDefault();
     if (!symbol.trim() || !code.trim()) return;
 
-    const newCurr = {
-      id: 'custom_' + Date.now(),
-      code: code.trim().toUpperCase(),
-      symbol: symbol.trim(),
-      name: name.trim() || `${code.trim().toUpperCase()}`,
-      country: name.trim() || 'Custom',
-      flag: flag.trim() || '🪙',
-      isCustom: true
-    };
+    if (editingCustomCurrency) {
+      const updatedCurr = {
+        ...editingCustomCurrency,
+        code: code.trim().toUpperCase(),
+        symbol: symbol.trim(),
+        name: name.trim() || `${code.trim().toUpperCase()}`,
+        country: name.trim() || 'Custom',
+        flag: flag.trim() || '🪙',
+        isCustom: true
+      };
 
-    const updatedList = [newCurr, ...customCurrencies.filter(c => c.code !== newCurr.code)];
-    
-    setSelectedCurrency(newCurr);
-    onSaveSettings({
-      ...data,
-      customCurrencies: updatedList,
-      currency: newCurr
-    });
+      const updatedList = customCurrencies.map(c => 
+        (c.id === editingCustomCurrency.id || c.code === editingCustomCurrency.code) ? updatedCurr : c
+      );
+
+      let nextSelected = selectedCurrency;
+      if (selectedCurrency.id === editingCustomCurrency.id || selectedCurrency.code === editingCustomCurrency.code) {
+        nextSelected = updatedCurr;
+        setSelectedCurrency(updatedCurr);
+      }
+
+      onSaveSettings({
+        ...data,
+        customCurrencies: updatedList,
+        currency: nextSelected
+      });
+    } else {
+      const newCurr = {
+        id: 'custom_' + Date.now(),
+        code: code.trim().toUpperCase(),
+        symbol: symbol.trim(),
+        name: name.trim() || `${code.trim().toUpperCase()}`,
+        country: name.trim() || 'Custom',
+        flag: flag.trim() || '🪙',
+        isCustom: true
+      };
+
+      const updatedList = [newCurr, ...customCurrencies.filter(c => c.code !== newCurr.code)];
+      setSelectedCurrency(newCurr);
+      onSaveSettings({
+        ...data,
+        customCurrencies: updatedList,
+        currency: newCurr
+      });
+    }
 
     setIsModalOpen(false);
+    setEditingCustomCurrency(null);
   };
 
   const handleDeleteCustom = (e, currId, currCode) => {
@@ -103,121 +142,97 @@ export default function CurrencySettingsPage({ data, onSaveSettings, onBack }) {
 
         <button
           type="button"
-          onClick={handleSave}
-          className="btn btn-primary btn-sm"
-          style={{
-            fontSize: '12px',
-            fontWeight: 800,
-            padding: '6px 14px',
-            borderRadius: 'var(--radius-full)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px'
-          }}
-        >
-          <Save size={13} /> Save
-        </button>
-      </div>
-
-      {/* Search & Add Custom Row */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
-        <div style={{ position: 'relative', flex: 1 }}>
-          <Search size={15} color="var(--text-tertiary)" style={{ position: 'absolute', left: '12px', top: '12px' }} />
-          <input 
-            type="text"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search currency or country..."
-            style={{
-              width: '100%',
-              padding: '9px 30px 9px 34px',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--border-medium)',
-              background: 'var(--bg-card)',
-              color: 'var(--text-primary)',
-              fontSize: '13px',
-              fontWeight: 600,
-              outline: 'none'
-            }}
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery('')}
-              style={{
-                position: 'absolute',
-                right: '10px',
-                top: '9px',
-                background: 'var(--bg-card-subtle)',
-                border: 'none',
-                borderRadius: '50%',
-                width: '18px',
-                height: '18px',
-                fontSize: '10px',
-                color: 'var(--text-secondary)',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              ✕
-            </button>
-          )}
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleStartAdd}
           className="btn btn-secondary btn-sm"
           style={{
-            whiteSpace: 'nowrap',
-            fontSize: '12px',
-            fontWeight: 700,
-            padding: '0 12px',
-            borderRadius: 'var(--radius-md)',
+            fontSize: '11px',
+            fontWeight: 600,
+            padding: '5px 10px',
+            borderRadius: 'var(--radius-sm)',
             display: 'flex',
             alignItems: 'center',
             gap: '4px'
           }}
         >
-          <Plus size={14} color="var(--ios-blue)" /> Custom
+          <Plus size={13} /> Custom
         </button>
       </div>
 
-      {/* Clean Currency List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      {/* Search Input Bar */}
+      <div style={{ position: 'relative', width: '100%', marginBottom: '14px' }}>
+        <Search size={15} color="var(--text-tertiary)" style={{ position: 'absolute', left: '12px', top: '12px' }} />
+        <input 
+          type="text"
+          value={searchQuery}
+          onChange={e => setSearchQuery(e.target.value)}
+          placeholder="Search currency or country..."
+          style={{
+            width: '100%',
+            padding: '9px 30px 9px 34px',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-medium)',
+            background: 'var(--bg-card)',
+            color: 'var(--text-primary)',
+            fontSize: '13px',
+            fontWeight: 600,
+            outline: 'none',
+            boxSizing: 'border-box'
+          }}
+        />
+        {searchQuery && (
+          <button 
+            type="button"
+            onClick={() => setSearchQuery('')}
+            style={{
+              position: 'absolute',
+              right: '10px',
+              top: '9px',
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-tertiary)',
+              cursor: 'pointer',
+              padding: '2px',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            <X size={14} />
+          </button>
+        )}
+      </div>
+
+      {/* Currency List */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
         {filteredCurrencies.map((curr) => {
           const isSelected = selectedCurrency.code === curr.code && selectedCurrency.symbol === curr.symbol;
           return (
             <div
               key={(curr.id || curr.code) + curr.symbol}
               onClick={() => handleSelect(curr)}
-              className="ios-card"
+              className="notion-card"
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                padding: '10px 14px',
-                borderRadius: '12px',
+                padding: '8px 12px',
                 cursor: 'pointer',
-                border: isSelected ? '1.5px solid var(--ios-blue)' : '1px solid var(--border-subtle)',
-                background: isSelected ? 'var(--ios-blue-bg)' : 'var(--bg-card)',
-                transition: 'all 0.15s ease'
+                border: isSelected ? '1px solid var(--text-primary)' : '1px solid var(--border-subtle)',
+                background: isSelected ? 'var(--bg-card-subtle)' : 'var(--bg-card)',
+                transition: 'all 0.1s ease'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <div style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '10px',
-                  background: isSelected ? 'var(--ios-blue)' : 'var(--bg-card-subtle)',
-                  color: isSelected ? '#FFFFFF' : 'var(--ios-blue)',
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: 'var(--radius-sm)',
+                  background: isSelected ? 'var(--text-primary)' : 'var(--bg-card-subtle)',
+                  color: isSelected ? 'var(--bg-app)' : 'var(--text-primary)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '16px',
-                  fontWeight: 800,
+                  fontSize: '14px',
+                  fontWeight: 600,
                   flexShrink: 0
                 }}>
                   {curr.symbol}
@@ -225,90 +240,128 @@ export default function CurrencySettingsPage({ data, onSaveSettings, onBack }) {
 
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '1px' }}>
-                    <span style={{ fontSize: '14px' }}>{curr.flag}</span>
+                    <span style={{ fontSize: '13px' }}>{curr.flag}</span>
                     <span style={{ 
                       fontSize: '13px', 
-                      fontWeight: 800, 
-                      color: isSelected ? 'var(--ios-blue)' : 'var(--text-primary)'
+                      fontWeight: 600, 
+                      color: 'var(--text-primary)'
                     }}>
                       {curr.code}
                     </span>
-                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                    <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
                       — {curr.country}
                     </span>
                     {curr.isCustom && (
-                      <span style={{
-                        fontSize: '9px',
-                        fontWeight: 700,
-                        background: 'var(--ios-orange-bg)',
-                        color: 'var(--ios-orange)',
-                        padding: '1px 5px',
-                        borderRadius: 'var(--radius-full)'
-                      }}>
+                      <span className="notion-tag notion-tag-orange" style={{ fontSize: '9px', padding: '1px 4px' }}>
                         Custom
                       </span>
                     )}
                   </div>
-                  <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontWeight: 600 }}>
+                  <span style={{ fontSize: '10px', color: 'var(--text-tertiary)' }}>
                     {curr.name} ({curr.symbol})
                   </span>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
                 {curr.isCustom && (
-                  <button
-                    type="button"
-                    onClick={(e) => handleDeleteCustom(e, curr.id, curr.code)}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: 'var(--ios-red)',
-                      cursor: 'pointer',
-                      padding: '4px',
-                      borderRadius: '6px'
-                    }}
-                    title="Delete custom currency"
-                  >
-                    <Trash2 size={13} />
-                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleStartEdit(curr);
+                      }}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--text-secondary)',
+                        cursor: 'pointer',
+                        width: '24px',
+                        height: '24px',
+                        padding: 0,
+                        borderRadius: 'var(--radius-sm)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}
+                      title="Edit custom currency"
+                    >
+                      <Edit2 size={13} />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeleteCustom(e, curr.id, curr.code)}
+                      style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--notion-red-text)',
+                        cursor: 'pointer',
+                        width: '24px',
+                        height: '24px',
+                        padding: 0,
+                        borderRadius: 'var(--radius-sm)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}
+                      title="Delete custom currency"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
                 )}
 
-                {isSelected ? (
-                  <div style={{
-                    width: '22px',
-                    height: '22px',
-                    borderRadius: '50%',
-                    background: 'var(--ios-blue)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <Check size={13} color="#FFFFFF" strokeWidth={3} />
-                  </div>
-                ) : (
-                  <div style={{
-                    width: '18px',
-                    height: '18px',
-                    borderRadius: '50%',
-                    border: '1.5px solid var(--border-medium)'
-                  }} />
-                )}
+                <div style={{
+                  width: '24px',
+                  height: '24px',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0
+                }}>
+                  {isSelected ? (
+                    <div style={{
+                      width: '18px',
+                      height: '18px',
+                      borderRadius: '50%',
+                      background: 'var(--text-primary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <Check size={11} color="var(--bg-app)" strokeWidth={3} />
+                    </div>
+                  ) : (
+                    <div style={{
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '50%',
+                      border: '1.5px solid var(--border-medium)'
+                    }} />
+                  )}
+                </div>
               </div>
             </div>
           );
         })}
 
         {filteredCurrencies.length === 0 && (
-          <div className="ios-card" style={{ padding: '24px 16px', textAlign: 'center' }}>
-            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 6px', fontWeight: 600 }}>
+          <div className="notion-card" style={{ padding: '20px 16px', textAlign: 'center' }}>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '0 0 6px', fontWeight: 500 }}>
               No currency found matching "{searchQuery}"
             </p>
             <button
               type="button"
               onClick={() => {
+                setEditingCustomCurrency(null);
                 setCode(searchQuery.toUpperCase().slice(0, 5));
                 setSymbol(searchQuery.slice(0, 3));
+                setName('Custom Currency');
+                setFlag('🪙');
                 setIsModalOpen(true);
               }}
               className="btn btn-primary btn-sm"
@@ -320,105 +373,125 @@ export default function CurrencySettingsPage({ data, onSaveSettings, onBack }) {
         )}
       </div>
 
-      {/* Clean Minimal Modal for Custom Currency */}
+      {/* Compact Modal for Custom Currency */}
       {isModalOpen && (
         <div 
           className="modal-overlay" 
-          onClick={() => setIsModalOpen(false)}
-          style={{ alignItems: 'flex-end', padding: 0 }}
+          onClick={() => {
+            setIsModalOpen(false);
+            setEditingCustomCurrency(null);
+          }}
+          style={{ alignItems: 'center', padding: '16px' }}
         >
           <div 
             className="modal-content" 
             onClick={e => e.stopPropagation()}
             style={{
-              maxWidth: '460px',
+              maxWidth: '320px',
               width: '100%',
-              borderRadius: 'var(--radius-xl) var(--radius-xl) 0 0',
-              padding: '20px',
-              animation: 'slideUp 0.25s ease-out'
+              borderRadius: 'var(--radius-md)',
+              padding: '16px',
+              border: '1px solid var(--border-subtle)',
+              animation: 'slideUp 0.2s ease-out'
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
               <div>
-                <h3 style={{ fontSize: '16px', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-                  Custom Currency
+                <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+                  {editingCustomCurrency ? 'Edit Custom Currency' : 'Custom Currency'}
                 </h3>
-                <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>
-                  Set your preferred symbol & code
+                <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', margin: '2px 0 0' }}>
+                  {editingCustomCurrency ? 'Update currency details & symbol' : 'Set your preferred symbol & code'}
                 </p>
               </div>
               <button 
                 type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="btn-icon" 
-                style={{ background: 'var(--bg-card-subtle)', borderRadius: '50%', width: '28px', height: '28px' }}
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setEditingCustomCurrency(null);
+                }}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-tertiary)',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderRadius: 'var(--radius-sm)'
+                }}
+                title="Close"
               >
-                <X size={15} color="var(--text-primary)" />
+                <X size={15} />
               </button>
             </div>
 
-            <form onSubmit={handleAddCustom}>
-              <div style={{ display: 'grid', gridTemplateColumns: '100px 1fr', gap: '10px', marginBottom: '12px' }}>
+            <form onSubmit={handleSaveCustom}>
+              <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '8px', marginBottom: '10px' }}>
                 <div>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
+                  <label style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '3px' }}>
                     Symbol
                   </label>
                   <input
                     type="text"
+                    inputMode="text"
                     required
                     placeholder="$"
                     maxLength={6}
                     value={symbol}
                     onChange={e => setSymbol(e.target.value)}
                     className="form-input"
-                    style={{ fontSize: '16px', fontWeight: 800, textAlign: 'center', color: 'var(--ios-blue)' }}
-                    autoFocus
+                    style={{ fontSize: '15px', fontWeight: 600, textAlign: 'center' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
+                  <label style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '3px' }}>
                     Code
                   </label>
                   <input
                     type="text"
+                    inputMode="text"
                     required
                     placeholder="USD"
                     maxLength={5}
                     value={code}
                     onChange={e => setCode(e.target.value.toUpperCase())}
                     className="form-input"
-                    style={{ fontSize: '14px', fontWeight: 800 }}
+                    style={{ fontSize: '13px', fontWeight: 600 }}
                   />
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '60px 1fr', gap: '10px', marginBottom: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '50px 1fr', gap: '8px', marginBottom: '14px' }}>
                 <div>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
+                  <label style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '3px' }}>
                     Flag
                   </label>
                   <input
                     type="text"
+                    inputMode="text"
                     maxLength={4}
                     value={flag}
                     onChange={e => setFlag(e.target.value)}
                     className="form-input"
-                    style={{ fontSize: '16px', textAlign: 'center' }}
+                    style={{ fontSize: '15px', textAlign: 'center' }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
+                  <label style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '3px' }}>
                     Country / Name
                   </label>
                   <input
                     type="text"
+                    inputMode="text"
                     placeholder="e.g. United States / USD"
                     value={name}
                     onChange={e => setName(e.target.value)}
                     className="form-input"
-                    style={{ fontSize: '13px' }}
+                    style={{ fontSize: '12px' }}
                   />
                 </div>
               </div>
@@ -426,9 +499,9 @@ export default function CurrencySettingsPage({ data, onSaveSettings, onBack }) {
               <button
                 type="submit"
                 className="btn btn-primary"
-                style={{ width: '100%', padding: '12px', fontSize: '13px', fontWeight: 800, borderRadius: 'var(--radius-md)' }}
+                style={{ width: '100%', padding: '10px', fontSize: '12px', fontWeight: 600 }}
               >
-                <Check size={15} /> Apply & Save Currency
+                <Check size={14} /> {editingCustomCurrency ? 'Update Currency' : 'Apply & Save Currency'}
               </button>
             </form>
           </div>

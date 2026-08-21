@@ -27,7 +27,6 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
   const handleDateSelectFromCalendar = (dateStr) => {
     if (dateStr) {
       setDate(dateStr);
-      setShowDatePicker(false);
     }
   };
 
@@ -66,77 +65,76 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
   };
 
   if (!isOpen) return null;
-
   return (
-    <div className="modal-overlay" style={{ alignItems: 'flex-end', padding: 0 }}>
+    <div className="modal-overlay" style={{ alignItems: 'flex-end', padding: 0 }} onClick={onClose}>
       <div 
         className="modal-content" 
+        onClick={e => e.stopPropagation()} 
         style={{ 
-          maxWidth: '500px', 
+          maxWidth: '480px', 
           width: '100%', 
-          borderRadius: 'var(--radius-xl) var(--radius-xl) 0 0',
-          padding: '24px 20px',
-          animation: 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+          borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
+          padding: '20px 18px',
+          animation: 'slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
           maxHeight: '90vh',
           overflowY: 'auto'
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <div>
-            <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-              Add Daily Expense
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '18px' }}>📝</span>
+            <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+              New Expense
             </h3>
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0 }}>
-              Record your spend seamlessly
-            </p>
           </div>
           <button 
             type="button"
             onClick={onClose} 
-            className="btn-icon" 
             style={{ 
-              background: 'var(--bg-card-subtle)', 
-              borderRadius: '50%',
-              width: '32px',
-              height: '32px',
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--text-tertiary)',
+              cursor: 'pointer',
+              padding: '4px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              borderRadius: 'var(--radius-sm)'
             }}
+            title="Close"
           >
-            <X size={18} color="var(--text-primary)" />
+            <X size={16} />
           </button>
         </div>
 
         <form onSubmit={handleSubmitCustom}>
           {/* Spend Source Selector */}
-          <div style={{ marginBottom: '16px' }}>
-            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
+          <div style={{ marginBottom: '14px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
               Deduct Funds From
             </span>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
               <button
                 type="button"
                 onClick={() => setSpendSource('allowance')}
                 style={{
-                  padding: '10px 8px',
-                  borderRadius: 'var(--radius-md)',
-                  border: spendSource === 'allowance' ? '2px solid var(--ios-blue)' : '1px solid var(--border-medium)',
-                  background: spendSource === 'allowance' ? 'var(--ios-blue-bg)' : 'var(--bg-card-subtle)',
-                  color: spendSource === 'allowance' ? 'var(--ios-blue)' : 'var(--text-primary)',
-                  fontWeight: 800,
+                  padding: '8px 10px',
+                  borderRadius: 'var(--radius-sm)',
+                  border: spendSource === 'allowance' ? '1px solid var(--text-primary)' : '1px solid var(--border-medium)',
+                  background: spendSource === 'allowance' ? 'var(--notion-gray-bg)' : 'transparent',
+                  color: 'var(--text-primary)',
+                  fontWeight: 600,
                   fontSize: '12px',
                   cursor: 'pointer',
                   display: 'flex',
-                  flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '2px',
-                  transition: 'all 0.2s ease'
+                  justifyContent: 'space-between',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 <span>👛 Pocket Money</span>
-                <span style={{ fontSize: '11px', opacity: 0.85, fontWeight: 700 }}>
-                  ({currencySymbol}{availableAllowanceCash})
+                <span className="notion-tag notion-tag-gray" style={{ fontSize: '10px' }}>
+                  {currencySymbol}{availableAllowanceCash}
                 </span>
               </button>
 
@@ -144,41 +142,40 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                 type="button"
                 onClick={() => setSpendSource('piggy_bank')}
                 style={{
-                  padding: '10px 8px',
-                  borderRadius: 'var(--radius-md)',
-                  border: spendSource === 'piggy_bank' ? '2px solid var(--ios-green)' : '1px solid var(--border-medium)',
-                  background: spendSource === 'piggy_bank' ? 'var(--ios-green-bg)' : 'var(--bg-card-subtle)',
-                  color: spendSource === 'piggy_bank' ? 'var(--ios-green)' : 'var(--text-primary)',
-                  fontWeight: 800,
+                  padding: '8px 10px',
+                  borderRadius: 'var(--radius-sm)',
+                  border: spendSource === 'piggy_bank' ? '1px solid var(--notion-green-text)' : '1px solid var(--border-medium)',
+                  background: spendSource === 'piggy_bank' ? 'var(--notion-green-bg)' : 'transparent',
+                  color: spendSource === 'piggy_bank' ? 'var(--notion-green-text)' : 'var(--text-primary)',
+                  fontWeight: 600,
                   fontSize: '12px',
                   cursor: 'pointer',
                   display: 'flex',
-                  flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '2px',
-                  transition: 'all 0.2s ease'
+                  justifyContent: 'space-between',
+                  transition: 'all 0.15s ease'
                 }}
               >
-                <span>🐷 Piggy Vault</span>
-                <span style={{ fontSize: '11px', opacity: 0.85, fontWeight: 700 }}>
-                  ({currencySymbol}{availablePiggyBalance})
+                <span>🐷 Piggy Bank</span>
+                <span className="notion-tag notion-tag-green" style={{ fontSize: '10px' }}>
+                  {currencySymbol}{availablePiggyBalance}
                 </span>
               </button>
             </div>
 
             {/* Validation alerts */}
             {isPiggyInsufficient && (
-              <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ios-red)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
-                ⚠️ Insufficient Vault balance (Max {currencySymbol}{availablePiggyBalance})
+              <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--notion-red-text)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
+                ⚠️ Insufficient Piggy Bank balance (Max {currencySymbol}{availablePiggyBalance})
               </span>
             )}
             {isAllowanceInsufficient && (
-              <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ios-red)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--notion-red-text)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
                 ⚠️ Insufficient Pocket Money balance (Max {currencySymbol}{availableAllowanceCash})
               </span>
             )}
             {isAllowanceOverDailySafe && (
-              <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ios-orange)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--notion-orange-text)', display: 'block', marginTop: '6px', textAlign: 'center' }}>
                 ⚠️ Exceeds daily safe limit (Safe Today: {currencySymbol}{todaysSafe})
               </span>
             )}
@@ -202,8 +199,8 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
             }}>
               <span style={{
                 fontSize: '18px',
-                fontWeight: 800,
-                color: 'var(--ios-red)',
+                fontWeight: 700,
+                color: 'var(--notion-red-text)',
                 marginRight: '10px',
                 userSelect: 'none',
                 flexShrink: 0
@@ -212,6 +209,8 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
               </span>
               <input
                 type="number"
+                inputMode="decimal"
+                pattern="[0-9]*"
                 step="1"
                 required
                 placeholder="0"
@@ -220,15 +219,14 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                   border: 'none',
                   background: 'transparent',
                   fontSize: '22px',
-                  fontWeight: 800,
-                  color: 'var(--ios-red)',
+                  fontWeight: 700,
+                  color: 'var(--notion-red-text)',
                   outline: 'none',
                   padding: 0,
                   width: '100%'
                 }}
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
-                autoFocus
               />
             </div>
           </div>
@@ -252,6 +250,7 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
             </span>
             <input
               type="text"
+              inputMode="text"
               placeholder="e.g. Chai & Snacks"
               className="form-input"
               style={{ fontSize: '14px', height: '44px' }}
@@ -275,19 +274,19 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
                 justifyContent: 'space-between',
                 padding: '12px 14px',
                 background: 'var(--bg-input)',
-                border: showDatePicker ? '1px solid var(--ios-blue)' : 'none',
+                border: showDatePicker ? '1px solid var(--border-medium)' : 'none',
                 borderRadius: 'var(--radius-md)',
                 color: 'var(--text-primary)',
                 fontSize: '14px',
-                fontWeight: 700,
+                fontWeight: 600,
                 cursor: 'pointer'
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CalendarIcon size={16} color="var(--ios-blue)" />
+                <CalendarIcon size={16} color="var(--text-secondary)" />
                 <span>{formatDateReadable(date)}</span>
               </div>
-              <span style={{ fontSize: '12px', color: 'var(--ios-blue)', fontWeight: 700 }}>
+              <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontWeight: 600 }}>
                 {showDatePicker ? 'Close' : 'Change Date'}
               </span>
             </button>
@@ -312,7 +311,7 @@ export default function QuickAddExpense({ categories = DEFAULT_CATEGORIES, onAdd
               padding: '10px 16px', 
               fontSize: '13px', 
               fontWeight: 700,
-              boxShadow: isInsufficient ? 'none' : '0 3px 10px rgba(37, 99, 235, 0.25)',
+              boxShadow: 'none',
               opacity: isInsufficient ? 0.5 : 1,
               cursor: isInsufficient ? 'not-allowed' : 'pointer'
             }}

@@ -1,0 +1,344 @@
+import React, { useState, useEffect } from 'react';
+import { X, CheckCircle2, Calendar as CalendarIcon, Trash2 } from 'lucide-react';
+import { DEFAULT_CATEGORIES, formatDateReadable, formatLocalYMD } from '../utils/storage';
+import InteractiveCalendar from './InteractiveCalendar';
+
+export default function EditExpenseModal({ 
+  isOpen, 
+  onClose, 
+  transaction, 
+  categories = DEFAULT_CATEGORIES, 
+  onSaveEdit, 
+  onDeleteTransaction, 
+  currencySymbol = '₹' 
+}) {
+  const [amount, setAmount] = useState('');
+  const [category, setCategory] = useState('other');
+  const [note, setNote] = useState('');
+  const [date, setDate] = useState('');
+  const [spendSource, setSpendSource] = useState('allowance');
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  useEffect(() => {
+    if (transaction) {
+      setAmount(String(transaction.amount || ''));
+      setCategory(transaction.category || categories[0]?.id || 'other');
+      setNote(transaction.note || '');
+      setDate(transaction.date || formatLocalYMD(new Date()));
+      setSpendSource(transaction.spendSource || 'allowance');
+      setShowDatePicker(false);
+    }
+  }, [transaction, categories]);
+
+  if (!isOpen || !transaction) return null;
+
+  const handleDateSelect = (dateStr) => {
+    if (dateStr) {
+      setDate(dateStr);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!amount || Number(amount) <= 0) return;
+
+    onSaveEdit({
+      ...transaction,
+      amount: Number(amount),
+      category,
+      note: note.trim() || categories.find(c => c.id === category)?.name || 'Expense',
+      date,
+      spendSource
+    });
+
+    onClose();
+  };
+
+  const handleDelete = () => {
+    if (transaction?.id) {
+      onDeleteTransaction(transaction.id);
+      onClose();
+    }
+  };
+
+  return (
+    <div className="modal-overlay" style={{ alignItems: 'flex-end', padding: 0 }} onClick={onClose}>
+      <div 
+        className="modal-content" 
+        onClick={e => e.stopPropagation()}
+        style={{ 
+          maxWidth: '480px', 
+          width: '100%', 
+          borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0',
+          padding: '20px 18px',
+          animation: 'slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+          maxHeight: '90vh',
+          overflowY: 'auto'
+        }}
+      >
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '18px' }}>✏️</span>
+            <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+              Edit Expense
+            </h3>
+          </div>
+          <button 
+            type="button"
+            onClick={onClose} 
+            style={{ 
+              background: 'transparent',
+              border: 'none',
+              color: 'var(--text-tertiary)',
+              cursor: 'pointer',
+              padding: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 'var(--radius-sm)'
+            }}
+            title="Close"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          {/* Amount Input */}
+          <div className="form-group" style={{ marginBottom: '14px' }}>
+            <label className="form-label">Amount ({currencySymbol})</label>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <span style={{
+                position: 'absolute',
+                left: '12px',
+                fontSize: '18px',
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+                pointerEvents: 'none'
+              }}>
+                {currencySymbol}
+              </span>
+              <input
+                type="number"
+                inputMode="decimal"
+                pattern="[0-9]*"
+                step="any"
+                required
+                placeholder="0"
+                className="form-input"
+                style={{
+                  fontSize: '22px',
+                  fontWeight: 700,
+                  paddingLeft: '32px',
+                  height: '48px',
+                  color: 'var(--text-primary)'
+                }}
+                value={amount}
+                onChange={e => setAmount(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {/* Spend Source Toggle */}
+          <div className="form-group" style={{ marginBottom: '14px' }}>
+            <label className="form-label">Deduct From</label>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={() => setSpendSource('allowance')}
+                className="btn"
+                style={{
+                  padding: '8px 10px',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  borderRadius: 'var(--radius-sm)',
+                  border: spendSource === 'allowance' ? '2px solid var(--text-primary)' : '1px solid var(--border-medium)',
+                  background: spendSource === 'allowance' ? 'var(--bg-card-subtle)' : 'transparent',
+                  color: 'var(--text-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                👛 Pocket Money
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSpendSource('piggy_bank')}
+                className="btn"
+                style={{
+                  padding: '8px 10px',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  borderRadius: 'var(--radius-sm)',
+                  border: spendSource === 'piggy_bank' ? '2px solid var(--text-primary)' : '1px solid var(--border-medium)',
+                  background: spendSource === 'piggy_bank' ? 'var(--bg-card-subtle)' : 'transparent',
+                  color: 'var(--text-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  cursor: 'pointer'
+                }}
+              >
+                🐷 Piggy Bank
+              </button>
+            </div>
+          </div>
+
+          {/* Category Picker */}
+          <div className="form-group" style={{ marginBottom: '14px' }}>
+            <label className="form-label">Category</label>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '6px',
+              maxHeight: '140px',
+              overflowY: 'auto',
+              padding: '2px'
+            }}>
+              {categories.map(cat => {
+                const isSelected = category === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setCategory(cat.id)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      padding: '7px 8px',
+                      borderRadius: 'var(--radius-sm)',
+                      background: isSelected ? 'var(--text-primary)' : 'var(--bg-card-subtle)',
+                      color: isSelected ? 'var(--bg-app)' : 'var(--text-primary)',
+                      border: isSelected ? '1px solid var(--text-primary)' : '1px solid var(--border-subtle)',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}
+                  >
+                    <span>{cat.icon}</span>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{cat.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Description / Note */}
+          <div className="form-group" style={{ marginBottom: '14px' }}>
+            <label className="form-label">Description / Note</label>
+            <input
+              type="text"
+              inputMode="text"
+              placeholder="e.g. Swiggy lunch, Tea & Samosa"
+              className="form-input"
+              style={{ fontSize: '13px' }}
+              value={note}
+              onChange={e => setNote(e.target.value)}
+            />
+          </div>
+
+          {/* Date Picker Button */}
+          <div className="form-group" style={{ marginBottom: '16px' }}>
+            <label className="form-label">Date</label>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={() => setShowDatePicker(!showDatePicker)}
+                className="btn btn-secondary"
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '9px 12px',
+                  fontSize: '12px',
+                  borderRadius: 'var(--radius-md)',
+                  textAlign: 'left'
+                }}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <CalendarIcon size={14} color="var(--text-secondary)" />
+                  {formatDateReadable(date)}
+                </span>
+                <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>Change</span>
+              </button>
+            </div>
+
+            {showDatePicker && (
+              <div style={{ marginTop: '10px' }}>
+                <InteractiveCalendar
+                  selectedDate={date}
+                  onSelectDate={handleDateSelect}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Action Buttons */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{
+                width: '100%',
+                padding: '11px',
+                fontSize: '13px',
+                fontWeight: 700,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px'
+              }}
+            >
+              <CheckCircle2 size={16} /> Save Changes
+            </button>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="btn btn-secondary"
+                style={{
+                  padding: '9px',
+                  fontSize: '12px',
+                  fontWeight: 600,
+                  color: 'var(--notion-red-text)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '5px'
+                }}
+              >
+                <Trash2 size={13} /> Delete
+              </button>
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn btn-secondary"
+                style={{
+                  padding: '9px',
+                  fontSize: '12px',
+                  fontWeight: 600
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

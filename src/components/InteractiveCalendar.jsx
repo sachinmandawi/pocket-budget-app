@@ -1,10 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon } from 'lucide-react';
 import { formatLocalYMD } from '../utils/storage';
 
-export default function InteractiveCalendar({ selectedDate, onSelectDate, paydayDay = 1 }) {
-  const initialDate = selectedDate ? new Date(selectedDate) : new Date();
-  const [viewDate, setViewDate] = useState(initialDate);
+const parseLocalYMD = (str) => {
+  if (!str) return new Date();
+  if (typeof str === 'string' && str.includes('-')) {
+    const parts = str.split('-');
+    if (parts.length === 3) {
+      const y = parseInt(parts[0], 10);
+      const m = parseInt(parts[1], 10) - 1;
+      const d = parseInt(parts[2], 10);
+      if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+        return new Date(y, m, d);
+      }
+    }
+  }
+  const d = new Date(str);
+  return isNaN(d.getTime()) ? new Date() : d;
+};
+
+export default function InteractiveCalendar({ selectedDate, onSelectDate, paydayDay = null }) {
+  const [viewDate, setViewDate] = useState(() => parseLocalYMD(selectedDate));
+
+  useEffect(() => {
+    if (selectedDate) {
+      setViewDate(parseLocalYMD(selectedDate));
+    }
+  }, [selectedDate]);
 
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();
@@ -60,29 +82,35 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
     });
   }
 
+  const handleSelectQuick = (str, day) => {
+    if (onSelectDate) {
+      onSelectDate(str, day);
+    }
+  };
+
   return (
     <div style={{
       background: 'var(--bg-card)',
       border: '1px solid var(--border-subtle)',
-      borderRadius: 'var(--radius-lg)',
-      padding: '12px 14px',
+      borderRadius: 'var(--radius-md)',
+      padding: '10px 12px',
       width: '100%',
-      boxShadow: 'var(--shadow-ios)'
+      boxShadow: 'var(--shadow-sm)'
     }}>
       {/* Calendar Header Navigation */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
         <button 
           type="button"
           onClick={handlePrevMonth}
           className="btn btn-secondary btn-sm"
-          style={{ width: '30px', height: '30px', padding: 0 }}
+          style={{ width: '26px', height: '26px', padding: 0 }}
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={14} />
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <CalendarIcon size={15} color="var(--ios-blue)" />
-          <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>
+          <CalendarIcon size={14} color="var(--text-primary)" />
+          <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)' }}>
             {monthNames[month]} {year}
           </span>
         </div>
@@ -91,9 +119,9 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
           type="button"
           onClick={handleNextMonth}
           className="btn btn-secondary btn-sm"
-          style={{ width: '30px', height: '30px', padding: 0 }}
+          style={{ width: '26px', height: '26px', padding: 0 }}
         >
-          <ChevronRight size={16} />
+          <ChevronRight size={14} />
         </button>
       </div>
 
@@ -103,13 +131,13 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
         gridTemplateColumns: 'repeat(7, 1fr)',
         gap: '2px',
         textAlign: 'center',
-        marginBottom: '6px'
+        marginBottom: '4px'
       }}>
         {dayNames.map((d, index) => (
           <span key={d} style={{
-            fontSize: '11px',
-            fontWeight: 800,
-            color: index === 0 ? 'var(--ios-red)' : 'var(--text-tertiary)',
+            fontSize: '10px',
+            fontWeight: 700,
+            color: index === 0 ? 'var(--notion-red-text)' : 'var(--text-tertiary)',
             textTransform: 'uppercase'
           }}>
             {d}
@@ -129,13 +157,13 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
               <div 
                 key={idx} 
                 style={{
-                  height: '32px',
+                  height: '28px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '12px',
+                  fontSize: '11px',
                   color: 'var(--text-tertiary)',
-                  opacity: 0.35
+                  opacity: 0.3
                 }}
               >
                 {cell.day}
@@ -143,20 +171,24 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
             );
           }
 
-          const isPaydaySelected = cell.day === paydayDay;
+          // Accurate selection checking:
+          // 1. If selectedDate is provided (e.g. '2026-08-21'), match dateStr exactly
+          // 2. If paydayDay is provided (e.g. 15), match day number
+          const isSelected = selectedDate 
+            ? cell.dateStr === selectedDate 
+            : (paydayDay !== null && paydayDay !== undefined ? cell.day === Number(paydayDay) : false);
+
           const isToday = cell.dateStr === todayStr;
 
           let bg = 'transparent';
           let textColor = 'var(--text-primary)';
           let borderStyle = 'none';
-          let shadowStyle = 'none';
 
-          if (isPaydaySelected) {
-            bg = 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)';
-            textColor = '#ffffff';
-            shadowStyle = '0 4px 12px rgba(37, 99, 235, 0.4)';
+          if (isSelected) {
+            bg = 'var(--text-primary)';
+            textColor = 'var(--bg-app)';
           } else if (isToday) {
-            bg = 'var(--ios-blue-bg)';
+            bg = 'var(--bg-card-subtle)';
             textColor = 'var(--ios-blue)';
             borderStyle = '1.5px solid var(--ios-blue)';
           }
@@ -165,21 +197,20 @@ export default function InteractiveCalendar({ selectedDate, onSelectDate, payday
             <button
               key={idx}
               type="button"
-              onClick={() => onSelectDate(cell.dateStr, cell.day)}
+              onClick={() => handleSelectQuick(cell.dateStr, cell.day)}
               style={{
-                height: '32px',
-                borderRadius: '8px',
+                height: '28px',
+                borderRadius: 'var(--radius-sm)',
                 border: borderStyle,
                 background: bg,
                 color: textColor,
                 fontSize: '12px',
-                fontWeight: isPaydaySelected || isToday ? 800 : 600,
+                fontWeight: isSelected ? 700 : (isToday ? 700 : 500),
                 cursor: 'pointer',
-                transition: 'all 0.15s ease',
+                transition: 'all 0.1s ease',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: shadowStyle
+                justifyContent: 'center'
               }}
             >
               {cell.day}

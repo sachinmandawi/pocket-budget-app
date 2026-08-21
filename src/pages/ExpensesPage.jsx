@@ -6,6 +6,7 @@ export default function ExpensesPage({
   categories, 
   transactions, 
   onDeleteTransaction, 
+  onEditTransaction,
   onOpenQuickAdd, 
   archivedCycles = [],
   cyclePeriodLabel = 'Current Cycle',
@@ -13,28 +14,29 @@ export default function ExpensesPage({
 }) {
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-      {/* Sleek Top Header Bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-        <div>
-          <h2 style={{ fontSize: '17px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.4px', margin: 0, lineHeight: 1.2 }}>
-            Expenses & History
-          </h2>
-          <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px', margin: 0 }}>
-            Track and filter all cycle transactions
-          </p>
+      {/* Page Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '20px' }}>📋</span>
+          <div>
+            <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+              Expenses & History
+            </h2>
+            <p style={{ fontSize: '11px', color: 'var(--text-tertiary)', margin: '1px 0 0' }}>
+              Track and filter all cycle transactions
+            </p>
+          </div>
         </div>
 
         <button 
           onClick={onOpenQuickAdd} 
           className="btn btn-primary btn-sm"
           style={{
-            padding: '6px 13px',
-            fontSize: '12px',
-            borderRadius: 'var(--radius-full)',
-            boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)'
+            padding: '5px 10px',
+            fontSize: '12px'
           }}
         >
-          <PlusCircle size={14} /> Log Spend
+          <PlusCircle size={13} /> Log Spend
         </button>
       </div>
 
@@ -42,6 +44,7 @@ export default function ExpensesPage({
         categories={categories}
         transactions={transactions}
         onDeleteTransaction={onDeleteTransaction}
+        onEditTransaction={onEditTransaction}
         archivedCycles={archivedCycles}
         cyclePeriodLabel={cyclePeriodLabel}
         currencySymbol={currencySymbol}

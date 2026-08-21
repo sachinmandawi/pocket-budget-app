@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
-  X, 
+  ChevronLeft, 
   LayoutDashboard, 
   ReceiptText, 
   Clock, 
@@ -20,7 +20,34 @@ export default function Sidebar({
   onNavigateTab, 
   onNavigateSettingPage 
 }) {
-  if (!isOpen) return null;
+  const [visible, setVisible] = useState(isOpen);
+  const [active, setActive] = useState(isOpen);
+
+  useEffect(() => {
+    let timer;
+    if (isOpen) {
+      setVisible(true);
+      // Double rAF ensures the browser paints initial -100% position before transitioning to 0
+      const id1 = requestAnimationFrame(() => {
+        const id2 = requestAnimationFrame(() => {
+          setActive(true);
+        });
+        timer = id2;
+      });
+      return () => {
+        cancelAnimationFrame(id1);
+        if (timer) cancelAnimationFrame(timer);
+      };
+    } else {
+      setActive(false);
+      const timeout = setTimeout(() => {
+        setVisible(false);
+      }, 290);
+      return () => clearTimeout(timeout);
+    }
+  }, [isOpen]);
+
+  if (!visible && !isOpen) return null;
 
   const navSections = [
     {
@@ -31,40 +58,40 @@ export default function Sidebar({
           type: 'tab',
           target: 'daily',
           label: 'Daily Dashboard',
-          icon: <LayoutDashboard size={18} color="var(--ios-blue)" />
+          icon: <LayoutDashboard size={18} color="var(--text-secondary)" />
         },
         {
           id: 'tab_expenses',
           type: 'tab',
           target: 'expenses',
           label: 'Expenses Log',
-          icon: <ReceiptText size={18} color="var(--ios-blue)" />
+          icon: <ReceiptText size={18} color="var(--text-secondary)" />
         }
       ]
     },
     {
-      title: 'SAVINGS & VAULTS',
+      title: 'SAVINGS',
       items: [
         {
           id: 'page_piggy_bank',
           type: 'page',
           target: 'piggy_bank',
-          label: 'Piggy Savings',
+          label: 'Piggy Bank',
           icon: <span style={{ fontSize: '16px' }}>🐷</span>
         },
         {
           id: 'page_allowance_countdown',
           type: 'page',
           target: 'allowance_countdown',
-          label: 'Next Payday Clock',
-          icon: <Clock size={18} color="var(--ios-blue)" />
+          label: 'Pocket Money Clock',
+          icon: <Clock size={18} color="var(--text-secondary)" />
         },
         {
           id: 'tab_cooloff',
           type: 'tab',
           target: 'cooloff',
           label: 'Shopping Wishlist',
-          icon: <Flame size={18} color="var(--ios-orange)" />
+          icon: <Flame size={18} color="var(--notion-orange-text)" />
         }
       ]
     },
@@ -76,28 +103,28 @@ export default function Sidebar({
           type: 'page',
           target: 'settings_allowance',
           label: 'Pocket Money & Payday',
-          icon: <Calendar size={18} color="var(--ios-blue)" />
+          icon: <Calendar size={18} color="var(--text-secondary)" />
         },
         {
           id: 'page_settings_categories',
           type: 'page',
           target: 'settings_categories',
           label: 'Category Manager',
-          icon: <Tags size={18} color="var(--ios-blue)" />
+          icon: <Tags size={18} color="var(--text-secondary)" />
         },
         {
           id: 'tab_analytics',
           type: 'tab',
           target: 'analytics',
           label: 'Expense Summary',
-          icon: <BarChart3 size={18} color="var(--ios-green)" />
+          icon: <BarChart3 size={18} color="var(--notion-green-text)" />
         },
         {
           id: 'page_settings_main',
           type: 'page',
           target: 'settings_main',
           label: 'All Settings & Reset',
-          icon: <Settings size={18} color="var(--ios-blue)" />
+          icon: <Settings size={18} color="var(--text-secondary)" />
         }
       ]
     }
@@ -127,20 +154,29 @@ export default function Sidebar({
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 10000 }}>
-      {/* Dark Backdrop Overlay */}
+    <div 
+      style={{ 
+        position: 'fixed', 
+        inset: 0, 
+        zIndex: 10000,
+        pointerEvents: active ? 'auto' : 'none'
+      }}
+    >
+      {/* Neutral Backdrop Overlay */}
       <div 
         onClick={onClose}
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'rgba(15, 23, 42, 0.6)',
-          backdropFilter: 'blur(4px)',
-          animation: 'fadeIn 0.2s ease-out'
+          background: 'rgba(0, 0, 0, 0.45)',
+          opacity: active ? 1 : 0,
+          transition: 'opacity 0.28s cubic-bezier(0.25, 1, 0.5, 1)',
+          WebkitTransition: 'opacity 0.28s cubic-bezier(0.25, 1, 0.5, 1)',
+          willChange: 'opacity'
         }}
       />
 
-      {/* Sliding Minimalist Left Drawer */}
+      {/* Sliding Navigation Sidebar */}
       <aside style={{
         position: 'absolute',
         top: 0,
@@ -149,32 +185,43 @@ export default function Sidebar({
         width: '280px',
         maxWidth: '82vw',
         background: 'var(--bg-card)',
-        boxShadow: '4px 0 24px rgba(0, 0, 0, 0.25)',
         display: 'flex',
         flexDirection: 'column',
         zIndex: 10001,
-        animation: 'slideInLeft 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
-        borderRight: '1px solid var(--border-subtle)'
+        transform: active ? 'translate3d(0, 0, 0)' : 'translate3d(-100%, 0, 0)',
+        WebkitTransform: active ? 'translate3d(0, 0, 0)' : 'translate3d(-100%, 0, 0)',
+        transition: 'transform 0.28s cubic-bezier(0.25, 1, 0.5, 1)',
+        WebkitTransition: '-webkit-transform 0.28s cubic-bezier(0.25, 1, 0.5, 1)',
+        borderRight: '1px solid var(--border-subtle)',
+        boxShadow: active ? '4px 0 24px rgba(0, 0, 0, 0.25)' : 'none',
+        willChange: 'transform',
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden'
       }}>
-        {/* Drawer Header Branding with Native Android Status Bar Safe Area Padding */}
+        {/* Workspace Header */}
         <div style={{
           paddingTop: 'calc(max(28px, env(safe-area-inset-top)) + 12px)',
-          paddingBottom: '16px',
-          paddingLeft: '18px',
-          paddingRight: '18px',
+          paddingBottom: '12px',
+          paddingLeft: '14px',
+          paddingRight: '14px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          borderBottom: '1px solid var(--border-subtle)',
-          background: 'var(--bg-card-subtle)'
+          borderBottom: '1px solid var(--border-subtle)'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <img 
               src="./app-icon.png" 
-              alt="Pocket Budget Logo" 
-              style={{ width: '34px', height: '34px', borderRadius: '10px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+              alt="Pocket Budget" 
+              style={{ 
+                width: '30px', 
+                height: '30px', 
+                borderRadius: '8px', 
+                objectFit: 'contain',
+                flexShrink: 0
+              }} 
             />
-            <h3 style={{ fontSize: '17px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px', lineHeight: 1 }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 600, margin: 0, color: 'var(--text-primary)', lineHeight: 1 }}>
               Pocket Budget
             </h3>
           </div>
@@ -182,40 +229,40 @@ export default function Sidebar({
           <button
             onClick={onClose}
             style={{
-              background: 'var(--bg-card-subtle)',
-              border: '1px solid var(--border-subtle)',
-              color: 'var(--text-secondary)',
-              width: '30px',
-              height: '30px',
-              borderRadius: '50%',
+              background: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              color: 'var(--text-tertiary)',
+              padding: '4px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              cursor: 'pointer'
+              borderRadius: 'var(--radius-sm)'
             }}
+            title="Collapse Sidebar"
           >
-            <X size={16} />
+            <ChevronLeft size={18} />
           </button>
         </div>
 
-        {/* Navigation Items Scroll Container (Concept 1: Grouped Sectional Categories) */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '14px 12px' }}>
+        {/* Navigation Items Tree */}
+        <div style={{ flex: 1, overflowY: 'auto', padding: '12px 8px' }}>
           {navSections.map((section, idx) => (
-            <div key={section.title} style={{ marginBottom: idx === navSections.length - 1 ? '0' : '18px' }}>
+            <div key={section.title} style={{ marginBottom: idx === navSections.length - 1 ? '0' : '14px' }}>
               {/* Section Header Title */}
               <p style={{
                 fontSize: '10px',
-                fontWeight: 800,
+                fontWeight: 600,
                 color: 'var(--text-tertiary)',
-                letterSpacing: '0.6px',
-                margin: '0 0 6px 6px',
+                letterSpacing: '0.4px',
+                margin: '0 0 4px 6px',
                 textTransform: 'uppercase'
               }}>
                 {section.title}
               </p>
 
               {/* Section Items */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                 {section.items.map(item => {
                   const active = isItemActive(item);
                   return (
@@ -226,37 +273,27 @@ export default function Sidebar({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
-                        padding: '9px 12px',
-                        borderRadius: 'var(--radius-md)',
-                        background: active ? 'var(--ios-blue-bg)' : 'transparent',
-                        border: active ? '1px solid var(--ios-blue)' : '1px solid transparent',
+                        padding: '6px 10px',
+                        borderRadius: 'var(--radius-sm)',
+                        background: active ? 'var(--notion-gray-bg)' : 'transparent',
+                        color: 'var(--text-primary)',
                         cursor: 'pointer',
-                        transition: 'all 0.15s ease'
+                        transition: 'background-color 0.12s ease'
                       }}
+                      className="menu-item-hover"
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <div style={{
-                          width: '30px',
-                          height: '30px',
-                          borderRadius: '8px',
-                          background: active ? '#ffffff' : 'var(--bg-card-subtle)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0
-                        }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '18px', flexShrink: 0 }}>
                           {item.icon}
-                        </div>
+                        </span>
                         <span style={{
                           fontSize: '13px',
-                          fontWeight: active ? 800 : 700,
-                          color: active ? 'var(--ios-blue)' : 'var(--text-primary)'
+                          fontWeight: active ? 600 : 500,
+                          color: 'var(--text-primary)'
                         }}>
                           {item.label}
                         </span>
                       </div>
-
-                      <ChevronRight size={15} color={active ? 'var(--ios-blue)' : 'var(--text-tertiary)'} />
                     </div>
                   );
                 })}
@@ -265,20 +302,16 @@ export default function Sidebar({
           ))}
         </div>
 
-        {/* Drawer Footer Status */}
+        {/* Drawer Footer Version Info */}
         <div style={{
-          padding: '12px 16px',
+          padding: '10px 14px',
           borderTop: '1px solid var(--border-subtle)',
-          background: 'var(--bg-card-subtle)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
-          <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontWeight: 600 }}>
-            Pocket Budget v1.2.0
-          </span>
-          <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--ios-green)', background: 'var(--ios-green-bg)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
-            Active
+          <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
+            Pocket Budget v1.4.0
           </span>
         </div>
       </aside>

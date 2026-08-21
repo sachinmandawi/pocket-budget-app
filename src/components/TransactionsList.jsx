@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { Search, Trash2, Calendar, Filter, Wallet, ArrowUpRight } from 'lucide-react';
-import { DEFAULT_CATEGORIES, formatDateReadable } from '../utils/storage';
+import { Search, Trash2, Calendar, Filter, Wallet, ArrowUpRight, Edit3 } from 'lucide-react';
+import { DEFAULT_CATEGORIES, formatDateReadable, formatLocalYMD } from '../utils/storage';
 import { formatCurrencyAmount } from '../utils/currencies';
 import CustomDropdown from './CustomDropdown';
+import EditExpenseModal from './EditExpenseModal';
 
 export default function TransactionsList({ 
   categories = DEFAULT_CATEGORIES, 
   transactions = [], 
   onDeleteTransaction, 
+  onEditTransaction,
   archivedCycles = [],
   cyclePeriodLabel = 'Current Cycle',
   currencySymbol = '₹'
@@ -15,6 +17,7 @@ export default function TransactionsList({
   const [selectedCycleId, setSelectedCycleId] = useState('current');
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [editingTx, setEditingTx] = useState(null);
 
   const cycleOptions = [
     { value: 'current', label: `Current Cycle (${cyclePeriodLabel})`, icon: '🗓️' },
@@ -58,17 +61,17 @@ export default function TransactionsList({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {/* Top Filter Dock Card */}
-      <div className="ios-card" style={{ padding: '16px', marginBottom: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      {/* Filter Dock Card */}
+      <div className="notion-card" style={{ padding: '14px', marginBottom: 0 }}>
         {/* Cycle Selector Header */}
-        <div style={{ marginBottom: '14px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Calendar size={13} color="var(--ios-blue)" /> Billing Cycle
+        <div style={{ marginBottom: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+            <span className="notion-tag notion-tag-gray">
+              <Calendar size={11} /> Billing Cycle
             </span>
-            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)' }}>
-              {filtered.length} {filtered.length === 1 ? 'Expense' : 'Expenses'}
+            <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+              {filtered.length} {filtered.length === 1 ? 'record' : 'records'}
             </span>
           </div>
 
@@ -80,14 +83,14 @@ export default function TransactionsList({
         </div>
 
         {/* Search & Category Filter Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 140px', gap: '10px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 130px', gap: '8px' }}>
           <div style={{ position: 'relative' }}>
-            <Search size={16} color="var(--text-tertiary)" style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)' }} />
+            <Search size={14} color="var(--text-tertiary)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
             <input
               type="text"
-              placeholder="Search expenses..."
+              placeholder="Filter expenses..."
               className="form-input"
-              style={{ paddingLeft: '38px', fontSize: '13px', height: '42px' }}
+              style={{ paddingLeft: '34px', fontSize: '12px', height: '36px', borderRadius: 'var(--radius-sm)' }}
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
@@ -101,27 +104,21 @@ export default function TransactionsList({
         </div>
       </div>
 
-      {/* Archived Cycle Banner if selected */}
+      {/* Archived Cycle Callout if selected */}
       {activeCycleInfo && (
-        <div style={{
-          background: 'var(--ios-blue-bg)',
-          border: '1px solid rgba(37, 99, 235, 0.15)',
-          padding: '14px 16px',
-          borderRadius: 'var(--radius-lg)',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          boxShadow: 'var(--shadow-card)'
-        }}>
-          <div>
-            <span style={{ fontSize: '11px', color: 'var(--ios-blue)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
-              Archived History: {activeCycleInfo.periodLabel}
-            </span>
-            <p style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600, marginTop: '2px' }}>
-              Allowance: {formatCurrencyAmount(currencySymbol, activeCycleInfo.monthlyAllowance)} • Spent: {formatCurrencyAmount(currencySymbol, activeCycleInfo.totalSpent)}
-            </p>
+        <div className="notion-callout" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '16px' }}>📁</span>
+            <div>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                {activeCycleInfo.periodLabel}
+              </span>
+              <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>
+                Allowance: {formatCurrencyAmount(currencySymbol, activeCycleInfo.monthlyAllowance)} • Spent: {formatCurrencyAmount(currencySymbol, activeCycleInfo.totalSpent)}
+              </p>
+            </div>
           </div>
-          <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-green)', background: 'var(--ios-green-bg)', padding: '6px 12px', borderRadius: 'var(--radius-full)' }}>
+          <span className="notion-tag notion-tag-green">
             +{formatCurrencyAmount(currencySymbol, activeCycleInfo.totalSaved)} Saved
           </span>
         </div>
@@ -132,150 +129,234 @@ export default function TransactionsList({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 4px'
+        padding: '0 2px'
       }}>
-        <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-          {selectedCycleId === 'current' ? 'Transactions' : 'Past Records'}
-        </h3>
-        <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--ios-blue)', background: 'var(--ios-blue-bg)', padding: '4px 12px', borderRadius: 'var(--radius-full)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span style={{ fontSize: '13px' }}>📋</span>
+          <h3 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+            {selectedCycleId === 'current' ? 'Transactions' : 'Past Records'}
+          </h3>
+        </div>
+        <span className="notion-tag notion-tag-blue">
           Total: {formatCurrencyAmount(currencySymbol, totalFilteredSpent)}
         </span>
       </div>
 
       {/* Transactions List */}
       {filtered.length === 0 ? (
-        <div className="ios-card" style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-tertiary)' }}>
+        <div className="notion-card" style={{ textAlign: 'center', padding: '32px 16px', color: 'var(--text-tertiary)' }}>
           <div style={{
-            width: '56px',
-            height: '56px',
-            borderRadius: '20px',
+            width: '44px',
+            height: '44px',
+            borderRadius: 'var(--radius-sm)',
             background: 'var(--bg-card-subtle)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            margin: '0 auto 12px'
+            margin: '0 auto 10px'
           }}>
-            <Wallet size={24} color="var(--text-tertiary)" />
+            <Wallet size={20} color="var(--text-tertiary)" />
           </div>
-          <p style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
-            No Expenses Logged
+          <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>
+            No Expenses Found
           </p>
-          <p style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-            Tap "+ Log Spend" above to record your first expense.
+          <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+            Record expenses from the Daily tab to track them here.
           </p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {filtered.map(tx => {
-            const cat = getCategoryInfo(tx.category);
-            const catBgColor = cat.color ? cat.color + '15' : 'var(--bg-card-subtle)';
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          {(() => {
+            const todayYMD = formatLocalYMD(new Date());
+            const yesterdayObj = new Date();
+            yesterdayObj.setDate(yesterdayObj.getDate() - 1);
+            const yesterdayYMD = formatLocalYMD(yesterdayObj);
 
-            return (
-              <div 
-                key={tx.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '14px 16px',
-                  background: 'var(--bg-card)',
-                  borderRadius: 'var(--radius-lg)',
-                  boxShadow: 'var(--shadow-card)',
-                  border: '1px solid var(--border-subtle)',
-                  transition: 'transform 0.15s ease'
-                }}
-              >
-                {/* Left Category Icon & Details */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
-                  <div style={{ 
-                    width: '36px', 
-                    height: '36px', 
-                    borderRadius: '10px', 
-                    background: catBgColor, 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    fontSize: '17px',
-                    flexShrink: 0,
-                    border: '1px solid rgba(0,0,0,0.04)'
+            // Group transactions by date
+            const grouped = {};
+            filtered.forEach(tx => {
+              const d = tx.date || todayYMD;
+              if (!grouped[d]) grouped[d] = [];
+              grouped[d].push(tx);
+            });
+
+            const sortedDates = Object.keys(grouped).sort((a, b) => (b > a ? 1 : -1));
+
+            const getDateLabel = (dateStr) => {
+              if (dateStr === todayYMD) return 'Today';
+              if (dateStr === yesterdayYMD) return 'Yesterday';
+              return formatDateReadable(dateStr);
+            };
+
+            return sortedDates.map(dateKey => {
+              const dayTxs = grouped[dateKey];
+              const dayTotal = dayTxs.reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
+              return (
+                <div key={dateKey}>
+                  {/* Date Subheader & Total */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '6px',
+                    padding: '0 4px'
                   }}>
-                    {cat.icon}
+                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                      {getDateLabel(dateKey)}
+                    </span>
+                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-tertiary)' }}>
+                      -{formatCurrencyAmount(currencySymbol, dayTotal)}
+                    </span>
                   </div>
 
-                  <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                    <p style={{ 
-                      fontSize: '13px', 
-                      fontWeight: 700, 
-                      color: 'var(--text-primary)',
-                      lineHeight: 1.2,
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      margin: 0
-                    }}>
-                      {tx.note || cat.name}
-                    </p>
-                    
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-                      <span style={{
-                        fontSize: '10px',
-                        fontWeight: 600,
-                        color: 'var(--text-secondary)',
-                        background: 'var(--bg-card-subtle)',
-                        padding: '1px 5px',
-                        borderRadius: '4px'
-                      }}>
-                        {cat.name}
-                      </span>
-                      {tx.spendSource === 'piggy_bank' && (
-                        <span style={{
-                          fontSize: '9px',
-                          fontWeight: 700,
-                          color: 'var(--ios-green)',
-                          background: 'var(--ios-green-bg)',
-                          padding: '1px 5px',
-                          borderRadius: 'var(--radius-full)'
-                        }}>
-                          🐷 Vault
-                        </span>
-                      )}
-                      <span style={{ fontSize: '10px', color: 'var(--text-tertiary)' }}>
-                        {formatDateReadable(tx.date)} {tx.time ? `• ${tx.time}` : ''}
-                      </span>
-                    </div>
+                  {/* Grouped Notion Card */}
+                  <div className="notion-card" style={{ padding: 0, overflow: 'hidden', marginBottom: 0 }}>
+                    {dayTxs.map((tx, idx) => {
+                      const cat = getCategoryInfo(tx.category);
+                      const isLast = idx === dayTxs.length - 1;
+
+                      return (
+                        <div
+                          key={tx.id}
+                          onClick={() => selectedCycleId === 'current' && setEditingTx(tx)}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            padding: '11px 14px',
+                            borderBottom: isLast ? 'none' : '1px solid var(--border-subtle)',
+                            cursor: selectedCycleId === 'current' ? 'pointer' : 'default',
+                            transition: 'background-color 0.15s ease',
+                            gap: '12px'
+                          }}
+                        >
+                          {/* Left Avatar */}
+                          <div style={{
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '8px',
+                            background: 'var(--bg-card-subtle)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '18px',
+                            flexShrink: 0,
+                            border: '1px solid var(--border-subtle)'
+                          }}>
+                            {cat.icon}
+                          </div>
+
+                          {/* Middle: Note / Category Name & Time */}
+                          <div style={{ minWidth: 0, flex: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                              <p style={{
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                color: 'var(--text-primary)',
+                                lineHeight: 1.2,
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                margin: 0
+                              }}>
+                                {tx.note || cat.name}
+                              </p>
+                              {tx.spendSource === 'piggy_bank' && (
+                                <span className="notion-tag notion-tag-green" style={{ fontSize: '9px', padding: '1px 5px', flexShrink: 0 }}>
+                                  🐷 Piggy Bank
+                                </span>
+                              )}
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'var(--text-tertiary)' }}>
+                              <span>{cat.name}</span>
+                              {tx.time && (
+                                <>
+                                  <span>•</span>
+                                  <span>{tx.time}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Right: Amount & Actions */}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                            <span style={{
+                              fontWeight: 700,
+                              fontSize: '14px',
+                              color: 'var(--notion-red-text)',
+                              marginRight: '2px',
+                              letterSpacing: '-0.2px'
+                            }}>
+                              -{formatCurrencyAmount(currencySymbol, tx.amount)}
+                            </span>
+
+                            {selectedCycleId === 'current' && (
+                              <>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setEditingTx(tx);
+                                  }}
+                                  className="btn btn-secondary btn-sm"
+                                  style={{
+                                    width: '26px',
+                                    height: '26px',
+                                    padding: 0,
+                                    borderRadius: 'var(--radius-sm)',
+                                    background: 'transparent',
+                                    color: 'var(--text-tertiary)',
+                                    border: '1px solid transparent'
+                                  }}
+                                  title="Edit expense"
+                                >
+                                  <Edit3 size={13} />
+                                </button>
+
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onDeleteTransaction(tx.id);
+                                  }}
+                                  className="btn btn-secondary btn-sm"
+                                  style={{
+                                    width: '26px',
+                                    height: '26px',
+                                    padding: 0,
+                                    borderRadius: 'var(--radius-sm)',
+                                    background: 'transparent',
+                                    color: 'var(--notion-red-text)',
+                                    border: '1px solid transparent'
+                                  }}
+                                  title="Delete expense"
+                                >
+                                  <Trash2 size={13} />
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-
-                {/* Right Amount & Delete Action */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0, marginLeft: '10px' }}>
-                  <span style={{ fontWeight: 800, fontSize: '14px', color: 'var(--ios-red)', letterSpacing: '-0.3px' }}>
-                    -{formatCurrencyAmount(currencySymbol, tx.amount)}
-                  </span>
-
-                  {selectedCycleId === 'current' && (
-                    <button 
-                      onClick={() => onDeleteTransaction(tx.id)}
-                      className="btn btn-secondary btn-sm"
-                      style={{
-                        width: '32px',
-                        height: '32px',
-                        padding: 0,
-                        borderRadius: '10px',
-                        background: 'var(--bg-card-subtle)',
-                        color: 'var(--text-tertiary)',
-                        border: 'none'
-                      }}
-                      title="Delete expense"
-                    >
-                      <Trash2 size={15} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
+              );
+            });
+          })()}
         </div>
       )}
+
+      {/* Edit Expense Modal */}
+      <EditExpenseModal
+        isOpen={!!editingTx}
+        onClose={() => setEditingTx(null)}
+        transaction={editingTx}
+        categories={categories}
+        onSaveEdit={onEditTransaction}
+        onDeleteTransaction={onDeleteTransaction}
+        currencySymbol={currencySymbol}
+      />
     </div>
   );
 }

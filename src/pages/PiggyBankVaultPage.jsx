@@ -10,137 +10,115 @@ export default function PiggyBankVaultPage({ budgetData }) {
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out', paddingBottom: '80px' }}>
       {/* Page Header */}
-      <div style={{ marginBottom: '14px' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
-          Piggy Savings Vault 🐷
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+        <span style={{ fontSize: '20px' }}>🐷</span>
+        <h2 style={{ fontSize: '16px', fontWeight: 600, margin: 0, color: 'var(--text-primary)' }}>
+          Piggy Bank
         </h2>
       </div>
 
-      {/* Hero Piggy Balance Card */}
-      <div className="ios-card" style={{
-        padding: '24px 20px',
-        marginBottom: '16px',
-        textAlign: 'center',
-        background: 'linear-gradient(135deg, rgba(52, 199, 89, 0.12) 0%, rgba(52, 199, 89, 0.03) 100%)',
-        border: '1px solid rgba(52, 199, 89, 0.25)'
+      {/* Hero Piggy Balance Callout Card */}
+      <div className="notion-card" style={{
+        padding: '16px',
+        marginBottom: '14px',
+        background: 'var(--bg-card)'
       }}>
-        <div style={{
-          width: '56px',
-          height: '56px',
-          borderRadius: '18px',
-          background: 'var(--ios-green-bg)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '28px',
-          margin: '0 auto 12px'
-        }}>
-          🐷
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+          <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+            Total Piggy Bank Savings
+          </span>
+          <span className="notion-tag notion-tag-green">
+            Piggy Bank
+          </span>
         </div>
-        <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.4px' }}>
-          Piggy Savings Vault
-        </h3>
-        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '0 0 12px' }}>
-          Total leftover money saved under daily spending limits
-        </p>
 
         <div style={{
           fontSize: '28px',
-          fontWeight: 800,
-          color: 'var(--ios-green)',
-          letterSpacing: '-1px',
+          fontWeight: 700,
+          color: 'var(--notion-green-text)',
+          letterSpacing: '-0.6px',
           lineHeight: 1,
-          marginBottom: '4px'
+          marginBottom: '6px'
         }}>
           +{formatCurrencyAmount(currencySymbol, totalSaved)}
         </div>
-        <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--ios-green)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          Accumulated Vault Balance
-        </span>
+        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>
+          Money saved when you spend less than your daily limit. Available anytime!
+        </p>
       </div>
 
       {/* Date-by-Date Timeline Log Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-        <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <History size={16} color="var(--ios-green)" /> Savings History Timeline
-        </h3>
-        <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--ios-green)', background: 'var(--ios-green-bg)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
-          {history.length} Days Recorded
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span style={{ fontSize: '13px' }}>📋</span>
+          <h3 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+            Daily Savings History
+          </h3>
+        </div>
+        <span className="notion-tag notion-tag-gray">
+          {history.length} {history.length === 1 ? 'day' : 'days'}
         </span>
       </div>
 
       {/* Date-by-Date Timeline Log List */}
       {history.length > 0 ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div className="notion-card" style={{ padding: 0, overflow: 'hidden' }}>
           {history.map((item, index) => {
             const isWithdrawal = item.type === 'withdrawal';
+            const isLast = index === history.length - 1;
+
             return (
               <div
                 key={index}
-                className="ios-card"
                 style={{
-                  padding: '14px 16px',
+                  padding: '11px 14px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  borderLeft: isWithdrawal ? '4px solid var(--ios-red)' : '4px solid var(--ios-green)'
+                  borderBottom: isLast ? 'none' : '1px solid var(--border-subtle)',
+                  borderLeft: isWithdrawal ? `3px solid var(--notion-red-text)` : `3px solid var(--notion-green-text)`,
+                  gap: '10px'
                 }}
               >
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                    <strong style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)' }}>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px', flexWrap: 'wrap' }}>
+                    <strong style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
                       {formatDateReadable(item.date)}
                     </strong>
                     {isWithdrawal ? (
-                      <span style={{
-                        fontSize: '9px',
-                        fontWeight: 800,
-                        background: 'var(--ios-red-bg)',
-                        color: 'var(--ios-red)',
-                        padding: '2px 6px',
-                        borderRadius: 'var(--radius-full)'
-                      }}>
-                        Vault Expense
+                      <span className="notion-tag notion-tag-red" style={{ fontSize: '9px', padding: '1px 5px' }}>
+                        Piggy Expense
                       </span>
                     ) : item.isZeroSpend && (
-                      <span style={{
-                        fontSize: '9px',
-                        fontWeight: 800,
-                        background: 'var(--ios-orange-bg)',
-                        color: 'var(--ios-orange)',
-                        padding: '2px 6px',
-                        borderRadius: 'var(--radius-full)',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '2px'
-                      }}>
-                        <Trophy size={10} /> Zero Spend Hero!
+                      <span className="notion-tag notion-tag-orange" style={{ fontSize: '9px', padding: '1px 5px', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+                        <Trophy size={9} /> Zero Spend!
                       </span>
                     )}
                   </div>
-                  <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                    {isWithdrawal ? item.note : `Spent ${formatCurrencyAmount(currencySymbol, item.spent)} of ${formatCurrencyAmount(currencySymbol, item.limit)} daily limit`}
+                  <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {isWithdrawal ? item.note : `Spent ${formatCurrencyAmount(currencySymbol, item.spent)} of ${formatCurrencyAmount(currencySymbol, item.limit)} limit`}
                   </span>
                 </div>
 
                 <span style={{
-                  fontSize: '15px',
-                  fontWeight: 800,
-                  color: isWithdrawal ? 'var(--ios-red)' : 'var(--ios-green)',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  color: isWithdrawal ? 'var(--notion-red-text)' : 'var(--notion-green-text)',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '2px'
+                  gap: '2px',
+                  flexShrink: 0
                 }}>
-                  {isWithdrawal ? `-${formatCurrencyAmount(currencySymbol, item.spent)}` : <><ArrowUpRight size={16} /> +{formatCurrencyAmount(currencySymbol, item.savedAmount)}</>}
+                  {isWithdrawal ? `-${formatCurrencyAmount(currencySymbol, item.spent)}` : <><ArrowUpRight size={13} /> +{formatCurrencyAmount(currencySymbol, item.savedAmount)}</>}
                 </span>
               </div>
             );
           })}
         </div>
       ) : (
-        <div className="ios-card" style={{ padding: '24px 18px', textAlign: 'center' }}>
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
-            💡 Spend less than your daily target to automatically deposit leftover cash into your Piggy Bank Vault!
+        <div className="notion-card" style={{ padding: '24px 16px', textAlign: 'center' }}>
+          <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4 }}>
+            💡 Spend less than your daily limit to automatically add leftover money into your Piggy Bank!
           </p>
         </div>
       )}

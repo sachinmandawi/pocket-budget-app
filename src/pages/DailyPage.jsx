@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import DailyGauge from '../components/DailyGauge';
-import { DEFAULT_CATEGORIES, formatLocalYMD } from '../utils/storage';
+import { DEFAULT_CATEGORIES, formatLocalYMD, formatDateReadable } from '../utils/storage';
 import { getGitHubConfig } from '../utils/githubSync';
 import { formatCurrencyAmount } from '../utils/currencies';
-import { Cloud, X, ArrowRight } from 'lucide-react';
+import { Cloud, X, ArrowRight, Edit3 } from 'lucide-react';
+import EditExpenseModal from '../components/EditExpenseModal';
 
-export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, transactions = [], budgetData }) {
+export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, transactions = [], budgetData, onEditTransaction, onDeleteTransaction }) {
   const todayStr = formatLocalYMD(new Date());
   const todayTx = transactions.filter(tx => tx.date === todayStr);
+  const [editingTx, setEditingTx] = useState(null);
 
   const [showGithubBanner, setShowGithubBanner] = useState(() => {
     try {
@@ -36,75 +38,77 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
       {/* Recommended GitHub Auto-Sync Card */}
       {showGithubBanner && (
         <div 
-          className="ios-card" 
           style={{ 
-            marginBottom: '16px', 
-            padding: '14px 16px',
-            background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card-subtle) 100%)',
-            border: '1px solid var(--border-medium)',
-            position: 'relative'
+            background: 'var(--bg-callout)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-md)',
+            padding: '10px 12px',
+            marginBottom: '14px'
           }}
         >
-          <button
-            onClick={handleDismissBanner}
-            style={{
-              position: 'absolute',
-              top: '10px',
-              right: '10px',
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              color: 'var(--text-tertiary)'
-            }}
-          >
-            <X size={14} />
-          </button>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-            <div style={{
-              width: '34px',
-              height: '34px',
-              borderRadius: '10px',
-              background: 'var(--ios-blue-bg)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <Cloud size={18} color="var(--ios-blue)" />
+          {/* Header Row: Icon + Title + Non-overlapping Cross Button */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '15px' }}>☁️</span>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                GitHub Auto-Sync
+              </span>
             </div>
 
-            <div>
-              <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-                Recommend: GitHub Auto-Sync ☁️
-              </h4>
-              <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>
-                Never lose your data. 100% private cloud backup.
-              </p>
-            </div>
+            <button
+              onClick={handleDismissBanner}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--text-tertiary)',
+                padding: '2px 4px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '4px'
+              }}
+              title="Dismiss"
+            >
+              <X size={13} />
+            </button>
           </div>
 
-          <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+          {/* Subtitle */}
+          <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '0 0 8px 0', lineHeight: 1.3 }}>
+            Keep your pocket budget safely backed up & synced to your private GitHub repo.
+          </p>
+
+          {/* Small compact actions */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <button
               onClick={() => onNavigateToPage('settings_github')}
               className="btn btn-primary btn-sm"
               style={{
-                flex: 1,
                 fontSize: '11px',
-                fontWeight: 800,
-                padding: '6px 12px',
-                borderRadius: 'var(--radius-full)',
-                display: 'flex',
+                fontWeight: 600,
+                padding: '4px 10px',
+                borderRadius: 'var(--radius-sm)',
+                display: 'inline-flex',
                 alignItems: 'center',
-                justifyContent: 'center',
                 gap: '4px'
               }}
             >
-              Connect GitHub <ArrowRight size={12} />
+              Connect <ArrowRight size={11} />
             </button>
+
             <button
               onClick={handleDismissBanner}
               className="btn btn-secondary btn-sm"
-              style={{ fontSize: '11px', fontWeight: 700, padding: '6px 10px' }}
+              style={{ 
+                fontSize: '11px', 
+                fontWeight: 500, 
+                padding: '4px 8px',
+                borderRadius: 'var(--radius-sm)',
+                background: 'transparent',
+                border: '1px solid transparent',
+                color: 'var(--text-tertiary)'
+              }}
             >
               Later
             </button>
@@ -118,70 +122,130 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
         onOpenQuickAdd={onOpenQuickAdd} 
       />
 
-      {/* Minimal Recent Today Spends Card */}
+      {/* Recent Today Spends Card */}
       {todayTx.length > 0 && (
-        <div className="ios-card" style={{ padding: '16px 18px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <h3 style={{ fontSize: '15px', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-              Today's Spends
-            </h3>
-            <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--ios-blue)', background: 'var(--ios-blue-bg)', padding: '2px 8px', borderRadius: 'var(--radius-full)' }}>
-              {todayTx.length}
+        <div className="notion-card" style={{ padding: '14px 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '13px' }}>📋</span>
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+                Today's Log
+              </h3>
+            </div>
+            <span className="notion-tag notion-tag-gray">
+              {todayTx.length} {todayTx.length === 1 ? 'item' : 'items'}
             </span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {todayTx.map(tx => {
               const cat = getCategoryInfo(tx.category);
-              const catBgColor = cat.color ? cat.color + '15' : 'var(--bg-card-subtle)';
 
               return (
                 <div 
                   key={tx.id}
+                  onClick={() => setEditingTx(tx)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '10px 12px',
                     background: 'var(--bg-card-subtle)',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--border-subtle)'
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1px solid var(--border-subtle)',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.15s ease',
+                    gap: '10px'
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ 
-                      width: '36px', 
-                      height: '36px', 
-                      borderRadius: '10px', 
-                      background: catBgColor, 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center',
-                      fontSize: '18px',
-                      flexShrink: 0
-                    }}>
-                      {cat.icon}
-                    </div>
+                  {/* Left Category Icon Avatar */}
+                  <div style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: 'var(--radius-sm)',
+                    background: 'var(--bg-card)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '18px',
+                    flexShrink: 0,
+                    border: '1px solid var(--border-subtle)'
+                  }}>
+                    {cat.icon}
+                  </div>
 
-                    <div>
-                      <p style={{ fontSize: '14px', fontWeight: 800, color: 'var(--text-primary)', margin: 0, lineHeight: 1.2 }}>
+                  {/* Middle: Title & Meta Info */}
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                      <p style={{ 
+                        fontSize: '13px', 
+                        fontWeight: 600, 
+                        color: 'var(--text-primary)', 
+                        margin: 0, 
+                        lineHeight: 1.2,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis'
+                      }}>
                         {tx.note || cat.name}
                       </p>
-                      <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
-                        {tx.time || ''}
-                      </span>
+                      {tx.spendSource === 'piggy_bank' && (
+                        <span className="notion-tag notion-tag-green" style={{ fontSize: '9px', padding: '1px 5px', flexShrink: 0 }}>
+                          🐷 Piggy Bank
+                        </span>
+                      )}
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: 'var(--text-tertiary)' }}>
+                      <span>{cat.name}</span>
+                      {tx.time && (
+                        <>
+                          <span>•</span>
+                          <span>{tx.time}</span>
+                        </>
+                      )}
                     </div>
                   </div>
 
-                  <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--ios-red)', letterSpacing: '-0.3px' }}>
-                    -{formatCurrencyAmount(stats.currencySymbol || '₹', tx.amount)}
-                  </span>
+                  {/* Right Amount & Edit Icon */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                    <span style={{ 
+                      fontSize: '14px', 
+                      fontWeight: 700, 
+                      color: 'var(--notion-red-text)',
+                      marginRight: '2px',
+                      letterSpacing: '-0.2px'
+                    }}>
+                      -{formatCurrencyAmount(stats.currencySymbol || '₹', tx.amount)}
+                    </span>
+                    <span style={{ 
+                      color: 'var(--text-tertiary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '26px',
+                      height: '26px'
+                    }}>
+                      <Edit3 size={13} />
+                    </span>
+                  </div>
                 </div>
               );
             })}
           </div>
         </div>
       )}
+
+      {/* Edit Expense Modal for Daily Tab */}
+      <EditExpenseModal
+        isOpen={!!editingTx}
+        onClose={() => setEditingTx(null)}
+        transaction={editingTx}
+        categories={budgetData?.categories || DEFAULT_CATEGORIES}
+        onSaveEdit={onEditTransaction}
+        onDeleteTransaction={onDeleteTransaction}
+        currencySymbol={stats.currencySymbol || '₹'}
+      />
     </div>
   );
 }

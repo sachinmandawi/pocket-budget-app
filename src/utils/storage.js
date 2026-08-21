@@ -90,6 +90,10 @@ export const getInitialData = () => {
           if (!parsed.wishlist) parsed.wishlist = [];
           if (!parsed.customCurrencies) parsed.customCurrencies = [];
           if (!parsed.currency) parsed.currency = DEFAULT_CURRENCY;
+          if (typeof parsed.isDarkMode !== 'boolean') {
+            const savedTheme = localStorage.getItem('pocket_budget_theme');
+            parsed.isDarkMode = savedTheme === 'dark';
+          }
           return parsed;
         }
       } catch (e) {
@@ -98,12 +102,19 @@ export const getInitialData = () => {
     }
   }
 
+  let defaultDark = false;
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    const savedTheme = localStorage.getItem('pocket_budget_theme');
+    if (savedTheme === 'dark') defaultDark = true;
+  }
+
   // All values start at 0 by default
   return {
     monthlyAllowance: 0,
     paydayAnchorDate: 1,
     emergencyReserve: 0,
     isEmergencyUnlocked: false,
+    isDarkMode: defaultDark,
     fixedDeductions: [],
     categories: DEFAULT_CATEGORIES,
     currency: DEFAULT_CURRENCY,
@@ -118,6 +129,9 @@ export const saveData = (data) => {
   if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
     if (data && typeof data === 'object') {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      if (typeof data.isDarkMode === 'boolean') {
+        localStorage.setItem('pocket_budget_theme', data.isDarkMode ? 'dark' : 'light');
+      }
     }
   }
 };
@@ -139,13 +153,15 @@ export const calculateBudgetStats = (rawInput) => {
   const currentDayNumber = Math.min(totalDaysInCycle, Math.max(1, daysPassed));
   const daysRemaining = Math.max(1, totalDaysInCycle - currentDayNumber + 1);
 
-  const totalFixedDeductions = (data.fixedDeductions || []).reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+  const fixedDeductionsList = Array.isArray(data.fixedDeductions) ? data.fixedDeductions : [];
+  const totalFixedDeductions = fixedDeductionsList.reduce((acc, curr) => acc + Number(curr?.amount || 0), 0);
   const effectiveReserve = data.isEmergencyUnlocked ? 0 : Number(data.emergencyReserve || 0);
 
   const totalUsablePool = Math.max(0, Number(data.monthlyAllowance || 0) - totalFixedDeductions - effectiveReserve);
   const baseDailyTarget = Math.round((totalUsablePool / totalDaysInCycle) * 10) / 10;
 
-  const currentCycleTx = (data.transactions || []).filter(tx => {
+  const rawTxList = Array.isArray(data.transactions) ? data.transactions : [];
+  const currentCycleTx = rawTxList.filter(tx => {
     return tx && tx.date && tx.date >= cycleStartStr && tx.date <= cycleEndStr;
   });
 
@@ -183,14 +199,27 @@ export const calculateBudgetStats = (rawInput) => {
   }
 
   const categoryTotals = {};
-  const activeCategories = data.categories || DEFAULT_CATEGORIES;
+  const activeCategories = Array.isArray(data.categories) ? data.categories : DEFAULT_CATEGORIES;
   activeCategories.forEach(cat => { if (cat && cat.id) categoryTotals[cat.id] = 0; });
   currentCycleTx.forEach(tx => {
     const cat = tx.category || 'other';
     categoryTotals[cat] = (categoryTotals[cat] || 0) + Number(tx.amount || 0);
   });
 
-  const cyclePeriodLabel = `${formatDateReadable(cycleStartStr)} – ${formatDateReadable(cycleEndStr)}`;
+  const formatCycleRangeCompact = (startStr, endStr) => {
+    if (!startStr || !endStr) return '';
+    const [sy, sm, sd] = startStr.split('-').map(Number);
+    const [ey, em, ed] = endStr.split('-').map(Number);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const startPart = `${sd} ${months[sm - 1]}`;
+    const endPart = `${ed} ${months[em - 1]}`;
+    if (sy === ey) {
+      return `${startPart} – ${endPart}`;
+    }
+    return `${startPart} '${String(sy).slice(-2)} – ${endPart} '${String(ey).slice(-2)}`;
+  };
+
+  const cyclePeriodLabel = formatCycleRangeCompact(cycleStartStr, cycleEndStr);
 
   return {
     monthlyAllowance: Number(data.monthlyAllowance || 0),
@@ -231,7 +260,7 @@ export const calculatePiggyBankSavings = (data) => {
   const todayStr = formatLocalYMD(new Date());
   const baseDailyTarget = stats.baseDailyTarget;
 
-  const transactions = data.transactions || [];
+  const transactions = Array.isArray(data.transactions) ? data.transactions : [];
   const datesMap = new Map();
   let totalPiggySpent = 0;
 

@@ -132,6 +132,19 @@ export const getCurrencySymbol = (budgetData) => {
 
 export const formatCurrencyAmount = (symbol, amount) => {
   const sym = symbol || '₹';
-  const val = amount !== undefined && amount !== null ? amount : 0;
-  return sym.length > 1 ? `${sym} ${val}` : `${sym}${val}`;
+  const num = typeof amount === 'number' ? amount : Number(amount);
+  if (isNaN(num)) {
+    return sym.length > 1 ? `${sym} 0` : `${sym}0`;
+  }
+  const isNegative = num < 0;
+  const absVal = Math.abs(num);
+
+  const formattedNum = Number.isInteger(absVal) 
+    ? absVal.toLocaleString('en-US') 
+    : absVal.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+
+  if (isNegative) {
+    return sym.length > 1 ? `-${sym} ${formattedNum}` : `-${sym}${formattedNum}`;
+  }
+  return sym.length > 1 ? `${sym} ${formattedNum}` : `${sym}${formattedNum}`;
 };

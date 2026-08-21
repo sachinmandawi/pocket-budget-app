@@ -12,37 +12,15 @@ export default function DataResetSettingsPage({ onResetDemo, onBack }) {
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out' }}>
-      <div className="ios-card">
-        <div style={{
-          background: 'var(--ios-red-bg)',
-          borderRadius: 'var(--radius-lg)',
-          padding: '16px',
-          marginBottom: '20px',
-          border: '1px solid rgba(239, 68, 68, 0.15)',
-          display: 'flex',
-          gap: '12px',
-          alignItems: 'center'
-        }}>
-          <div style={{
-            width: '42px',
-            height: '42px',
-            borderRadius: '12px',
-            background: '#ffffff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexShrink: 0,
-            boxShadow: '0 2px 8px rgba(239, 68, 68, 0.12)'
-          }}>
-            <AlertTriangle size={22} color="var(--ios-red)" />
-          </div>
-
+      <div className="notion-card">
+        <div className="notion-callout" style={{ marginBottom: '16px', background: 'var(--notion-red-bg)' }}>
+          <AlertTriangle size={15} color="var(--notion-red-text)" />
           <div>
-            <h4 style={{ fontSize: '14px', fontWeight: 800, color: 'var(--ios-red)', margin: 0, lineHeight: 1.2 }}>
+            <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'var(--notion-red-text)', margin: 0, lineHeight: 1.3 }}>
               Reset Database to 0
             </h4>
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', margin: 0 }}>
-              Wipes all expenses, piggy bank vault, wishlist items & resets to ₹0 state.
+            <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px', margin: 0 }}>
+              Wipes all expenses, piggy bank savings, wishlist items & resets to ₹0 state.
             </p>
           </div>
         </div>
@@ -53,21 +31,20 @@ export default function DataResetSettingsPage({ onResetDemo, onBack }) {
           className="btn"
           style={{
             width: '100%',
-            padding: '10px 16px',
-            fontSize: '13px',
-            fontWeight: 800,
+            padding: '9px 14px',
+            fontSize: '12px',
+            fontWeight: 600,
             color: '#ffffff',
-            background: 'var(--ios-red)',
-            borderRadius: 'var(--radius-md)',
-            boxShadow: '0 4px 14px rgba(239, 68, 68, 0.35)',
+            background: 'var(--notion-red-text)',
+            borderRadius: 'var(--radius-sm)',
             border: 'none',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px'
+            gap: '6px'
           }}
         >
-          <RefreshCw size={16} /> Reset All Data Now
+          <RefreshCw size={14} /> Reset All Data Now
         </button>
       </div>
 
@@ -88,44 +65,43 @@ export default function DataResetSettingsPage({ onResetDemo, onBack }) {
             onClick={e => e.stopPropagation()}
             style={{ 
               width: '100%',
-              maxWidth: '320px', 
-              padding: '24px 20px', 
+              maxWidth: '280px', 
+              padding: '20px 18px', 
               textAlign: 'center', 
-              borderRadius: '24px',
+              borderRadius: '12px',
               background: 'var(--bg-card)',
-              border: '1px solid var(--border-medium)',
-              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.35)',
+              border: '1px solid var(--border-subtle)',
+              boxShadow: 'none',
               animation: 'slideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
             }}
           >
             <div style={{
-              width: '56px',
-              height: '56px',
+              width: '44px',
+              height: '44px',
               borderRadius: '50%',
-              background: 'var(--ios-red-bg)',
+              background: 'var(--notion-red-bg)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 16px auto',
-              border: '1px solid rgba(239, 68, 68, 0.25)'
+              margin: '0 auto 12px auto'
             }}>
-              <AlertTriangle size={28} color="var(--ios-red)" />
+              <AlertTriangle size={22} color="var(--notion-red-text)" />
             </div>
 
-            <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px', lineHeight: 1.2 }}>
+            <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px', lineHeight: 1.2 }}>
               Reset App Database?
             </h3>
             
-            <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '22px' }}>
+            <p style={{ fontSize: '12px', fontWeight: 500, color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '18px' }}>
               Are you sure you want to wipe all transactions, piggy bank savings & wishlist items back to ₹0 state?
             </p>
 
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
               <button 
                 type="button"
                 onClick={() => setShowModal(false)}
                 className="btn btn-secondary"
-                style={{ flex: 1, padding: '11px', fontSize: '13px', fontWeight: 700 }}
+                style={{ flex: 1, padding: '9px', fontSize: '12px', fontWeight: 600 }}
               >
                 Cancel
               </button>
@@ -136,21 +112,20 @@ export default function DataResetSettingsPage({ onResetDemo, onBack }) {
                 className="btn"
                 style={{
                   flex: 1.2,
-                  padding: '11px',
-                  fontSize: '13px',
-                  fontWeight: 800,
+                  padding: '9px',
+                  fontSize: '12px',
+                  fontWeight: 600,
                   color: '#ffffff',
-                  background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
-                  borderRadius: 'var(--radius-full)',
-                  boxShadow: '0 4px 14px rgba(239, 68, 68, 0.4)',
+                  background: 'var(--notion-red-text)',
+                  borderRadius: 'var(--radius-sm)',
                   border: 'none',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '6px'
+                  gap: '5px'
                 }}
               >
-                <RefreshCw size={15} /> Reset Data
+                <RefreshCw size={13} /> Reset Data
               </button>
             </div>
           </div>

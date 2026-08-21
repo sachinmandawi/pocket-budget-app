@@ -59,129 +59,132 @@ export default function AllowanceCountdownPage({ stats }) {
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out', paddingBottom: '80px' }}>
       {/* Page Header */}
-      <div style={{ marginBottom: '14px' }}>
-        <h2 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.4px' }}>
-          Next Payday Clock ⏱️
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+        <span style={{ fontSize: '20px' }}>⏱️</span>
+        <h2 style={{ fontSize: '16px', fontWeight: 600, margin: 0, color: 'var(--text-primary)' }}>
+          Pocket Money Clock
         </h2>
       </div>
 
-      {/* Main Countdown Hero Card */}
-      <div className="ios-card" style={{ padding: '20px 16px', marginBottom: '14px', textAlign: 'center' }}>
-        <div style={{
-          width: '46px',
-          height: '46px',
-          borderRadius: '14px',
-          background: 'var(--ios-blue-bg)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '0 auto 10px'
-        }}>
-          <Clock size={22} color="var(--ios-blue)" />
+      {/* Main Countdown Card */}
+      <div className="notion-card" style={{ padding: '18px 16px', marginBottom: '14px', textAlign: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginBottom: '4px' }}>
+          <Clock size={15} color="var(--text-secondary)" />
+          <h3 style={{ fontSize: '14px', fontWeight: 600, margin: 0, color: 'var(--text-primary)' }}>
+            Next Pocket Money Reset
+          </h3>
         </div>
-
-        <h3 style={{ fontSize: '16px', fontWeight: 800, margin: '0 0 2px', color: 'var(--text-primary)' }}>
-          Next Pocket Money Credit
-        </h3>
-        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '0 0 20px' }}>
-          Countdown to {getOrdinalSuffix(paydayDay)} of next cycle
+        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '0 0 16px' }}>
+          Counting down to the {getOrdinalSuffix(paydayDay)} of next month
         </p>
 
-        {/* Big Live Digital Clock */}
+        {/* Minimal Digital Clock */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '8px',
-          marginBottom: '20px'
+          gap: '6px',
+          marginBottom: '16px'
         }}>
           <div style={{
             background: 'var(--bg-card-subtle)',
-            padding: '12px 6px',
-            borderRadius: 'var(--radius-lg)',
+            padding: '10px 4px',
+            borderRadius: 'var(--radius-sm)',
             border: '1px solid var(--border-subtle)'
           }}>
-            <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--ios-blue)', display: 'block', lineHeight: 1 }}>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', display: 'block', lineHeight: 1 }}>
               {String(timeLeft.days).padStart(2, '0')}
             </span>
-            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '4px', display: 'block' }}>
+            <span style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '3px', display: 'block' }}>
               Days
             </span>
           </div>
 
           <div style={{
             background: 'var(--bg-card-subtle)',
-            padding: '12px 6px',
-            borderRadius: 'var(--radius-lg)',
+            padding: '10px 4px',
+            borderRadius: 'var(--radius-sm)',
             border: '1px solid var(--border-subtle)'
           }}>
-            <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', display: 'block', lineHeight: 1 }}>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', display: 'block', lineHeight: 1 }}>
               {String(timeLeft.hours).padStart(2, '0')}
             </span>
-            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '4px', display: 'block' }}>
+            <span style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '3px', display: 'block' }}>
               Hours
             </span>
           </div>
 
           <div style={{
             background: 'var(--bg-card-subtle)',
-            padding: '12px 6px',
-            borderRadius: 'var(--radius-lg)',
+            padding: '10px 4px',
+            borderRadius: 'var(--radius-sm)',
             border: '1px solid var(--border-subtle)'
           }}>
-            <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', display: 'block', lineHeight: 1 }}>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', display: 'block', lineHeight: 1 }}>
               {String(timeLeft.minutes).padStart(2, '0')}
             </span>
-            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '4px', display: 'block' }}>
+            <span style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '3px', display: 'block' }}>
               Mins
             </span>
           </div>
 
           <div style={{
             background: 'var(--bg-card-subtle)',
-            padding: '12px 6px',
-            borderRadius: 'var(--radius-lg)',
+            padding: '10px 4px',
+            borderRadius: 'var(--radius-sm)',
             border: '1px solid var(--border-subtle)'
           }}>
-            <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--ios-green)', display: 'block', lineHeight: 1 }}>
+            <span style={{ fontSize: '20px', fontWeight: 700, color: 'var(--notion-blue-text)', display: 'block', lineHeight: 1 }}>
               {String(timeLeft.seconds).padStart(2, '0')}
             </span>
-            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '4px', display: 'block' }}>
+            <span style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', marginTop: '3px', display: 'block' }}>
               Secs
             </span>
           </div>
         </div>
 
         {/* Progress Bar & Info */}
-        <div style={{ textAlign: 'left' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '6px' }}>
-            <span>Current Cycle Progress</span>
-            <span>{Math.round(cycleProgress)}% Complete</span>
+        <div style={{ textAlign: 'left', marginTop: '14px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '4px' }}>
+            <span>Cycle Progress</span>
+            <span className="notion-tag notion-tag-gray">{Math.round(cycleProgress)}%</span>
           </div>
-          <div className="progress-bar-bg" style={{ height: '8px', marginBottom: '10px' }}>
-            <div className="progress-bar-fill" style={{ width: `${cycleProgress}%`, backgroundColor: 'var(--ios-blue)' }} />
+          <div className="progress-bar-bg" style={{ height: '5px', marginBottom: '8px', borderRadius: '3px' }}>
+            <div className="progress-bar-fill" style={{ width: `${cycleProgress}%`, backgroundColor: 'var(--text-primary)', borderRadius: '3px' }} />
           </div>
           <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', display: 'block', textAlign: 'center' }}>
-            Day {currentDayNumber} of {totalDaysInMonth} ({daysRemaining} days left in cycle)
+            Day {currentDayNumber} of {totalDaysInMonth} ({daysRemaining} days left)
           </span>
         </div>
       </div>
 
-      {/* 2 Micro Stat Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-        <div className="ios-card" style={{ padding: '14px 16px' }}>
-          <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-tertiary)', textTransform: 'uppercase', display: 'block' }}>
+      {/* Property Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+        <div className="notion-card" style={{ 
+          padding: '12px 14px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          minHeight: '74px'
+        }}>
+          <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             Monthly Pocket Money
           </span>
-          <strong style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', display: 'block', marginTop: '2px' }}>
+          <strong style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', display: 'block', marginTop: '4px', lineHeight: 1.1 }}>
             {formatCurrencyAmount(stats?.currencySymbol || '₹', stats?.monthlyAllowance || 0)}
           </strong>
         </div>
 
-        <div className="ios-card" style={{ padding: '14px 16px' }}>
-          <span style={{ fontSize: '10px', fontWeight: 800, color: 'var(--text-tertiary)', textTransform: 'uppercase', display: 'block' }}>
+        <div className="notion-card" style={{ 
+          padding: '12px 14px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          minHeight: '74px'
+        }}>
+          <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             Daily Base Target
           </span>
-          <strong style={{ fontSize: '18px', fontWeight: 800, color: 'var(--ios-blue)', display: 'block', marginTop: '2px' }}>
+          <strong style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', display: 'block', marginTop: '4px', lineHeight: 1.1 }}>
             {formatCurrencyAmount(stats?.currencySymbol || '₹', stats?.baseDailyTarget || 0)}/day
           </strong>
         </div>
