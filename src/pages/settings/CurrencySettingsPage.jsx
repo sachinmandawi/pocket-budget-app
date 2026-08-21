@@ -221,45 +221,63 @@ export default function CurrencySettingsPage({ data, onSaveSettings, onBack }) {
                 transition: 'all 0.1s ease'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1, marginRight: '8px' }}>
                 <div style={{
-                  width: '32px',
-                  height: '32px',
+                  minWidth: '42px',
+                  height: '34px',
+                  padding: '0 4px',
                   borderRadius: 'var(--radius-sm)',
                   background: isSelected ? 'var(--text-primary)' : 'var(--bg-card-subtle)',
                   color: isSelected ? 'var(--bg-app)' : 'var(--text-primary)',
-                  display: 'flex',
+                  display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  flexShrink: 0
+                  fontSize: (curr.symbol || '').length >= 4 ? '10px' : (curr.symbol || '').length === 3 ? '11.5px' : '13.5px',
+                  fontWeight: 700,
+                  flexShrink: 0,
+                  boxSizing: 'border-box',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden'
                 }}>
                   {curr.symbol}
                 </div>
 
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '1px' }}>
-                    <span style={{ fontSize: '13px' }}>{curr.flag}</span>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '1px', flexWrap: 'nowrap', overflow: 'hidden' }}>
+                    <span style={{ fontSize: '13px', flexShrink: 0 }}>{curr.flag}</span>
                     <span style={{ 
                       fontSize: '13px', 
                       fontWeight: 600, 
-                      color: 'var(--text-primary)'
+                      color: 'var(--text-primary)',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0
                     }}>
                       {curr.code}
                     </span>
-                    <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
+                    <span style={{ 
+                      fontSize: '11px', 
+                      color: 'var(--text-tertiary)', 
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}>
                       — {curr.country}
                     </span>
                     {curr.isCustom && (
-                      <span className="notion-tag notion-tag-orange" style={{ fontSize: '9px', padding: '1px 4px' }}>
+                      <span className="notion-tag notion-tag-orange" style={{ fontSize: '9px', padding: '1px 4px', flexShrink: 0 }}>
                         Custom
                       </span>
                     )}
                   </div>
-                  <span style={{ fontSize: '10px', color: 'var(--text-tertiary)' }}>
+                  <div style={{ 
+                    fontSize: '10.5px', 
+                    color: 'var(--text-tertiary)',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}>
                     {curr.name} ({curr.symbol})
-                  </span>
+                  </div>
                 </div>
               </div>
 
