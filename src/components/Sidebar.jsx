@@ -11,6 +11,7 @@ import {
   Tags,
   ChevronRight
 } from 'lucide-react';
+import { CURRENT_APP_VERSION } from '../utils/versionCheck';
 
 export default function Sidebar({ 
   isOpen, 
@@ -311,7 +312,7 @@ export default function Sidebar({
           justifyContent: 'space-between'
         }}>
           <span style={{ fontSize: '11px', color: 'var(--text-tertiary)' }}>
-            Pocket Budget v1.4.0
+            Pocket Budget v{CURRENT_APP_VERSION}
           </span>
         </div>
       </aside>
