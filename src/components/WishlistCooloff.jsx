@@ -129,14 +129,15 @@ export default function WishlistCooloff({
       )}
 
       {/* Main Wishlist Card */}
-      <div className="notion-card" style={{ padding: 0, overflow: 'hidden' }}>
+      <div className="notion-card" style={{ padding: 0, overflow: 'visible' }}>
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           padding: '12px 14px',
           borderBottom: wishlist.length > 0 ? '1px solid var(--border-subtle)' : 'none',
-          background: 'var(--bg-card)'
+          background: 'var(--bg-card)',
+          borderRadius: 'var(--radius-md) var(--radius-md) 0 0'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Clock size={15} color="var(--notion-purple-text)" />
@@ -284,18 +285,18 @@ export default function WishlistCooloff({
                           style={{
                             position: 'absolute',
                             right: 0,
-                            top: isLast && wishlist.length > 1 ? 'auto' : '28px',
-                            bottom: isLast && wishlist.length > 1 ? '28px' : 'auto',
+                            top: isLast && wishlist.length > 2 ? 'auto' : '28px',
+                            bottom: isLast && wishlist.length > 2 ? '28px' : 'auto',
                             zIndex: 100,
                             background: 'var(--bg-card)',
-                            border: '1px solid var(--border-subtle)',
+                            border: '1px solid var(--border-medium)',
                             borderRadius: 'var(--radius-sm)',
-                            boxShadow: 'var(--shadow-card)',
+                            boxShadow: '0 12px 28px rgba(0, 0, 0, 0.45)',
                             padding: '4px',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '2px',
-                            minWidth: '110px',
+                            minWidth: '115px',
                             animation: 'fadeIn 0.12s ease-out'
                           }}
                         >

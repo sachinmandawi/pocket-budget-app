@@ -271,18 +271,18 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
                           style={{
                             position: 'absolute',
                             right: 0,
-                            top: isLast && todayTx.length > 1 ? 'auto' : '28px',
-                            bottom: isLast && todayTx.length > 1 ? '28px' : 'auto',
+                            top: isLast && todayTx.length > 2 ? 'auto' : '28px',
+                            bottom: isLast && todayTx.length > 2 ? '28px' : 'auto',
                             zIndex: 100,
                             background: 'var(--bg-card)',
-                            border: '1px solid var(--border-subtle)',
+                            border: '1px solid var(--border-medium)',
                             borderRadius: 'var(--radius-sm)',
-                            boxShadow: 'var(--shadow-card)',
+                            boxShadow: '0 12px 28px rgba(0, 0, 0, 0.45)',
                             padding: '4px',
                             display: 'flex',
                             flexDirection: 'column',
                             gap: '2px',
-                            minWidth: '110px',
+                            minWidth: '115px',
                             animation: 'fadeIn 0.12s ease-out'
                           }}
                         >
