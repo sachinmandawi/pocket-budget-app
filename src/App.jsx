@@ -21,6 +21,7 @@ import ReminderSettingsPage from './pages/settings/ReminderSettingsPage';
 import CurrencySettingsPage from './pages/settings/CurrencySettingsPage';
 import AllowanceCountdownPage from './pages/AllowanceCountdownPage';
 import PiggyBankVaultPage from './pages/PiggyBankVaultPage';
+import UdhaarPage from './pages/UdhaarPage';
 import AppUpdateModal from './components/AppUpdateModal';
 import { initAdMob, showStickyBanner, showSmartInterstitial } from './utils/admobService';
 
@@ -289,12 +290,25 @@ export default function App() {
           const hour = parseInt(hStr || '20', 10);
           const minute = parseInt(mStr || '0', 10);
 
+          try {
+            await LocalNotifications.createChannel({
+              id: 'daily-reminder',
+              name: 'Daily Reminders',
+              description: 'Daily expense logging reminders',
+              importance: 4,
+              visibility: 1,
+              vibration: true
+            });
+          } catch (channelErr) {}
+
           await LocalNotifications.schedule({
             notifications: [
               {
                 id: 1001,
                 title: 'Pocket Budget Reminder 🔔',
                 body: "Did you record today's spends? Tap to keep your budget on track!",
+                channelId: 'daily-reminder',
+                autoCancel: true,
                 schedule: {
                   on: {
                     hour,
@@ -314,6 +328,7 @@ export default function App() {
 
   // Floating Auto-Sync Toast State
   const [syncToastMsg, setSyncToastMsg] = useState(null);
+  const lastLocalSaveTimeRef = useRef(0);
 
   const triggerSyncToast = (msg) => {
     setSyncToastMsg(msg);
@@ -322,8 +337,24 @@ export default function App() {
     }, 3000);
   };
 
-  // Save to localStorage & Automatic Background Push to GitHub Private Repo
+  // Helper for immediate save & push to GitHub (used by settings pages & critical updates)
+  const saveAndSyncImmediately = (newData) => {
+    lastLocalSaveTimeRef.current = Date.now();
+    saveData(newData);
+    setData(newData);
+    const config = getGitHubConfig();
+    if (config.token && config.owner && config.repo) {
+      pushToGitHub(newData).then(res => {
+        if (res.success) {
+          triggerSyncToast('☁️ Synced to GitHub Cloud!');
+        }
+      }).catch(() => {});
+    }
+  };
+
+  // Save to localStorage & Automatic Background Push to GitHub Private Repo (for regular edits)
   useEffect(() => {
+    lastLocalSaveTimeRef.current = Date.now();
     saveData(data);
     const config = getGitHubConfig();
     if (config.token && config.owner && config.repo) {
@@ -340,6 +371,9 @@ export default function App() {
   // On App Mount & On Focus/Visibility Change, Smart Sync & Merge Cloud Data
   useEffect(() => {
     const syncAndMergeOnFocus = () => {
+      // Do not overwrite if user just made a local change in the last 4 seconds
+      if (Date.now() - lastLocalSaveTimeRef.current < 4000) return;
+
       const config = getGitHubConfig();
       if (config.token && config.owner && config.repo) {
         pullFromGitHub().then(res => {
@@ -436,6 +470,78 @@ export default function App() {
     setData({
       ...data,
       wishlist: (data.wishlist || []).map(w => w.id === updatedItem.id ? { ...w, ...updatedItem } : w)
+    });
+  };
+
+  const handleAddDebt = (newDebt) => {
+    setData(prev => ({
+      ...prev,
+      debts: [newDebt, ...(prev.debts || [])]
+    }));
+  };
+
+  const handleUpdateDebt = (updatedDebt) => {
+    if (!updatedDebt || !updatedDebt.id) return;
+    setData(prev => ({
+      ...prev,
+      debts: (prev.debts || []).map(d => d.id === updatedDebt.id ? updatedDebt : d)
+    }));
+  };
+
+  const handleDeleteDebt = (debtId) => {
+    setData(prev => ({
+      ...prev,
+      debts: (prev.debts || []).filter(d => d.id !== debtId)
+    }));
+  };
+
+  const handleAddRepayment = ({ debtId, amount, date, note, depositToPiggy }) => {
+    setData(prev => {
+      const debts = prev.debts || [];
+      const updatedDebts = debts.map(d => {
+        if (d.id !== debtId) return d;
+        const currentSettled = Number(d.settledAmount || 0) + Number(amount);
+        const remaining = Math.max(0, Number(d.amount || 0) - currentSettled);
+        const isSettled = remaining <= 0;
+
+        return {
+          ...d,
+          settledAmount: currentSettled,
+          remainingAmount: remaining,
+          isSettled: isSettled,
+          history: [
+            ...(d.history || []),
+            {
+              id: 'log-' + Date.now(),
+              date: date,
+              amount: amount,
+              type: 'repayment',
+              note: note || (d.type === 'lent' ? 'Repayment received' : 'Repayment made'),
+              savedToPiggy: depositToPiggy && d.type === 'lent'
+            }
+          ]
+        };
+      });
+
+      // If user chose to save recovered money to Piggy Bank Vault
+      const piggyManualDeposits = prev.piggyManualDeposits || [];
+      const newPiggyDeposits = (depositToPiggy)
+        ? [
+            ...piggyManualDeposits,
+            {
+              id: 'piggy-' + Date.now(),
+              date: date || new Date().toISOString().slice(0, 10),
+              amount: Number(amount),
+              note: note ? `Recovered (${note})` : 'Recovered from debt repayment'
+            }
+          ]
+        : piggyManualDeposits;
+
+      return {
+        ...prev,
+        debts: updatedDebts,
+        piggyManualDeposits: newPiggyDeposits
+      };
     });
   };
 
@@ -578,7 +684,7 @@ export default function App() {
           <CurrencySettingsPage 
             data={data}
             onSaveSettings={(newData) => {
-              setData(newData);
+              saveAndSyncImmediately(newData);
               setActiveSettingPage(null);
               setActiveTab('daily');
             }}
@@ -590,7 +696,7 @@ export default function App() {
           <GithubSyncSettingsPage 
             budgetData={data}
             onUpdateBudgetData={(newData) => {
-              setData(newData);
+              saveAndSyncImmediately(newData);
             }}
             onBack={() => setActiveSettingPage('settings_main')}
           />
@@ -600,7 +706,7 @@ export default function App() {
           <AllowanceSettingsPage 
             data={data}
             onSaveSettings={(newData) => {
-              setData(newData);
+              saveAndSyncImmediately(newData);
               setActiveSettingPage(null);
               setActiveTab('daily');
             }}
@@ -615,7 +721,7 @@ export default function App() {
           <ReminderSettingsPage 
             reminderSettings={data.reminderSettings || { enabled: true, time: '20:00' }}
             onSaveReminder={(reminderSettings) => {
-              setData({ ...data, reminderSettings });
+              saveAndSyncImmediately({ ...data, reminderSettings });
               setActiveSettingPage(null);
               setActiveTab('daily');
             }}
@@ -627,7 +733,7 @@ export default function App() {
           <CategoriesSettingsPage 
             data={data}
             onSaveSettings={(newData) => {
-              setData(newData);
+              saveAndSyncImmediately(newData);
               setActiveSettingPage(null);
               setActiveTab('daily');
             }}
@@ -706,6 +812,18 @@ export default function App() {
             onAddWishItem={handleAddWishItem}
             onDeleteWishItem={handleDeleteWishItem}
             onEditWishItem={handleEditWishItem}
+          />
+        )}
+
+        {!activeSettingPage && activeTab === 'udhaar' && (
+          <UdhaarPage 
+            debts={data.debts || []}
+            currencySymbol={stats.currencySymbol}
+            onAddDebt={handleAddDebt}
+            onUpdateDebt={handleUpdateDebt}
+            onDeleteDebt={handleDeleteDebt}
+            onAddRepayment={handleAddRepayment}
+            onAddExpense={handleAddExpense}
           />
         )}
 

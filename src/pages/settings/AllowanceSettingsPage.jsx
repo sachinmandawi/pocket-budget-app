@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Save, Trash2, Plus, Calendar, ChevronDown, ChevronUp } from 'lucide-react';
 import InteractiveCalendar from '../../components/InteractiveCalendar';
+import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 
 export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) {
   const [allowance, setAllowance] = useState(data.monthlyAllowance !== undefined ? data.monthlyAllowance : 0);
@@ -10,6 +11,7 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
   const [newFixedTitle, setNewFixedTitle] = useState('');
   const [newFixedAmount, setNewFixedAmount] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
+  const [fixedToDelete, setFixedToDelete] = useState(null);
 
   const handleDateSelect = (dateStr, dayNum) => {
     if (dayNum) {
@@ -137,11 +139,26 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
                     border: '1px solid var(--border-subtle)'
                   }}
                 >
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>{item.title}</span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0, flex: 1, marginRight: '8px' }}>{item.title}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                     <span style={{ fontWeight: 600, fontSize: '12px', color: 'var(--text-primary)' }}>{currencySymbol}{item.amount}</span>
-                    <button type="button" onClick={() => handleRemoveFixed(item.id)} className="btn btn-secondary btn-sm" style={{ width: '26px', height: '26px', padding: 0 }}>
-                      <Trash2 size={12} color="var(--notion-red-text)" />
+                    <button 
+                      type="button" 
+                      onClick={() => setFixedToDelete(item)} 
+                      style={{ 
+                        width: '26px', 
+                        height: '26px', 
+                        padding: 0, 
+                        background: 'transparent', 
+                        border: 'none', 
+                        cursor: 'pointer', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center' 
+                      }}
+                      title="Delete bill"
+                    >
+                      <Trash2 size={13} color="var(--notion-red-text)" />
                     </button>
                   </div>
                 </div>
@@ -181,6 +198,21 @@ export default function AllowanceSettingsPage({ data, onSaveSettings, onBack }) 
           <Save size={16} /> Save Settings
         </button>
       </form>
+
+      {/* Modern Delete Fixed Bill Confirmation Dialog */}
+      <ConfirmDeleteModal
+        isOpen={!!fixedToDelete}
+        title="Delete Fixed Bill?"
+        message={`Are you sure you want to delete "${fixedToDelete?.title}" (${currencySymbol}${fixedToDelete?.amount})?`}
+        confirmText="Delete Bill"
+        cancelText="Cancel"
+        onConfirm={() => {
+          if (fixedToDelete?.id) {
+            handleRemoveFixed(fixedToDelete.id);
+          }
+        }}
+        onClose={() => setFixedToDelete(null)}
+      />
     </div>
   );
 }

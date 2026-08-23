@@ -286,7 +286,7 @@ export default function EditExpenseModal({
           </div>
 
           {/* Action Buttons */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
+          <div style={{ marginTop: '18px' }}>
             <button
               type="submit"
               className="btn btn-primary"
@@ -303,39 +303,6 @@ export default function EditExpenseModal({
             >
               <CheckCircle2 size={16} /> Save Changes
             </button>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-              <button
-                type="button"
-                onClick={handleDelete}
-                className="btn btn-secondary"
-                style={{
-                  padding: '9px',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  color: 'var(--notion-red-text)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '5px'
-                }}
-              >
-                <Trash2 size={13} /> Delete
-              </button>
-
-              <button
-                type="button"
-                onClick={onClose}
-                className="btn btn-secondary"
-                style={{
-                  padding: '9px',
-                  fontSize: '12px',
-                  fontWeight: 600
-                }}
-              >
-                Cancel
-              </button>
-            </div>
           </div>
         </form>
       </div>

@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Save, MoreVertical, Edit2, Check, X } from 'lucide-react';
 import { DEFAULT_CATEGORIES } from '../../utils/storage';
+import ConfirmDeleteModal from '../../components/ConfirmDeleteModal';
 
 export default function CategoriesSettingsPage({ data, onSaveSettings, onBack }) {
   const [categories, setCategories] = useState(data.categories || DEFAULT_CATEGORIES);
   const [newCatName, setNewCatName] = useState('');
   const [newCatIcon, setNewCatIcon] = useState('🛍️');
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [catToDelete, setCatToDelete] = useState(null);
 
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState('');
   const [editIcon, setEditIcon] = useState('');
   const [errorMsg, setErrorMsg] = useState(null);
+
+  useEffect(() => {
+    if (data && data.categories) {
+      setCategories(data.categories);
+    }
+  }, [data?.categories]);
 
   // Close 3-dot popup menu when clicking outside
   useEffect(() => {
@@ -160,12 +168,12 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
                   position: 'relative'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ fontSize: '16px' }}>{cat.icon}</span>
-                  <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)' }}>{cat.name}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1, overflow: 'hidden', marginRight: '8px' }}>
+                  <span style={{ fontSize: '16px', flexShrink: 0 }}>{cat.icon}</span>
+                  <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>{cat.name}</span>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                   <span style={{
                     width: '8px',
                     height: '8px',
@@ -173,22 +181,34 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
                     backgroundColor: cat.color || 'var(--text-tertiary)'
                   }} />
 
-                  <div style={{ position: 'relative' }} data-category-menu={cat.id}>
+                  <div style={{ position: 'relative', zIndex: isMenuOpen ? 90 : 1 }} data-category-menu={cat.id}>
                     <button 
                       type="button" 
                       onClick={() => setOpenMenuId(isMenuOpen ? null : cat.id)} 
-                      className="btn btn-secondary btn-sm"
-                      style={{ width: '26px', height: '26px', padding: 0 }}
+                      style={{ 
+                        width: '26px', 
+                        height: '26px', 
+                        padding: 0,
+                        background: 'transparent',
+                        border: 'none',
+                        color: 'var(--text-tertiary)',
+                        borderRadius: 'var(--radius-sm)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer'
+                      }}
+                      title="More options"
                     >
-                      <MoreVertical size={14} color="var(--text-secondary)" />
+                      <MoreVertical size={14} />
                     </button>
 
                     {isMenuOpen && (
                       <div style={{
                         position: 'absolute',
                         right: 0,
-                        top: '32px',
-                        zIndex: 50,
+                        top: '28px',
+                        zIndex: 100,
                         background: 'var(--bg-card)',
                         border: '1px solid var(--border-subtle)',
                         borderRadius: 'var(--radius-sm)',
@@ -197,8 +217,8 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
                         display: 'flex',
                         flexDirection: 'column',
                         gap: '2px',
-                        minWidth: '100px',
-                        animation: 'fadeIn 0.15s ease-out'
+                        minWidth: '110px',
+                        animation: 'fadeIn 0.12s ease-out'
                       }}>
                         <button
                           type="button"
@@ -224,7 +244,10 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
                         
                         <button
                           type="button"
-                          onClick={() => handleRemoveCategory(cat.id)}
+                          onClick={() => {
+                            setOpenMenuId(null);
+                            setCatToDelete(cat);
+                          }}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -307,6 +330,21 @@ export default function CategoriesSettingsPage({ data, onSaveSettings, onBack })
           <Save size={15} /> Save Changes
         </button>
       </form>
+
+      {/* Modern Delete Category Confirmation Dialog */}
+      <ConfirmDeleteModal
+        isOpen={!!catToDelete}
+        title="Delete Category?"
+        message={`Are you sure you want to delete the "${catToDelete?.name}" category?`}
+        confirmText="Delete Category"
+        cancelText="Cancel"
+        onConfirm={() => {
+          if (catToDelete?.id) {
+            handleRemoveCategory(catToDelete.id);
+          }
+        }}
+        onClose={() => setCatToDelete(null)}
+      />
     </div>
   );
 }

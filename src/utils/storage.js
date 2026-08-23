@@ -80,7 +80,7 @@ export const getInitialData = () => {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === 'object') {
           if (parsed.categories && Array.isArray(parsed.categories)) {
-            parsed.categories = parsed.categories.filter(c => c && c.name && !c.name.toLowerCase().includes('cigarette') && !c.id.toLowerCase().includes('cigarette'));
+            parsed.categories = parsed.categories.filter(c => c && c.name && c.id);
           }
           if (parsed.monthlyAllowance === undefined) parsed.monthlyAllowance = 0;
           if (parsed.emergencyReserve === undefined) parsed.emergencyReserve = 0;
@@ -88,6 +88,8 @@ export const getInitialData = () => {
           if (!parsed.archivedCycles) parsed.archivedCycles = [];
           if (!parsed.transactions) parsed.transactions = [];
           if (!parsed.wishlist) parsed.wishlist = [];
+          if (!parsed.debts) parsed.debts = [];
+          if (!parsed.piggyManualDeposits) parsed.piggyManualDeposits = [];
           if (!parsed.customCurrencies) parsed.customCurrencies = [];
           if (!parsed.currency) parsed.currency = DEFAULT_CURRENCY;
           if (typeof parsed.isDarkMode !== 'boolean') {
@@ -121,7 +123,9 @@ export const getInitialData = () => {
     customCurrencies: [],
     archivedCycles: [],
     transactions: [],
-    wishlist: []
+    wishlist: [],
+    debts: [],
+    piggyManualDeposits: []
   };
 };
 
@@ -328,6 +332,20 @@ export const calculatePiggyBankSavings = (data) => {
         spent: Number(tx.amount || 0),
         note: tx.note || 'Vault Expense',
         savedAmount: -Number(tx.amount || 0)
+      });
+    }
+  });
+
+  // Add manual deposits (e.g. from debt repayments)
+  (data.piggyManualDeposits || []).forEach(dep => {
+    if (dep && dep.amount > 0) {
+      accumulatedSaved += Number(dep.amount || 0);
+      history.push({
+        type: 'deposit',
+        date: dep.date || formatLocalYMD(new Date()),
+        savedAmount: Math.round(Number(dep.amount || 0)),
+        note: dep.note || 'Manual deposit',
+        isManual: true
       });
     }
   });

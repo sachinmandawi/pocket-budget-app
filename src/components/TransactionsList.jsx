@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { Search, Trash2, Calendar, Filter, Wallet, ArrowUpRight, Edit3 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Trash2, Calendar, Filter, Wallet, ArrowUpRight, Edit3, MoreVertical, Pencil } from 'lucide-react';
 import { DEFAULT_CATEGORIES, formatDateReadable, formatLocalYMD } from '../utils/storage';
 import { formatCurrencyAmount } from '../utils/currencies';
 import CustomDropdown from './CustomDropdown';
 import EditExpenseModal from './EditExpenseModal';
+import ConfirmDeleteModal from './ConfirmDeleteModal';
 
 export default function TransactionsList({ 
   categories = DEFAULT_CATEGORIES, 
@@ -18,6 +19,24 @@ export default function TransactionsList({
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [editingTx, setEditingTx] = useState(null);
+  const [txToDelete, setTxToDelete] = useState(null);
+  const [openMenuTxId, setOpenMenuTxId] = useState(null);
+
+  // Close 3-dot popup menu when clicking outside
+  useEffect(() => {
+    if (!openMenuTxId) return;
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest('[data-tx-menu]')) {
+        setOpenMenuTxId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('touchstart', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+    };
+  }, [openMenuTxId]);
 
   const cycleOptions = [
     { value: 'current', label: `Current Cycle (${cyclePeriodLabel})`, icon: '🗓️' },
@@ -211,24 +230,24 @@ export default function TransactionsList({
                   </div>
 
                   {/* Grouped Notion Card */}
-                  <div className="notion-card" style={{ padding: 0, overflow: 'hidden', marginBottom: 0 }}>
+                  <div className="notion-card" style={{ padding: 0, overflow: 'visible', marginBottom: 0 }}>
                     {dayTxs.map((tx, idx) => {
                       const cat = getCategoryInfo(tx.category);
                       const isLast = idx === dayTxs.length - 1;
+                      const isMenuOpen = openMenuTxId === tx.id;
 
                       return (
                         <div
                           key={tx.id}
-                          onClick={() => selectedCycleId === 'current' && setEditingTx(tx)}
                           style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             padding: '11px 14px',
                             borderBottom: isLast ? 'none' : '1px solid var(--border-subtle)',
-                            cursor: selectedCycleId === 'current' ? 'pointer' : 'default',
-                            transition: 'background-color 0.15s ease',
-                            gap: '12px'
+                            gap: '12px',
+                            position: 'relative',
+                            zIndex: isMenuOpen ? 90 : 1
                           }}
                         >
                           {/* Left Avatar */}
@@ -249,7 +268,7 @@ export default function TransactionsList({
 
                           {/* Middle: Note / Category Name & Time */}
                           <div style={{ minWidth: 0, flex: 1 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px', minWidth: 0 }}>
                               <p style={{
                                 fontSize: '13px',
                                 fontWeight: 600,
@@ -258,7 +277,9 @@ export default function TransactionsList({
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
-                                margin: 0
+                                margin: 0,
+                                minWidth: 0,
+                                flex: 1
                               }}>
                                 {tx.note || cat.name}
                               </p>
@@ -293,13 +314,13 @@ export default function TransactionsList({
                             </span>
 
                             {selectedCycleId === 'current' && (
-                              <>
+                              <div style={{ position: 'relative' }} data-tx-menu={tx.id}>
                                 <button
+                                  type="button"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    setEditingTx(tx);
+                                    setOpenMenuTxId(openMenuTxId === tx.id ? null : tx.id);
                                   }}
-                                  className="btn btn-secondary btn-sm"
                                   style={{
                                     width: '26px',
                                     height: '26px',
@@ -307,33 +328,92 @@ export default function TransactionsList({
                                     borderRadius: 'var(--radius-sm)',
                                     background: 'transparent',
                                     color: 'var(--text-tertiary)',
-                                    border: '1px solid transparent'
+                                    border: 'none',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer'
                                   }}
-                                  title="Edit expense"
+                                  title="More options"
                                 >
-                                  <Edit3 size={13} />
+                                  <MoreVertical size={14} />
                                 </button>
 
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    onDeleteTransaction(tx.id);
-                                  }}
-                                  className="btn btn-secondary btn-sm"
-                                  style={{
-                                    width: '26px',
-                                    height: '26px',
-                                    padding: 0,
-                                    borderRadius: 'var(--radius-sm)',
-                                    background: 'transparent',
-                                    color: 'var(--notion-red-text)',
-                                    border: '1px solid transparent'
-                                  }}
-                                  title="Delete expense"
-                                >
-                                  <Trash2 size={13} />
-                                </button>
-                              </>
+                                {openMenuTxId === tx.id && (
+                                  <div
+                                    onClick={e => e.stopPropagation()}
+                                    style={{
+                                      position: 'absolute',
+                                      right: 0,
+                                      top: isLast && dayTxs.length > 1 ? 'auto' : '28px',
+                                      bottom: isLast && dayTxs.length > 1 ? '28px' : 'auto',
+                                      zIndex: 100,
+                                      background: 'var(--bg-card)',
+                                      border: '1px solid var(--border-subtle)',
+                                      borderRadius: 'var(--radius-sm)',
+                                      boxShadow: 'var(--shadow-card)',
+                                      padding: '4px',
+                                      display: 'flex',
+                                      flexDirection: 'column',
+                                      gap: '2px',
+                                      minWidth: '110px',
+                                      animation: 'fadeIn 0.12s ease-out'
+                                    }}
+                                  >
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOpenMenuTxId(null);
+                                        setEditingTx(tx);
+                                      }}
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        padding: '6px 8px',
+                                        background: 'none',
+                                        border: 'none',
+                                        fontSize: '12px',
+                                        fontWeight: 500,
+                                        color: 'var(--text-primary)',
+                                        borderRadius: 'var(--radius-sm)',
+                                        cursor: 'pointer',
+                                        textAlign: 'left',
+                                        width: '100%'
+                                      }}
+                                    >
+                                      <Pencil size={13} color="var(--text-secondary)" /> Edit
+                                    </button>
+
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOpenMenuTxId(null);
+                                        setTxToDelete(tx);
+                                      }}
+                                      style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        padding: '6px 8px',
+                                        background: 'none',
+                                        border: 'none',
+                                        fontSize: '12px',
+                                        fontWeight: 500,
+                                        color: 'var(--notion-red-text)',
+                                        borderRadius: 'var(--radius-sm)',
+                                        cursor: 'pointer',
+                                        textAlign: 'left',
+                                        width: '100%'
+                                      }}
+                                    >
+                                      <Trash2 size={13} color="var(--notion-red-text)" /> Delete
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
                             )}
                           </div>
                         </div>
@@ -356,6 +436,21 @@ export default function TransactionsList({
         onSaveEdit={onEditTransaction}
         onDeleteTransaction={onDeleteTransaction}
         currencySymbol={currencySymbol}
+      />
+
+      {/* Modern Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={!!txToDelete}
+        title="Delete Expense?"
+        message={`Are you sure you want to delete "${txToDelete?.note || 'this expense'}"?`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={() => {
+          if (txToDelete?.id) {
+            onDeleteTransaction(txToDelete.id);
+          }
+        }}
+        onClose={() => setTxToDelete(null)}
       />
     </div>
   );

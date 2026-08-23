@@ -89,6 +89,10 @@ export default function PiggyBankVaultPage({ budgetData }) {
                       <span className="notion-tag notion-tag-red" style={{ fontSize: '9px', padding: '1px 5px' }}>
                         Piggy Expense
                       </span>
+                    ) : item.isManual ? (
+                      <span className="notion-tag notion-tag-blue" style={{ fontSize: '9px', padding: '1px 5px' }}>
+                        🤝 Debt Recovery
+                      </span>
                     ) : item.isZeroSpend && (
                       <span className="notion-tag notion-tag-orange" style={{ fontSize: '9px', padding: '1px 5px', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
                         <Trophy size={9} /> Zero Spend!
@@ -96,7 +100,7 @@ export default function PiggyBankVaultPage({ budgetData }) {
                     )}
                   </div>
                   <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {isWithdrawal ? item.note : `Spent ${formatCurrencyAmount(currencySymbol, item.spent)} of ${formatCurrencyAmount(currencySymbol, item.limit)} limit`}
+                    {isWithdrawal ? item.note : item.isManual ? (item.note || 'Manual deposit') : `Spent ${formatCurrencyAmount(currencySymbol, item.spent)} of ${formatCurrencyAmount(currencySymbol, item.limit)} limit`}
                   </span>
                 </div>
 

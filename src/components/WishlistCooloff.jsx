@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Clock, Plus, Trash2, Target, CheckCircle2, Edit3, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Clock, Plus, Trash2, Target, CheckCircle2, Edit3, X, MoreVertical, Pencil } from 'lucide-react';
 import { formatCurrencyAmount } from '../utils/currencies';
+import ConfirmDeleteModal from './ConfirmDeleteModal';
 
 export default function WishlistCooloff({ 
   wishlist, 
@@ -14,8 +15,26 @@ export default function WishlistCooloff({
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [editingWish, setEditingWish] = useState(null);
+  const [itemToDelete, setItemToDelete] = useState(null);
   const [editTitle, setEditTitle] = useState('');
   const [editAmount, setEditAmount] = useState('');
+  const [openMenuWishId, setOpenMenuWishId] = useState(null);
+
+  // Close 3-dot popup menu when clicking outside
+  useEffect(() => {
+    if (!openMenuWishId) return;
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest('[data-wish-menu]')) {
+        setOpenMenuWishId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('touchstart', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+    };
+  }, [openMenuWishId]);
 
   const handleAdd = (e) => {
     e.preventDefault();
@@ -170,20 +189,15 @@ export default function WishlistCooloff({
               return (
                 <div 
                   key={item.id}
-                  onClick={() => {
-                    setEditingWish(item);
-                    setEditTitle(item.title);
-                    setEditAmount(String(item.amount));
-                  }}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '11px 14px',
                     borderBottom: isLast ? 'none' : '1px solid var(--border-subtle)',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.15s ease',
-                    gap: '12px'
+                    gap: '12px',
+                    position: 'relative',
+                    zIndex: openMenuWishId === item.id ? 90 : 1
                   }}
                 >
                   {/* Left Avatar */}
@@ -204,7 +218,7 @@ export default function WishlistCooloff({
 
                   {/* Middle Title & Status */}
                   <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px', minWidth: 0 }}>
                       <p style={{ 
                         fontSize: '13px', 
                         fontWeight: 600, 
@@ -212,7 +226,9 @@ export default function WishlistCooloff({
                         margin: 0, 
                         overflow: 'hidden', 
                         textOverflow: 'ellipsis', 
-                        whiteSpace: 'nowrap' 
+                        whiteSpace: 'nowrap',
+                        minWidth: 0,
+                        flex: 1
                       }}>
                         {item.title}
                       </p>
@@ -237,47 +253,108 @@ export default function WishlistCooloff({
                       {formatCurrencyAmount(currencySymbol, item.amount)}
                     </span>
 
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditingWish(item);
-                        setEditTitle(item.title);
-                        setEditAmount(String(item.amount));
-                      }}
-                      className="btn btn-secondary btn-sm"
-                      style={{ 
-                        width: '26px', 
-                        height: '26px', 
-                        padding: 0, 
-                        borderRadius: 'var(--radius-sm)',
-                        background: 'transparent',
-                        border: '1px solid transparent',
-                        color: 'var(--text-tertiary)'
-                      }}
-                      title="Edit item"
-                    >
-                      <Edit3 size={13} />
-                    </button>
+                    <div style={{ position: 'relative' }} data-wish-menu={item.id}>
+                      <button 
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuWishId(openMenuWishId === item.id ? null : item.id);
+                        }}
+                        style={{ 
+                          width: '26px', 
+                          height: '26px', 
+                          padding: 0, 
+                          borderRadius: 'var(--radius-sm)',
+                          background: 'transparent',
+                          border: 'none',
+                          color: 'var(--text-tertiary)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer'
+                        }}
+                        title="More options"
+                      >
+                        <MoreVertical size={14} />
+                      </button>
 
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDeleteWishItem(item.id);
-                      }}
-                      className="btn btn-secondary btn-sm"
-                      style={{ 
-                        width: '26px', 
-                        height: '26px', 
-                        padding: 0, 
-                        borderRadius: 'var(--radius-sm)',
-                        background: 'transparent',
-                        border: '1px solid transparent',
-                        color: 'var(--notion-red-text)'
-                      }}
-                      title="Remove item"
-                    >
-                      <Trash2 size={13} />
-                    </button>
+                      {openMenuWishId === item.id && (
+                        <div
+                          onClick={e => e.stopPropagation()}
+                          style={{
+                            position: 'absolute',
+                            right: 0,
+                            top: isLast && wishlist.length > 1 ? 'auto' : '28px',
+                            bottom: isLast && wishlist.length > 1 ? '28px' : 'auto',
+                            zIndex: 100,
+                            background: 'var(--bg-card)',
+                            border: '1px solid var(--border-subtle)',
+                            borderRadius: 'var(--radius-sm)',
+                            boxShadow: 'var(--shadow-card)',
+                            padding: '4px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '2px',
+                            minWidth: '110px',
+                            animation: 'fadeIn 0.12s ease-out'
+                          }}
+                        >
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenMenuWishId(null);
+                              setEditingWish(item);
+                              setEditTitle(item.title);
+                              setEditAmount(String(item.amount));
+                            }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '6px 8px',
+                              background: 'none',
+                              border: 'none',
+                              fontSize: '12px',
+                              fontWeight: 500,
+                              color: 'var(--text-primary)',
+                              borderRadius: 'var(--radius-sm)',
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              width: '100%'
+                            }}
+                          >
+                            <Pencil size={13} color="var(--text-secondary)" /> Edit
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenMenuWishId(null);
+                              setItemToDelete(item);
+                            }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '6px 8px',
+                              background: 'none',
+                              border: 'none',
+                              fontSize: '12px',
+                              fontWeight: 500,
+                              color: 'var(--notion-red-text)',
+                              borderRadius: 'var(--radius-sm)',
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              width: '100%'
+                            }}
+                          >
+                            <Trash2 size={13} color="var(--notion-red-text)" /> Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -386,7 +463,7 @@ export default function WishlistCooloff({
                 </div>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
+              <div style={{ marginTop: '18px' }}>
                 <button
                   type="submit"
                   className="btn btn-primary"
@@ -403,47 +480,26 @@ export default function WishlistCooloff({
                 >
                   <CheckCircle2 size={16} /> Save Changes
                 </button>
-
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (onDeleteWishItem) onDeleteWishItem(editingWish.id);
-                      setEditingWish(null);
-                    }}
-                    className="btn btn-secondary"
-                    style={{
-                      padding: '9px',
-                      fontSize: '12px',
-                      fontWeight: 600,
-                      color: 'var(--notion-red-text)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '5px'
-                    }}
-                  >
-                    <Trash2 size={13} /> Delete
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setEditingWish(null)}
-                    className="btn btn-secondary"
-                    style={{
-                      padding: '9px',
-                      fontSize: '12px',
-                      fontWeight: 600
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
               </div>
             </form>
           </div>
         </div>
       )}
+
+      {/* Modern Delete Confirmation Dialog */}
+      <ConfirmDeleteModal
+        isOpen={!!itemToDelete}
+        title="Delete Wish Item?"
+        message={`Are you sure you want to delete "${itemToDelete?.title || 'this item'}" from your wishlist?`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={() => {
+          if (itemToDelete?.id) {
+            onDeleteWishItem(itemToDelete.id);
+          }
+        }}
+        onClose={() => setItemToDelete(null)}
+      />
     </div>
   );
 }

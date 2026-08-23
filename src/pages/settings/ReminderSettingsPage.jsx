@@ -61,13 +61,26 @@ export default function ReminderSettingsPage({ reminderSettings = { enabled: tru
     try {
       const perm = await LocalNotifications.requestPermissions();
       if (perm.display === 'granted') {
+        try {
+          await LocalNotifications.createChannel({
+            id: 'daily-reminder',
+            name: 'Daily Reminders',
+            description: 'Daily expense logging reminders',
+            importance: 4,
+            visibility: 1,
+            vibration: true
+          });
+        } catch (channelErr) {}
+
         await LocalNotifications.schedule({
           notifications: [
             {
               title: 'Pocket Budget Evening Reminder 🔔',
               body: 'Did you log today\'s expenses? Tap to record your spends now!',
               id: 101,
-              schedule: { at: new Date(Date.now() + 1000) }
+              channelId: 'daily-reminder',
+              autoCancel: true,
+              schedule: { at: new Date(Date.now() + 1000), allowWhileIdle: true }
             }
           ]
         });

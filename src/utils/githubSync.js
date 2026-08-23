@@ -65,37 +65,101 @@ export const mergeBudgetData = (localData, cloudData) => {
 
   const mergedTransactions = Array.from(txMap.values()).sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
 
-  // Merge categories
-  const catMap = new Map();
-  (cloudData.categories || []).forEach(c => { if (c && c.id) catMap.set(c.id, c); });
-  (localData.categories || []).forEach(c => { if (c && c.id) catMap.set(c.id, c); });
+  const isLocalEmpty = localTx.length === 0 && Number(localData.monthlyAllowance || 0) === 0;
+  const isCloudEmpty = cloudTx.length === 0 && Number(cloudData.monthlyAllowance || 0) === 0;
 
-  // Merge wishlist
+  // Categories resolution:
+  // If local app is brand new/empty and cloud has categories, hydrate directly from cloud
+  // If local has categories, local categories is the authority (preserves custom icons, names, deletions & ordering)
+  // Plus, safely append any cloud custom categories that local doesn't have so historical transactions don't lose icons
+  let effectiveCategories = [];
+  if (isLocalEmpty && !isCloudEmpty && Array.isArray(cloudData.categories) && cloudData.categories.length > 0) {
+    effectiveCategories = cloudData.categories;
+  } else if (Array.isArray(localData.categories) && localData.categories.length > 0) {
+    const localCatIds = new Set(localData.categories.map(c => c.id));
+    const extraCloudCats = (cloudData.categories || []).filter(cc => cc && cc.id && !localCatIds.has(cc.id));
+    effectiveCategories = [...localData.categories, ...extraCloudCats];
+  } else if (Array.isArray(cloudData.categories) && cloudData.categories.length > 0) {
+    effectiveCategories = cloudData.categories;
+  } else {
+    effectiveCategories = localData.categories || [];
+  }
+
+  // Merge Wishlist
   const wishMap = new Map();
   (cloudData.wishlist || []).forEach(w => { if (w && w.id) wishMap.set(w.id, w); });
   (localData.wishlist || []).forEach(w => { if (w && w.id) wishMap.set(w.id, w); });
 
-  // Merge custom currencies
+  // Merge Custom Currencies
   const currMap = new Map();
   (cloudData.customCurrencies || []).forEach(c => { if (c && c.code) currMap.set(c.code, c); });
   (localData.customCurrencies || []).forEach(c => { if (c && c.code) currMap.set(c.code, c); });
 
-  const isLocalEmpty = localTx.length === 0 && Number(localData.monthlyAllowance || 0) === 0;
-  const isCloudEmpty = cloudTx.length === 0 && Number(cloudData.monthlyAllowance || 0) === 0;
+  // Merge Debts (smart merge of debt records and repayment history logs)
+  const debtMap = new Map();
+  (cloudData.debts || []).forEach(d => { if (d && d.id) debtMap.set(d.id, { ...d }); });
+  (localData.debts || []).forEach(d => {
+    if (!d || !d.id) return;
+    if (debtMap.has(d.id)) {
+      const cloudDebt = debtMap.get(d.id);
+      const historyMap = new Map();
+      (cloudDebt.history || []).forEach(h => { if (h && (h.id || h.date)) historyMap.set(h.id || `${h.date}-${h.amount}`, h); });
+      (d.history || []).forEach(h => { if (h && (h.id || h.date)) historyMap.set(h.id || `${h.date}-${h.amount}`, h); });
+      const mergedHistory = Array.from(historyMap.values()).sort((a, b) => new Date(a.date || 0) - new Date(b.date || 0));
+
+      const actualRepaid = mergedHistory.filter(h => h.type === 'repayment').reduce((s, h) => s + Number(h.amount || 0), 0);
+      const totalAmount = Number(d.amount || cloudDebt.amount || 0);
+      const isSettled = Boolean(d.isSettled || cloudDebt.isSettled || (totalAmount > 0 && actualRepaid >= totalAmount));
+      const remainingAmount = isSettled ? 0 : Math.max(0, totalAmount - actualRepaid);
+      const settledAmount = isSettled ? totalAmount : actualRepaid;
+
+      debtMap.set(d.id, {
+        ...cloudDebt,
+        ...d,
+        settledAmount,
+        remainingAmount,
+        isSettled,
+        history: mergedHistory
+      });
+    } else {
+      debtMap.set(d.id, { ...d });
+    }
+  });
+
+  // Merge Piggy Manual Deposits
+  const piggyDepMap = new Map();
+  (cloudData.piggyManualDeposits || []).forEach(p => { if (p && p.id) piggyDepMap.set(p.id, p); });
+  (localData.piggyManualDeposits || []).forEach(p => { if (p && p.id) piggyDepMap.set(p.id, p); });
+
+  // Merge Archived Cycles (deduplicate by id or date)
+  const cycleMap = new Map();
+  (cloudData.archivedCycles || []).forEach(c => { 
+    const key = c.id || c.cycleEndStr || c.date; 
+    if (key) cycleMap.set(key, c); 
+  });
+  (localData.archivedCycles || []).forEach(c => { 
+    const key = c.id || c.cycleEndStr || c.date; 
+    if (key) cycleMap.set(key, c); 
+  });
+
+  // Merge Fixed Deductions
+  const fixMap = new Map();
+  (cloudData.fixedDeductions || []).forEach(f => { if (f && (f.id || f.title)) fixMap.set(f.id || f.title, f); });
+  (localData.fixedDeductions || []).forEach(f => { if (f && (f.id || f.title)) fixMap.set(f.id || f.title, f); });
+  const effectiveFixedDeductions = Array.from(fixMap.values());
 
   let effectiveMonthlyAllowance = Number(localData.monthlyAllowance || 0);
   let effectivePayday = Number(localData.paydayAnchorDate || 1);
   let effectiveReserve = Number(localData.emergencyReserve || 0);
-  let effectiveCategories = Array.from(catMap.values());
   let effectiveCurrency = localData.currency || { code: 'INR', symbol: '₹', name: 'Indian Rupee', country: 'India', flag: '🇮🇳' };
   let effectiveDarkMode = Boolean(localData.isDarkMode ?? cloudData.isDarkMode ?? false);
+  let effectiveReminderSettings = localData.reminderSettings || cloudData.reminderSettings || { enabled: true, time: '20:00' };
 
   if (isLocalEmpty && !isCloudEmpty) {
     // Local app is fresh/empty: Hydrate 100% directly from Cloud
     effectiveMonthlyAllowance = Number(cloudData.monthlyAllowance || 0);
     effectivePayday = Number(cloudData.paydayAnchorDate || 1);
     effectiveReserve = Number(cloudData.emergencyReserve || 0);
-    effectiveCategories = Array.isArray(cloudData.categories) && cloudData.categories.length > 0 ? cloudData.categories : Array.from(catMap.values());
     effectiveCurrency = cloudData.currency || effectiveCurrency;
     effectiveDarkMode = Boolean(cloudData.isDarkMode ?? false);
   } else if (!isLocalEmpty && isCloudEmpty) {
@@ -119,13 +183,16 @@ export const mergeBudgetData = (localData, cloudData) => {
     emergencyReserve: effectiveReserve,
     isEmergencyUnlocked: Boolean(localData.isEmergencyUnlocked ?? cloudData.isEmergencyUnlocked ?? false),
     isDarkMode: effectiveDarkMode,
-    fixedDeductions: Array.isArray(localData.fixedDeductions) && localData.fixedDeductions.length > 0 ? localData.fixedDeductions : (cloudData.fixedDeductions || []),
+    fixedDeductions: effectiveFixedDeductions,
     currency: effectiveCurrency,
     categories: effectiveCategories,
     transactions: mergedTransactions,
     wishlist: Array.from(wishMap.values()),
+    debts: Array.from(debtMap.values()),
+    piggyManualDeposits: Array.from(piggyDepMap.values()),
     customCurrencies: Array.from(currMap.values()),
-    archivedCycles: Array.isArray(localData.archivedCycles) && localData.archivedCycles.length > 0 ? localData.archivedCycles : (cloudData.archivedCycles || [])
+    archivedCycles: Array.from(cycleMap.values()),
+    reminderSettings: effectiveReminderSettings
   };
 };
 

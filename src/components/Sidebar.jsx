@@ -67,6 +67,13 @@ export default function Sidebar({
           target: 'expenses',
           label: 'Expenses Log',
           icon: <ReceiptText size={18} color="var(--text-secondary)" />
+        },
+        {
+          id: 'tab_udhaar',
+          type: 'tab',
+          target: 'udhaar',
+          label: 'Loans & Debts',
+          icon: <span style={{ fontSize: '16px' }}>🤝</span>
         }
       ]
     },

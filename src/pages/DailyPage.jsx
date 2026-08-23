@@ -1,15 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DailyGauge from '../components/DailyGauge';
 import { DEFAULT_CATEGORIES, formatLocalYMD, formatDateReadable } from '../utils/storage';
 import { getGitHubConfig } from '../utils/githubSync';
 import { formatCurrencyAmount } from '../utils/currencies';
-import { Cloud, X, ArrowRight, Edit3 } from 'lucide-react';
+import { Cloud, X, ArrowRight, Edit3, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import EditExpenseModal from '../components/EditExpenseModal';
+import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
 
 export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, transactions = [], budgetData, onEditTransaction, onDeleteTransaction }) {
   const todayStr = formatLocalYMD(new Date());
   const todayTx = transactions.filter(tx => tx.date === todayStr);
   const [editingTx, setEditingTx] = useState(null);
+  const [txToDelete, setTxToDelete] = useState(null);
+  const [openMenuDailyTxId, setOpenMenuDailyTxId] = useState(null);
+
+  // Close 3-dot popup menu when clicking outside
+  useEffect(() => {
+    if (!openMenuDailyTxId) return;
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest('[data-daily-tx-menu]')) {
+        setOpenMenuDailyTxId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('touchstart', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+    };
+  }, [openMenuDailyTxId]);
 
   const [showGithubBanner, setShowGithubBanner] = useState(() => {
     try {
@@ -138,13 +157,14 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            {todayTx.map(tx => {
+            {todayTx.map((tx, idx) => {
               const cat = getCategoryInfo(tx.category);
+              const isLast = idx === todayTx.length - 1;
+              const isMenuOpen = openMenuDailyTxId === tx.id;
 
               return (
                 <div 
                   key={tx.id}
-                  onClick={() => setEditingTx(tx)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -153,9 +173,9 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
                     background: 'var(--bg-card-subtle)',
                     borderRadius: 'var(--radius-sm)',
                     border: '1px solid var(--border-subtle)',
-                    cursor: 'pointer',
-                    transition: 'background-color 0.15s ease',
-                    gap: '10px'
+                    gap: '10px',
+                    position: 'relative',
+                    zIndex: isMenuOpen ? 90 : 1
                   }}
                 >
                   {/* Left Category Icon Avatar */}
@@ -176,7 +196,7 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
 
                   {/* Middle: Title & Meta Info */}
                   <div style={{ minWidth: 0, flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px', minWidth: 0 }}>
                       <p style={{ 
                         fontSize: '13px', 
                         fontWeight: 600, 
@@ -185,7 +205,9 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
                         lineHeight: 1.2,
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
-                        textOverflow: 'ellipsis'
+                        textOverflow: 'ellipsis',
+                        minWidth: 0,
+                        flex: 1
                       }}>
                         {tx.note || cat.name}
                       </p>
@@ -218,16 +240,106 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
                     }}>
                       -{formatCurrencyAmount(stats.currencySymbol || '₹', tx.amount)}
                     </span>
-                    <span style={{ 
-                      color: 'var(--text-tertiary)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: '26px',
-                      height: '26px'
-                    }}>
-                      <Edit3 size={13} />
-                    </span>
+                    <div style={{ position: 'relative' }} data-daily-tx-menu={tx.id}>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setOpenMenuDailyTxId(openMenuDailyTxId === tx.id ? null : tx.id);
+                        }}
+                        style={{
+                          width: '26px',
+                          height: '26px',
+                          padding: 0,
+                          borderRadius: 'var(--radius-sm)',
+                          background: 'transparent',
+                          color: 'var(--text-tertiary)',
+                          border: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer'
+                        }}
+                        title="More options"
+                      >
+                        <MoreVertical size={14} />
+                      </button>
+
+                      {openMenuDailyTxId === tx.id && (
+                        <div
+                          onClick={e => e.stopPropagation()}
+                          style={{
+                            position: 'absolute',
+                            right: 0,
+                            top: isLast && todayTx.length > 1 ? 'auto' : '28px',
+                            bottom: isLast && todayTx.length > 1 ? '28px' : 'auto',
+                            zIndex: 100,
+                            background: 'var(--bg-card)',
+                            border: '1px solid var(--border-subtle)',
+                            borderRadius: 'var(--radius-sm)',
+                            boxShadow: 'var(--shadow-card)',
+                            padding: '4px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '2px',
+                            minWidth: '110px',
+                            animation: 'fadeIn 0.12s ease-out'
+                          }}
+                        >
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenMenuDailyTxId(null);
+                              setEditingTx(tx);
+                            }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '6px 8px',
+                              background: 'none',
+                              border: 'none',
+                              fontSize: '12px',
+                              fontWeight: 500,
+                              color: 'var(--text-primary)',
+                              borderRadius: 'var(--radius-sm)',
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              width: '100%'
+                            }}
+                          >
+                            <Pencil size={13} color="var(--text-secondary)" /> Edit
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenMenuDailyTxId(null);
+                              setTxToDelete(tx);
+                            }}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '6px 8px',
+                              background: 'none',
+                              border: 'none',
+                              fontSize: '12px',
+                              fontWeight: 500,
+                              color: 'var(--notion-red-text)',
+                              borderRadius: 'var(--radius-sm)',
+                              cursor: 'pointer',
+                              textAlign: 'left',
+                              width: '100%'
+                            }}
+                          >
+                            <Trash2 size={13} color="var(--notion-red-text)" /> Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -245,6 +357,21 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
         onSaveEdit={onEditTransaction}
         onDeleteTransaction={onDeleteTransaction}
         currencySymbol={stats.currencySymbol || '₹'}
+      />
+
+      {/* Modern Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={!!txToDelete}
+        title="Delete Expense?"
+        message={`Are you sure you want to delete "${txToDelete?.note || 'this expense'}"?`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={() => {
+          if (txToDelete?.id) {
+            onDeleteTransaction(txToDelete.id);
+          }
+        }}
+        onClose={() => setTxToDelete(null)}
       />
     </div>
   );
