@@ -1,7 +1,7 @@
 {
-  "monthlyAllowance": 2500,
-  "paydayAnchorDate": 5,
-  "emergencyReserve": 140,
+  "monthlyAllowance": 3500,
+  "paydayAnchorDate": 9,
+  "emergencyReserve": 180,
   "isEmergencyUnlocked": false,
   "currency": {
     "code": "INR",
@@ -12,6 +12,11 @@
       "id": "fixed-4",
       "title": "Fixed Bill 4",
       "amount": 70
+    },
+    {
+      "id": "fixed-8",
+      "title": "Fixed Bill 8",
+      "amount": 90
     }
   ],
   "transactions": [
@@ -40,6 +45,32 @@
       "date": "2026-08-31",
       "topupTarget": "allowance",
       "note": "Mid-month Boost #4"
+    },
+    {
+      "id": "tx-allowance-8",
+      "type": "expense",
+      "amount": 33,
+      "date": "2026-08-31",
+      "category": "food",
+      "note": "Lunch #8",
+      "spendSource": "allowance"
+    },
+    {
+      "id": "tx-piggy-8",
+      "type": "expense",
+      "amount": 23,
+      "date": "2026-08-31",
+      "category": "chai_snacks",
+      "note": "Tea & Snack #8",
+      "spendSource": "piggy_bank"
+    },
+    {
+      "id": "tx-topup-8",
+      "type": "topup",
+      "amount": 280,
+      "date": "2026-08-31",
+      "topupTarget": "allowance",
+      "note": "Mid-month Boost #8"
     }
   ],
   "debts": [
@@ -67,20 +98,54 @@
           "note": "Partial online return"
         }
       ]
-    }
-  ],
-  "archivedCycles": [
+    },
     {
-      "cycleId": "arch-4",
-      "totalSaved": 160
+      "id": "debt-8",
+      "type": "lend",
+      "personName": "Ramesh #8",
+      "amount": 900,
+      "formDate": "2026-08-31",
+      "date": "2026-08-31",
+      "isSettled": false,
+      "history": [
+        {
+          "id": "h1-8",
+          "type": "initial",
+          "amount": 900,
+          "date": "2026-08-31",
+          "note": "Given in cash"
+        },
+        {
+          "id": "h2-8",
+          "type": "repayment",
+          "amount": 100,
+          "date": "2026-08-31",
+          "note": "Partial online return"
+        }
+      ]
     }
   ],
+  "archivedCycles": [],
   "piggyManualDeposits": [
     {
       "id": "dep-4",
       "amount": 54,
       "date": "2026-08-31",
       "note": "Manual Deposit #4"
+    },
+    {
+      "id": "dep-8",
+      "amount": 58,
+      "date": "2026-08-31",
+      "note": "Manual Deposit #8"
     }
-  ]
+  ],
+  "isDarkMode": false,
+  "categories": [],
+  "wishlist": [],
+  "customCurrencies": [],
+  "reminderSettings": {
+    "enabled": true,
+    "time": "20:00"
+  }
 }
