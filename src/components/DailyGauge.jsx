@@ -114,7 +114,7 @@ export default function DailyGauge({ stats, onOpenQuickAdd, onNavigateToPage, on
         </div>
 
         <div style={{ padding: '4px 6px', borderLeft: '1px solid var(--border-subtle)' }}>
-          <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 600, display: 'block', marginBottom: '2px' }}>In Hand</span>
+          <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 600, display: 'block', marginBottom: '2px' }}>Balance</span>
           <strong style={{ fontSize: '13px', fontWeight: 600, color: 'var(--notion-blue-text)' }}>{formatCurrencyAmount(currencySymbol, remainingTotalInHand)}</strong>
         </div>
       </div>

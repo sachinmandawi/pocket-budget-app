@@ -186,9 +186,36 @@ export const calculateBudgetStats = (rawInput) => {
     .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
 
   const totalSpentThisMonth = allowanceTx.reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
-  const remainingTotalInHand = Number(data.monthlyAllowance || 0) + totalTopupsThisMonth - totalFixedDeductions - totalSpentThisMonth - effectiveReserve;
 
-  const remainingUsablePool = Math.max(0, totalUsablePool - spentPastDays);
+  // Idea 1: Real Locker System — Calculate unspent daily amounts from past days locked into Piggy Bank
+  let currentCycleSavingsLocked = 0;
+  if (baseDailyTarget > 0) {
+    const pastDatesMap = new Map();
+    allowanceTx.forEach(tx => {
+      if (tx.date < todayStr) {
+        pastDatesMap.set(tx.date, (pastDatesMap.get(tx.date) || 0) + Number(tx.amount || 0));
+      }
+    });
+
+    const [sy, sm, sd] = cycleStartStr.split('-').map(Number);
+    const [ty, tm, td] = todayStr.split('-').map(Number);
+    const startDate = new Date(sy, sm - 1, sd);
+    const todayDate = new Date(ty, tm - 1, td);
+
+    for (let d = new Date(startDate); d < todayDate; d.setDate(d.getDate() + 1)) {
+      const dStr = formatLocalYMD(d);
+      const spentOnDay = pastDatesMap.get(dStr) || 0;
+      const savedOnDay = Math.max(0, baseDailyTarget - spentOnDay);
+      currentCycleSavingsLocked += savedOnDay;
+    }
+  }
+  currentCycleSavingsLocked = Math.round(currentCycleSavingsLocked);
+
+  const netTotalInHand = Math.max(0, Math.round(totalUsablePool - totalSpentThisMonth));
+  const remainingPocketMoney = Math.max(0, Math.round(totalUsablePool - totalSpentThisMonth - currentCycleSavingsLocked));
+  const remainingTotalInHand = netTotalInHand;
+
+  const remainingUsablePool = Math.max(0, totalUsablePool - spentPastDays - currentCycleSavingsLocked);
   const todaysAllowedTotal = daysRemaining > 0 ? Math.round((remainingUsablePool / daysRemaining) * 10) / 10 : 0;
   const todaysSafeRemaining = Math.round((todaysAllowedTotal - spentToday) * 10) / 10;
 
@@ -245,6 +272,8 @@ export const calculateBudgetStats = (rawInput) => {
     spentPastDays,
     totalSpentThisMonth,
     remainingTotalInHand,
+    remainingPocketMoney,
+    currentCyclePiggySavings: currentCycleSavingsLocked,
     totalFixedDeductions,
     effectiveReserve,
     isFastBurn,

@@ -1,11 +1,13 @@
 import React from 'react';
-import { Trophy, ArrowUpRight, Sparkles, History, ShieldCheck } from 'lucide-react';
-import { calculatePiggyBankSavings, formatDateReadable } from '../utils/storage';
+import { Trophy, ArrowUpRight, Sparkles, History, ShieldCheck, Wallet, Lock } from 'lucide-react';
+import { calculatePiggyBankSavings, calculateBudgetStats, formatDateReadable } from '../utils/storage';
 import { formatCurrencyAmount } from '../utils/currencies';
 
 export default function PiggyBankVaultPage({ budgetData }) {
   const { totalSaved, history } = calculatePiggyBankSavings(budgetData);
+  const stats = calculateBudgetStats(budgetData);
   const currencySymbol = budgetData?.currency?.symbol || '₹';
+  const pocketMoneyInHand = Math.max(0, stats?.remainingTotalInHand || 0);
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out', paddingBottom: '80px' }}>
@@ -13,7 +15,7 @@ export default function PiggyBankVaultPage({ budgetData }) {
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
         <span style={{ fontSize: '20px' }}>🐷</span>
         <h2 style={{ fontSize: '16px', fontWeight: 600, margin: 0, color: 'var(--text-primary)' }}>
-          Piggy Bank
+          Piggy Bank Vault
         </h2>
       </div>
 
@@ -25,10 +27,10 @@ export default function PiggyBankVaultPage({ budgetData }) {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
           <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>
-            Total Piggy Bank Savings
+            Locked Vault Savings
           </span>
           <span className="notion-tag notion-tag-green">
-            Piggy Bank
+            <Lock size={10} /> Vault Protected
           </span>
         </div>
 
@@ -42,9 +44,35 @@ export default function PiggyBankVaultPage({ budgetData }) {
         }}>
           +{formatCurrencyAmount(currencySymbol, totalSaved)}
         </div>
-        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>
-          Money saved when you spend less than your daily limit. Available anytime!
+        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '0 0 12px' }}>
+          Unspent daily money is automatically locked in this vault. Separate from daily pocket money!
         </p>
+
+        {/* Real Locker Wallet Breakdown */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '8px',
+          paddingTop: '10px',
+          borderTop: '1px solid var(--border-subtle)'
+        }}>
+          <div style={{ background: 'var(--bg-card-subtle)', padding: '8px 10px', borderRadius: 'var(--radius-sm)' }}>
+            <span style={{ fontSize: '10.5px', color: 'var(--text-tertiary)', display: 'block', fontWeight: 500 }}>
+              👛 Pocket Wallet
+            </span>
+            <strong style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600 }}>
+              {formatCurrencyAmount(currencySymbol, pocketMoneyInHand)}
+            </strong>
+          </div>
+          <div style={{ background: 'var(--notion-green-bg)', padding: '8px 10px', borderRadius: 'var(--radius-sm)' }}>
+            <span style={{ fontSize: '10.5px', color: 'var(--notion-green-text)', display: 'block', fontWeight: 500 }}>
+              🐷 Vault Savings
+            </span>
+            <strong style={{ fontSize: '13px', color: 'var(--notion-green-text)', fontWeight: 600 }}>
+              +{formatCurrencyAmount(currencySymbol, totalSaved)}
+            </strong>
+          </div>
+        </div>
       </div>
 
       {/* Date-by-Date Timeline Log Header */}
