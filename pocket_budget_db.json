@@ -1,7 +1,7 @@
 {
-  "monthlyAllowance": 4500,
-  "paydayAnchorDate": 13,
-  "emergencyReserve": 220,
+  "monthlyAllowance": 5500,
+  "paydayAnchorDate": 17,
+  "emergencyReserve": 260,
   "isEmergencyUnlocked": false,
   "currency": {
     "code": "INR",
@@ -32,6 +32,11 @@
       "id": "fixed-12",
       "title": "Fixed Bill 12",
       "amount": 110
+    },
+    {
+      "id": "fixed-16",
+      "title": "Fixed Bill 16",
+      "amount": 130
     }
   ],
   "categories": [
@@ -168,6 +173,32 @@
       "date": "2026-08-31",
       "topupTarget": "allowance",
       "note": "Mid-month Boost #12"
+    },
+    {
+      "id": "tx-allowance-16",
+      "type": "expense",
+      "amount": 41,
+      "date": "2026-08-31",
+      "category": "food",
+      "note": "Lunch #16",
+      "spendSource": "allowance"
+    },
+    {
+      "id": "tx-piggy-16",
+      "type": "expense",
+      "amount": 31,
+      "date": "2026-08-31",
+      "category": "chai_snacks",
+      "note": "Tea & Snack #16",
+      "spendSource": "piggy_bank"
+    },
+    {
+      "id": "tx-topup-16",
+      "type": "topup",
+      "amount": 360,
+      "date": "2026-08-31",
+      "topupTarget": "allowance",
+      "note": "Mid-month Boost #16"
     }
   ],
   "debts": [
@@ -263,6 +294,31 @@
           "note": "Partial online return"
         }
       ]
+    },
+    {
+      "id": "debt-16",
+      "type": "lend",
+      "personName": "Ramesh #16",
+      "amount": 1300,
+      "formDate": "2026-08-31",
+      "date": "2026-08-31",
+      "isSettled": false,
+      "history": [
+        {
+          "id": "h1-16",
+          "type": "initial",
+          "amount": 1300,
+          "date": "2026-08-31",
+          "note": "Given in cash"
+        },
+        {
+          "id": "h2-16",
+          "type": "repayment",
+          "amount": 100,
+          "date": "2026-08-31",
+          "note": "Partial online return"
+        }
+      ]
     }
   ],
   "wishlist": [
@@ -295,6 +351,12 @@
       "amount": 62,
       "date": "2026-08-31",
       "note": "Manual Deposit #12"
+    },
+    {
+      "id": "dep-16",
+      "amount": 66,
+      "date": "2026-08-31",
+      "note": "Manual Deposit #16"
     }
   ],
   "isDarkMode": false,
