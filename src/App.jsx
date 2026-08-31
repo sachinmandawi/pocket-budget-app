@@ -23,6 +23,7 @@ import AllowanceCountdownPage from './pages/AllowanceCountdownPage';
 import PiggyBankVaultPage from './pages/PiggyBankVaultPage';
 import UdhaarPage from './pages/UdhaarPage';
 import AppUpdateModal from './components/AppUpdateModal';
+import ExportPdfModal from './components/ExportPdfModal';
 import { initAdMob, showStickyBanner, showSmartInterstitial } from './utils/admobService';
 
 import { getInitialData, saveData, calculateBudgetStats } from './utils/storage';
@@ -55,6 +56,9 @@ export default function App() {
 
   // 1-Time Welcome Onboarding Carousel State
   const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // PDF Export Modal State
+  const [isExportPdfOpen, setIsExportPdfOpen] = useState(false);
 
   // Advanced Navigation History Stack & Double Back To Exit
   const [showExitToast, setShowExitToast] = useState(false);
@@ -710,6 +714,7 @@ export default function App() {
         onNavigateSettingPage={(page) => {
           handleNavigate(activeTab, page);
         }}
+        onOpenExportPdf={() => setIsExportPdfOpen(true)}
       />
 
       <Navbar 
@@ -841,6 +846,7 @@ export default function App() {
             onDeleteTransaction={handleDeleteTransaction}
             onEditTransaction={handleEditTransaction}
             onOpenQuickAdd={handleOpenQuickAdd}
+            onOpenExportPdf={() => setIsExportPdfOpen(true)}
             onAddExpense={handleAddExpense}
             archivedCycles={data.archivedCycles || []}
             cyclePeriodLabel={stats.cyclePeriodLabel}
@@ -903,6 +909,13 @@ export default function App() {
         isOpen={showUpdateModal}
         updateInfo={updateInfo}
         onClose={() => setShowUpdateModal(false)}
+      />
+
+      {/* Official PDF Statement Export Modal */}
+      <ExportPdfModal
+        isOpen={isExportPdfOpen}
+        onClose={() => setIsExportPdfOpen(false)}
+        budgetData={data}
       />
       {/* Sleek Compact Bottom Auto-Sync Toast Pill */}
       {syncToastMsg && (

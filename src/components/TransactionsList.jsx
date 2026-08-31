@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Trash2, Calendar, Filter, Wallet, ArrowUpRight, Edit3, MoreVertical, Pencil } from 'lucide-react';
+import { Search, Trash2, Calendar, Filter, Wallet, ArrowUpRight, Edit3, MoreVertical, Pencil, FileText } from 'lucide-react';
 import { DEFAULT_CATEGORIES, formatDateReadable, formatLocalYMD } from '../utils/storage';
 import { formatCurrencyAmount } from '../utils/currencies';
 import CustomDropdown from './CustomDropdown';
@@ -11,6 +11,7 @@ export default function TransactionsList({
   transactions = [], 
   onDeleteTransaction, 
   onEditTransaction,
+  onOpenExportPdf,
   archivedCycles = [],
   cyclePeriodLabel = 'Current Cycle',
   currencySymbol = '₹'
@@ -101,9 +102,29 @@ export default function TransactionsList({
             <span className="notion-tag notion-tag-gray">
               <Calendar size={11} /> Billing Cycle
             </span>
-            <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>
-              {filtered.length} {filtered.length === 1 ? 'record' : 'records'}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                {filtered.length} {filtered.length === 1 ? 'record' : 'records'}
+              </span>
+              {onOpenExportPdf && (
+                <button
+                  type="button"
+                  onClick={onOpenExportPdf}
+                  className="btn btn-secondary btn-sm"
+                  style={{
+                    padding: '3px 8px',
+                    fontSize: '11px',
+                    gap: '4px',
+                    height: '24px',
+                    borderRadius: 'var(--radius-sm)'
+                  }}
+                  title="Export PDF Statement"
+                >
+                  <FileText size={12} color="var(--ios-blue)" />
+                  <span>Export PDF</span>
+                </button>
+              )}
+            </div>
           </div>
 
           <CustomDropdown

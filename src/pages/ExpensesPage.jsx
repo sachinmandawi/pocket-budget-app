@@ -8,6 +8,7 @@ export default function ExpensesPage({
   onDeleteTransaction, 
   onEditTransaction,
   onOpenQuickAdd, 
+  onOpenExportPdf,
   archivedCycles = [],
   cyclePeriodLabel = 'Current Cycle',
   currencySymbol = '₹'
@@ -45,6 +46,7 @@ export default function ExpensesPage({
         transactions={transactions}
         onDeleteTransaction={onDeleteTransaction}
         onEditTransaction={onEditTransaction}
+        onOpenExportPdf={onOpenExportPdf}
         archivedCycles={archivedCycles}
         cyclePeriodLabel={cyclePeriodLabel}
         currencySymbol={currencySymbol}
