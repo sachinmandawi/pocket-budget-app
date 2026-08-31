@@ -6,6 +6,8 @@ export default function DailyGauge({ stats, onOpenQuickAdd, onNavigateToPage, on
   const {
     todaysAllowedTotal,
     spentToday,
+    spentTodayPiggy = 0,
+    spentTodayTotal = spentToday,
     todaysSafeRemaining,
     remainingTotalInHand,
     currentDayNumber,
@@ -15,7 +17,7 @@ export default function DailyGauge({ stats, onOpenQuickAdd, onNavigateToPage, on
   } = stats;
 
   const isOverspentToday = todaysSafeRemaining < 0;
-  const spentPercent = todaysAllowedTotal > 0 ? Math.min(100, Math.max(0, (spentToday / todaysAllowedTotal) * 100)) : 0;
+  const spentPercent = todaysAllowedTotal > 0 ? Math.min(100, Math.max(0, (spentTodayTotal / todaysAllowedTotal) * 100)) : 0;
 
   const currencySymbol = stats.currencySymbol || stats.currency?.symbol || '₹';
 
@@ -110,7 +112,7 @@ export default function DailyGauge({ stats, onOpenQuickAdd, onNavigateToPage, on
 
         <div style={{ padding: '4px 6px', borderLeft: '1px solid var(--border-subtle)' }}>
           <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 600, display: 'block', marginBottom: '2px' }}>Spent</span>
-          <strong style={{ fontSize: '13px', fontWeight: 600, color: 'var(--notion-red-text)' }}>{formatCurrencyAmount(currencySymbol, spentToday)}</strong>
+          <strong style={{ fontSize: '13px', fontWeight: 600, color: 'var(--notion-red-text)' }}>{formatCurrencyAmount(currencySymbol, spentTodayTotal)}</strong>
         </div>
 
         <div style={{ padding: '4px 6px', borderLeft: '1px solid var(--border-subtle)' }}>

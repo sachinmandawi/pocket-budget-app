@@ -222,15 +222,27 @@ export const calculateBudgetStats = (rawInput) => {
   const manualPiggyDeposits = (Array.isArray(data.piggyManualDeposits) ? data.piggyManualDeposits : [])
     .reduce((sum, dep) => sum + Number(dep?.amount || 0), 0);
 
-  const currentPiggyVaultBalance = Math.max(0, Math.round(archivedPiggySavings + manualPiggyDeposits + currentCycleSavingsLocked - totalPiggySpent));
+  const pocketOverspendDeficit = Math.max(0, Math.round(totalSpentThisMonth + currentCycleSavingsLocked - totalUsablePool));
+  const currentPiggyVaultBalance = Math.max(0, Math.round(archivedPiggySavings + manualPiggyDeposits + currentCycleSavingsLocked - totalPiggySpent - pocketOverspendDeficit));
   const remainingPocketMoney = Math.max(0, Math.round(totalUsablePool - totalSpentThisMonth - currentCycleSavingsLocked));
   
   // Total Combined Balance = Pocket Money (In-Hand) + Piggy Bank (Vault Savings)
   const remainingTotalInHand = Math.round(remainingPocketMoney + currentPiggyVaultBalance);
 
+  const allExpensesTx = currentCycleTx.filter(tx => tx.type !== 'topup');
+  const spentTodayAll = allExpensesTx
+    .filter(tx => tx.date === todayStr)
+    .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
+
+  const spentTodayPiggy = currentCycleTx
+    .filter(tx => tx.type !== 'topup' && tx.spendSource === 'piggy_bank' && tx.date === todayStr)
+    .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
+
+  const totalSpentAllThisMonth = allExpensesTx.reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
+
   const remainingUsablePool = Math.max(0, totalUsablePool - spentPastDays - currentCycleSavingsLocked);
   const todaysAllowedTotal = daysRemaining > 0 ? Math.round((remainingUsablePool / daysRemaining) * 10) / 10 : 0;
-  const todaysSafeRemaining = Math.round((todaysAllowedTotal - spentToday) * 10) / 10;
+  const todaysSafeRemaining = Math.round((todaysAllowedTotal - spentTodayAll) * 10) / 10;
 
   const percentMonthPassed = (currentDayNumber / totalDaysInCycle) * 100;
   const percentMoneySpent = totalUsablePool > 0 ? (totalSpentThisMonth / totalUsablePool) * 100 : 0;
@@ -251,7 +263,7 @@ export const calculateBudgetStats = (rawInput) => {
   const categoryTotals = {};
   const activeCategories = Array.isArray(data.categories) ? data.categories : DEFAULT_CATEGORIES;
   activeCategories.forEach(cat => { if (cat && cat.id) categoryTotals[cat.id] = 0; });
-  allowanceTx.forEach(tx => {
+  allExpensesTx.forEach(tx => {
     const cat = tx.category || 'other';
     categoryTotals[cat] = (categoryTotals[cat] || 0) + Number(tx.amount || 0);
   });
@@ -281,9 +293,12 @@ export const calculateBudgetStats = (rawInput) => {
     baseDailyTarget,
     todaysAllowedTotal,
     spentToday,
+    spentTodayPiggy,
+    spentTodayTotal: spentTodayAll,
     todaysSafeRemaining,
     spentPastDays,
     totalSpentThisMonth,
+    totalSpentAllThisMonth,
     remainingTotalInHand,
     remainingPocketMoney,
     currentCyclePiggySavings: currentCycleSavingsLocked,
@@ -403,7 +418,9 @@ export const calculatePiggyBankSavings = (data) => {
 
   history.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  const totalSaved = Math.max(0, Math.round(accumulatedSaved - totalPiggySpent));
+  const totalUsablePool = Math.max(0, Number(data.monthlyAllowance || 0) + (stats.totalTopupsThisMonth || 0) - (stats.totalFixedDeductions || 0) - (stats.effectiveReserve || 0));
+  const pocketOverspendDeficit = Math.max(0, Math.round((stats.totalSpentThisMonth || 0) + (stats.currentCyclePiggySavings || 0) - totalUsablePool));
+  const totalSaved = Math.max(0, Math.round(accumulatedSaved - totalPiggySpent - pocketOverspendDeficit));
 
   return {
     totalSaved,
