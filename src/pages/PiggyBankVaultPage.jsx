@@ -7,7 +7,7 @@ export default function PiggyBankVaultPage({ budgetData }) {
   const { totalSaved, history } = calculatePiggyBankSavings(budgetData);
   const stats = calculateBudgetStats(budgetData);
   const currencySymbol = budgetData?.currency?.symbol || '₹';
-  const pocketMoneyInHand = Math.max(0, stats?.remainingTotalInHand || 0);
+  const pocketMoneyInHand = Math.max(0, stats?.remainingPocketMoney ?? stats?.remainingTotalInHand ?? 0);
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out', paddingBottom: '80px' }}>

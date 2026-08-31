@@ -36,7 +36,7 @@ export default function QuickAddExpense({
   const stats = calculateBudgetStats(budgetData);
   const { totalSaved: availablePiggyBalance } = calculatePiggyBankSavings(budgetData);
 
-  const availableAllowanceCash = Math.max(0, stats.remainingTotalInHand || 0);
+  const availableAllowanceCash = Math.max(0, stats.remainingPocketMoney ?? stats.remainingTotalInHand ?? 0);
   const todaysSafe = Math.max(0, stats.todaysSafeRemaining || 0);
   const daysRemaining = stats.daysRemaining || 1;
 
