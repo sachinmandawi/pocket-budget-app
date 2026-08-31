@@ -104,12 +104,10 @@
       "amount": 1499,
       "category": "shopping",
       "cooloffDays": 2,
-      "createdAt": "2026-08-31T12:22:39.036Z",
+      "createdAt": "2026-08-31T12:24:31.294Z",
       "status": "pending"
     }
   ],
   "archivedCycles": [],
-  "piggyManualDeposits": [],
-  "lastAuditTimestamp": "2026-08-31T12:24:29.030Z",
-  "auditVerificationPasses": 10
+  "piggyManualDeposits": []
 }
