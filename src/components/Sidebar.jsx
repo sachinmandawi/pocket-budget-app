@@ -9,8 +9,7 @@ import {
   Settings,
   Calendar,
   Tags,
-  ChevronRight,
-  FileText
+  ChevronRight
 } from 'lucide-react';
 import { CURRENT_APP_VERSION } from '../utils/versionCheck';
 
@@ -20,8 +19,7 @@ export default function Sidebar({
   activeTab, 
   activeSettingPage, 
   onNavigateTab, 
-  onNavigateSettingPage,
-  onOpenExportPdf
+  onNavigateSettingPage
 }) {
   if (!isOpen) return null;
 
@@ -103,13 +101,6 @@ export default function Sidebar({
           icon: <BarChart3 size={18} color="var(--notion-green-text)" />
         },
         {
-          id: 'action_export_pdf',
-          type: 'action',
-          action: onOpenExportPdf,
-          label: 'Export PDF Statement',
-          icon: <FileText size={18} color="var(--ios-blue)" />
-        },
-        {
           id: 'page_settings_main',
           type: 'page',
           target: 'settings_main',
@@ -122,9 +113,7 @@ export default function Sidebar({
 
   const handleItemClick = (item) => {
     onClose();
-    if (item.type === 'action' && item.action) {
-      item.action();
-    } else if (item.type === 'tab') {
+    if (item.type === 'tab') {
       onNavigateTab(item.target);
     } else if (item.type === 'page') {
       onNavigateSettingPage(item.target);

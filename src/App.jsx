@@ -714,7 +714,6 @@ export default function App() {
         onNavigateSettingPage={(page) => {
           handleNavigate(activeTab, page);
         }}
-        onOpenExportPdf={() => setIsExportPdfOpen(true)}
       />
 
       <Navbar 
