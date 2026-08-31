@@ -229,8 +229,7 @@ export default function AddRepaymentModal({ isOpen, onClose, debt, currencySymbo
                 <InteractiveCalendar
                   selectedDate={date}
                   onSelectDate={(d) => {
-                    setDate(d);
-                    setShowDatePicker(false);
+                    if (d) setDate(d);
                   }}
                 />
               </div>

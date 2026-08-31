@@ -1081,8 +1081,7 @@ export default function UdhaarPage({
                     <InteractiveCalendar
                       selectedDate={formDate || formatLocalYMD(new Date())}
                       onSelectDate={(d) => {
-                        setFormDate(d);
-                        setShowFormDateCalendar(false);
+                        if (d) setFormDate(d);
                       }}
                     />
                   </div>
@@ -1137,8 +1136,7 @@ export default function UdhaarPage({
                     <InteractiveCalendar
                       selectedDate={formDueDate || formatLocalYMD(new Date())}
                       onSelectDate={(d) => {
-                        setFormDueDate(d);
-                        setShowDueDateCalendar(false);
+                        if (d) setFormDueDate(d);
                       }}
                     />
                   </div>
@@ -1424,8 +1422,7 @@ export default function UdhaarPage({
                     <InteractiveCalendar
                       selectedDate={editDate || formatLocalYMD(new Date())}
                       onSelectDate={(d) => {
-                        setEditDate(d);
-                        setShowEditDateCalendar(false);
+                        if (d) setEditDate(d);
                       }}
                     />
                   </div>
@@ -1478,8 +1475,7 @@ export default function UdhaarPage({
                     <InteractiveCalendar
                       selectedDate={editDueDate || formatLocalYMD(new Date())}
                       onSelectDate={(d) => {
-                        setEditDueDate(d);
-                        setShowEditDueDateCalendar(false);
+                        if (d) setEditDueDate(d);
                       }}
                     />
                   </div>
