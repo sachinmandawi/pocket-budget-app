@@ -47,6 +47,8 @@ export default function UdhaarPage({
   const [formName, setFormName] = useState('');
   const [formPhone, setFormPhone] = useState('');
   const [formAmount, setFormAmount] = useState('');
+  const [formDate, setFormDate] = useState(formatLocalYMD(new Date()));
+  const [showFormDateCalendar, setShowFormDateCalendar] = useState(false);
   const [formDueDate, setFormDueDate] = useState('');
   const [showDueDateCalendar, setShowDueDateCalendar] = useState(false);
   const [formNote, setFormNote] = useState('');
@@ -57,6 +59,8 @@ export default function UdhaarPage({
   const [editType, setEditType] = useState('lent');
   const [editName, setEditName] = useState('');
   const [editPhone, setEditPhone] = useState('');
+  const [editDate, setEditDate] = useState(formatLocalYMD(new Date()));
+  const [showEditDateCalendar, setShowEditDateCalendar] = useState(false);
   const [editDueDate, setEditDueDate] = useState('');
   const [showEditDueDateCalendar, setShowEditDueDateCalendar] = useState(false);
   const [editNote, setEditNote] = useState('');
@@ -147,6 +151,8 @@ export default function UdhaarPage({
     setFormName('');
     setFormPhone('');
     setFormAmount('');
+    setFormDate(formatLocalYMD(new Date()));
+    setShowFormDateCalendar(false);
     setFormDueDate('');
     setShowDueDateCalendar(false);
     setFormNote('');
@@ -167,6 +173,8 @@ export default function UdhaarPage({
       return;
     }
 
+    const txDate = formDate || formatLocalYMD(new Date());
+
     const newDebt = {
       id: 'debt-' + Date.now(),
       personName: formName.trim(),
@@ -180,14 +188,15 @@ export default function UdhaarPage({
       history: [
         {
           id: 'log-' + Date.now(),
-          date: formatLocalYMD(new Date()),
+          date: txDate,
           amount: numAmount,
           type: 'initial',
           note: formNote.trim() || (formType === 'lent' ? 'Initial amount lent' : 'Initial amount borrowed')
         }
       ],
       isSettled: false,
-      createdAt: formatLocalYMD(new Date())
+      createdAt: txDate,
+      date: txDate
     };
 
     onAddDebt(newDebt);
@@ -197,11 +206,12 @@ export default function UdhaarPage({
         amount: numAmount,
         category: 'other',
         note: `Lent to ${formName.trim()}`,
-        date: formatLocalYMD(new Date())
+        date: txDate
       });
     }
 
     setIsAddModalOpen(false);
+    setShowFormDateCalendar(false);
     setShowDueDateCalendar(false);
   };
 
@@ -275,6 +285,9 @@ export default function UdhaarPage({
     setEditType(debt.type);
     setEditName(debt.personName || '');
     setEditPhone(debt.phone || '');
+    const currentTxDate = debt.createdAt || debt.date || debt.history?.[0]?.date || formatLocalYMD(new Date());
+    setEditDate(currentTxDate);
+    setShowEditDateCalendar(false);
     setEditDueDate(debt.dueDate || '');
     setShowEditDueDateCalendar(false);
     setEditNote(debt.note || '');
@@ -287,13 +300,23 @@ export default function UdhaarPage({
       setEditError('Please enter person name');
       return;
     }
+
+    const txDate = editDate || editingDebt.createdAt || formatLocalYMD(new Date());
+    const updatedHistory = Array.isArray(editingDebt.history) ? [...editingDebt.history] : [];
+    if (updatedHistory.length > 0 && updatedHistory[0].type === 'initial') {
+      updatedHistory[0] = { ...updatedHistory[0], date: txDate };
+    }
+
     const updated = {
       ...editingDebt,
       type: editType,
       personName: editName.trim(),
       phone: editPhone.trim(),
+      createdAt: txDate,
+      date: txDate,
       dueDate: editDueDate || '',
       note: editNote.trim() || (editType === 'lent' ? 'Money lent' : 'Money borrowed'),
+      history: updatedHistory
     };
     onUpdateDebt(updated);
     setEditingDebt(null);
@@ -783,9 +806,12 @@ export default function UdhaarPage({
                   </div>
                 )}
 
-                {/* Due Date & Timestamp Tags */}
+                {/* Transaction Date (Given / Taken) & Due Date Tags */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', fontSize: '11px', color: 'var(--text-tertiary)' }}>
-                  <span>Created {formatDateReadable(debt.createdAt || debt.history?.[0]?.date)}</span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Calendar size={11} color="var(--text-tertiary)" />
+                    <span>{isLent ? 'Given on' : 'Taken on'} {formatDateReadable(debt.createdAt || debt.date || debt.history?.[0]?.date)}</span>
+                  </span>
                   {debt.dueDate && (
                     <span style={{
                       display: 'flex',
@@ -1015,6 +1041,52 @@ export default function UdhaarPage({
                     boxSizing: 'border-box'
                   }}
                 />
+              </div>
+
+              {/* Transaction Date (Date Given / Date Taken) */}
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                  {formType === 'lent' ? 'Date Given *' : 'Date Taken *'}
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowFormDateCalendar(!showFormDateCalendar)}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '10px 14px',
+                    background: 'var(--bg-input)',
+                    border: showFormDateCalendar ? '1px solid var(--border-medium)' : '1px solid var(--border-subtle)',
+                    borderRadius: 'var(--radius-md)',
+                    color: 'var(--text-primary)',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    boxSizing: 'border-box'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Calendar size={15} color={formType === 'lent' ? 'var(--ios-green)' : 'var(--ios-red)'} />
+                    <span>{formatDateReadable(formDate || formatLocalYMD(new Date()))}</span>
+                  </div>
+                  <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontWeight: 600 }}>
+                    {showFormDateCalendar ? 'Close' : 'Change Date'}
+                  </span>
+                </button>
+
+                {showFormDateCalendar && (
+                  <div style={{ marginTop: '8px', animation: 'fadeIn 0.15s ease-out' }}>
+                    <InteractiveCalendar
+                      selectedDate={formDate || formatLocalYMD(new Date())}
+                      onSelectDate={(d) => {
+                        setFormDate(d);
+                        setShowFormDateCalendar(false);
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Due Date (Optional) */}
@@ -1312,6 +1384,52 @@ export default function UdhaarPage({
                     boxSizing: 'border-box'
                   }}
                 />
+              </div>
+
+              {/* Transaction Date (Date Given / Date Taken) */}
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                  {editType === 'lent' ? 'Date Given *' : 'Date Taken *'}
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowEditDateCalendar(!showEditDateCalendar)}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '10px 14px',
+                    background: 'var(--bg-input)',
+                    border: showEditDateCalendar ? '1px solid var(--border-medium)' : '1px solid var(--border-subtle)',
+                    borderRadius: 'var(--radius-md)',
+                    color: 'var(--text-primary)',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    boxSizing: 'border-box'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Calendar size={15} color={editType === 'lent' ? 'var(--ios-green)' : 'var(--ios-red)'} />
+                    <span>{formatDateReadable(editDate || formatLocalYMD(new Date()))}</span>
+                  </div>
+                  <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontWeight: 600 }}>
+                    {showEditDateCalendar ? 'Close' : 'Change Date'}
+                  </span>
+                </button>
+
+                {showEditDateCalendar && (
+                  <div style={{ marginTop: '8px', animation: 'fadeIn 0.15s ease-out' }}>
+                    <InteractiveCalendar
+                      selectedDate={editDate || formatLocalYMD(new Date())}
+                      onSelectDate={(d) => {
+                        setEditDate(d);
+                        setShowEditDateCalendar(false);
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Due Date */}

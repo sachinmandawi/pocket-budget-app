@@ -21,34 +21,7 @@ export default function Sidebar({
   onNavigateTab, 
   onNavigateSettingPage 
 }) {
-  const [visible, setVisible] = useState(isOpen);
-  const [active, setActive] = useState(isOpen);
-
-  useEffect(() => {
-    let timer;
-    if (isOpen) {
-      setVisible(true);
-      // Double rAF ensures the browser paints initial -100% position before transitioning to 0
-      const id1 = requestAnimationFrame(() => {
-        const id2 = requestAnimationFrame(() => {
-          setActive(true);
-        });
-        timer = id2;
-      });
-      return () => {
-        cancelAnimationFrame(id1);
-        if (timer) cancelAnimationFrame(timer);
-      };
-    } else {
-      setActive(false);
-      const timeout = setTimeout(() => {
-        setVisible(false);
-      }, 290);
-      return () => clearTimeout(timeout);
-    }
-  }, [isOpen]);
-
-  if (!visible && !isOpen) return null;
+  if (!isOpen) return null;
 
   const navSections = [
     {
@@ -167,7 +140,7 @@ export default function Sidebar({
         position: 'fixed', 
         inset: 0, 
         zIndex: 10000,
-        pointerEvents: active ? 'auto' : 'none'
+        overflow: 'hidden'
       }}
     >
       {/* Neutral Backdrop Overlay */}
@@ -177,10 +150,7 @@ export default function Sidebar({
           position: 'absolute',
           inset: 0,
           background: 'rgba(0, 0, 0, 0.45)',
-          opacity: active ? 1 : 0,
-          transition: 'opacity 0.28s cubic-bezier(0.25, 1, 0.5, 1)',
-          WebkitTransition: 'opacity 0.28s cubic-bezier(0.25, 1, 0.5, 1)',
-          willChange: 'opacity'
+          animation: 'fadeIn 0.2s ease-out'
         }}
       />
 
@@ -196,13 +166,9 @@ export default function Sidebar({
         display: 'flex',
         flexDirection: 'column',
         zIndex: 10001,
-        transform: active ? 'translate3d(0, 0, 0)' : 'translate3d(-100%, 0, 0)',
-        WebkitTransform: active ? 'translate3d(0, 0, 0)' : 'translate3d(-100%, 0, 0)',
-        transition: 'transform 0.28s cubic-bezier(0.25, 1, 0.5, 1)',
-        WebkitTransition: '-webkit-transform 0.28s cubic-bezier(0.25, 1, 0.5, 1)',
+        animation: 'slideInLeft 0.22s cubic-bezier(0.16, 1, 0.3, 1)',
         borderRight: '1px solid var(--border-subtle)',
-        boxShadow: active ? '4px 0 24px rgba(0, 0, 0, 0.25)' : 'none',
-        willChange: 'transform',
+        boxShadow: '4px 0 24px rgba(0, 0, 0, 0.25)',
         backfaceVisibility: 'hidden',
         WebkitBackfaceVisibility: 'hidden'
       }}>

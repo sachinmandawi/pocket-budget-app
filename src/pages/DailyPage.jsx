@@ -6,13 +6,15 @@ import { formatCurrencyAmount } from '../utils/currencies';
 import { Cloud, X, ArrowRight, Edit3, MoreVertical, Pencil, Trash2 } from 'lucide-react';
 import EditExpenseModal from '../components/EditExpenseModal';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal';
+import SetPocketBottomSheet from '../components/SetPocketBottomSheet';
 
-export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, transactions = [], budgetData, onEditTransaction, onDeleteTransaction }) {
+export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, transactions = [], budgetData, onEditTransaction, onDeleteTransaction, onSaveSettings }) {
   const todayStr = formatLocalYMD(new Date());
   const todayTx = transactions.filter(tx => tx.date === todayStr);
   const [editingTx, setEditingTx] = useState(null);
   const [txToDelete, setTxToDelete] = useState(null);
   const [openMenuDailyTxId, setOpenMenuDailyTxId] = useState(null);
+  const [showSetPocket, setShowSetPocket] = useState(false);
 
   // Close 3-dot popup menu when clicking outside
   useEffect(() => {
@@ -139,8 +141,17 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
       <DailyGauge 
         stats={stats} 
         onOpenQuickAdd={onOpenQuickAdd} 
+        onNavigateToPage={onNavigateToPage}
+        onOpenSetPocket={() => setShowSetPocket(true)}
       />
 
+      {/* Set Pocket Money Bottom Sheet */}
+      <SetPocketBottomSheet
+        isOpen={showSetPocket}
+        onClose={() => setShowSetPocket(false)}
+        data={budgetData}
+        onSaveSettings={onSaveSettings}
+      />
       {/* Recent Today Spends Card */}
       {todayTx.length > 0 && (
         <div className="notion-card" style={{ padding: '14px 16px' }}>
@@ -158,7 +169,10 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
             {todayTx.map((tx, idx) => {
-              const cat = getCategoryInfo(tx.category);
+              const isTopup = tx.type === 'topup';
+              const cat = isTopup 
+                ? { name: 'Added Money', icon: '💵', color: '#10b981' } 
+                : getCategoryInfo(tx.category);
               const isLast = idx === todayTx.length - 1;
               const isMenuOpen = openMenuDailyTxId === tx.id;
 
@@ -170,9 +184,9 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '10px 12px',
-                    background: 'var(--bg-card-subtle)',
+                    background: isTopup ? 'var(--notion-green-bg)' : 'var(--bg-card-subtle)',
                     borderRadius: 'var(--radius-sm)',
-                    border: '1px solid var(--border-subtle)',
+                    border: isTopup ? '1px solid var(--border-subtle)' : '1px solid var(--border-subtle)',
                     gap: '10px',
                     position: 'relative',
                     zIndex: isMenuOpen ? 90 : 1
@@ -191,7 +205,7 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
                     flexShrink: 0,
                     border: '1px solid var(--border-subtle)'
                   }}>
-                    {cat.icon}
+                    {isTopup ? '💵' : cat.icon}
                   </div>
 
                   {/* Middle: Title & Meta Info */}
@@ -209,17 +223,23 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
                         minWidth: 0,
                         flex: 1
                       }}>
-                        {tx.note || cat.name}
+                        {tx.note || (isTopup ? 'Added Money' : cat.name)}
                       </p>
-                      {tx.spendSource === 'piggy_bank' && (
+                      {isTopup ? (
                         <span className="notion-tag notion-tag-green" style={{ fontSize: '9px', padding: '1px 5px', flexShrink: 0 }}>
-                          🐷 Piggy Bank
+                          {tx.topupTarget === 'emergency' ? '🛡️ Emergency' : tx.topupTarget === 'piggy_bank' ? '🐷 Piggy' : '⚡ Added Money'}
                         </span>
+                      ) : (
+                        tx.spendSource === 'piggy_bank' && (
+                          <span className="notion-tag notion-tag-green" style={{ fontSize: '9px', padding: '1px 5px', flexShrink: 0 }}>
+                            🐷 Piggy Bank
+                          </span>
+                        )
                       )}
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', color: 'var(--text-tertiary)' }}>
-                      <span>{cat.name}</span>
+                      <span>{isTopup ? 'Received' : cat.name}</span>
                       {tx.time && (
                         <>
                           <span>•</span>
@@ -234,11 +254,11 @@ export default function DailyPage({ stats, onOpenQuickAdd, onNavigateToPage, tra
                     <span style={{ 
                       fontSize: '14px', 
                       fontWeight: 700, 
-                      color: 'var(--notion-red-text)',
+                      color: isTopup ? 'var(--notion-green-text)' : 'var(--notion-red-text)',
                       marginRight: '2px',
                       letterSpacing: '-0.2px'
                     }}>
-                      -{formatCurrencyAmount(stats.currencySymbol || '₹', tx.amount)}
+                      {isTopup ? '+' : '-'}{formatCurrencyAmount(stats.currencySymbol || '₹', tx.amount)}
                     </span>
                     <div style={{ position: 'relative' }} data-daily-tx-menu={tx.id}>
                       <button

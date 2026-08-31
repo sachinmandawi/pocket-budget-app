@@ -48,7 +48,9 @@ export default function TransactionsList({
   ];
 
   const categoryOptions = [
-    { value: 'all', label: 'All Categories', icon: '🏷️' },
+    { value: 'all', label: 'All Records', icon: '🏷️' },
+    { value: 'expenses', label: 'Spends Only', icon: '🔴' },
+    { value: 'topups', label: 'Added Money Only', icon: '🟢' },
     ...categories.map(c => ({
       value: c.id,
       label: c.name,
@@ -69,11 +71,21 @@ export default function TransactionsList({
 
   const filtered = activeTxList.filter(tx => {
     const matchesSearch = (tx.note || '').toLowerCase().includes(search.toLowerCase());
-    const matchesCat = selectedCategory === 'all' || tx.category === selectedCategory;
+    let matchesCat = true;
+    if (selectedCategory === 'all') {
+      matchesCat = true;
+    } else if (selectedCategory === 'expenses') {
+      matchesCat = tx.type !== 'topup';
+    } else if (selectedCategory === 'topups') {
+      matchesCat = tx.type === 'topup';
+    } else {
+      matchesCat = tx.category === selectedCategory;
+    }
     return matchesSearch && matchesCat;
   });
 
-  const totalFilteredSpent = filtered.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+  const totalFilteredSpent = filtered.filter(tx => tx.type !== 'topup').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+  const totalFilteredTopup = filtered.filter(tx => tx.type === 'topup').reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
 
   const getCategoryInfo = (catId) => {
     return categories.find(c => c.id === catId) || { name: 'Other', icon: '🏷️', color: '#2563eb' };
@@ -102,7 +114,7 @@ export default function TransactionsList({
         </div>
 
         {/* Search & Category Filter Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 130px', gap: '8px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 140px', gap: '8px' }}>
           <div style={{ position: 'relative' }}>
             <Search size={14} color="var(--text-tertiary)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
             <input
@@ -156,9 +168,16 @@ export default function TransactionsList({
             {selectedCycleId === 'current' ? 'Transactions' : 'Past Records'}
           </h3>
         </div>
-        <span className="notion-tag notion-tag-blue">
-          Total: {formatCurrencyAmount(currencySymbol, totalFilteredSpent)}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          {totalFilteredTopup > 0 && (
+            <span className="notion-tag notion-tag-green" style={{ fontSize: '10px' }}>
+              +{formatCurrencyAmount(currencySymbol, totalFilteredTopup)}
+            </span>
+          )}
+          <span className="notion-tag notion-tag-blue" style={{ fontSize: '10px' }}>
+            Spent: {formatCurrencyAmount(currencySymbol, totalFilteredSpent)}
+          </span>
+        </div>
       </div>
 
       {/* Transactions List */}
@@ -177,10 +196,10 @@ export default function TransactionsList({
             <Wallet size={20} color="var(--text-tertiary)" />
           </div>
           <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '2px' }}>
-            No Expenses Found
+            No Transactions Found
           </p>
           <p style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-            Record expenses from the Daily tab to track them here.
+            Record spends or top-ups from the Daily tab to track them here.
           </p>
         </div>
       ) : (
@@ -209,7 +228,8 @@ export default function TransactionsList({
 
             return sortedDates.map(dateKey => {
               const dayTxs = grouped[dateKey];
-              const dayTotal = dayTxs.reduce((sum, t) => sum + Number(t.amount || 0), 0);
+              const daySpent = dayTxs.filter(t => t.type !== 'topup').reduce((sum, t) => sum + Number(t.amount || 0), 0);
+              const dayTopup = dayTxs.filter(t => t.type === 'topup').reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
               return (
                 <div key={dateKey}>
@@ -224,15 +244,25 @@ export default function TransactionsList({
                     <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>
                       {getDateLabel(dateKey)}
                     </span>
-                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-tertiary)' }}>
-                      -{formatCurrencyAmount(currencySymbol, dayTotal)}
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 600 }}>
+                      {dayTopup > 0 && (
+                        <span style={{ color: 'var(--notion-green-text)' }}>
+                          +{formatCurrencyAmount(currencySymbol, dayTopup)}
+                        </span>
+                      )}
+                      {daySpent > 0 && (
+                        <span style={{ color: 'var(--text-tertiary)' }}>
+                          -{formatCurrencyAmount(currencySymbol, daySpent)}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   {/* Grouped Notion Card */}
                   <div className="notion-card" style={{ padding: 0, overflow: 'visible', marginBottom: 0 }}>
                     {dayTxs.map((tx, idx) => {
-                      const cat = getCategoryInfo(tx.category);
+                      const isTopup = tx.type === 'topup';
+                      const cat = isTopup ? { name: 'Added Money', icon: '💵', color: '#10b981' } : getCategoryInfo(tx.category);
                       const isLast = idx === dayTxs.length - 1;
                       const isMenuOpen = openMenuTxId === tx.id;
 
@@ -255,7 +285,7 @@ export default function TransactionsList({
                             width: '36px',
                             height: '36px',
                             borderRadius: '8px',
-                            background: 'var(--bg-card-subtle)',
+                            background: isTopup ? 'var(--notion-green-bg)' : 'var(--bg-card-subtle)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -263,7 +293,7 @@ export default function TransactionsList({
                             flexShrink: 0,
                             border: '1px solid var(--border-subtle)'
                           }}>
-                            {cat.icon}
+                            {isTopup ? '💵' : cat.icon}
                           </div>
 
                           {/* Middle: Note / Category Name & Time */}
@@ -281,17 +311,23 @@ export default function TransactionsList({
                                 minWidth: 0,
                                 flex: 1
                               }}>
-                                {tx.note || cat.name}
+                                {tx.note || (isTopup ? 'Added Money' : cat.name)}
                               </p>
-                              {tx.spendSource === 'piggy_bank' && (
+                              {isTopup ? (
                                 <span className="notion-tag notion-tag-green" style={{ fontSize: '9px', padding: '1px 5px', flexShrink: 0 }}>
-                                  🐷 Piggy Bank
+                                  {tx.topupTarget === 'emergency' ? '🛡️ Emergency' : tx.topupTarget === 'piggy_bank' ? '🐷 Piggy' : '⚡ Added Money'}
                                 </span>
+                              ) : (
+                                tx.spendSource === 'piggy_bank' && (
+                                  <span className="notion-tag notion-tag-green" style={{ fontSize: '9px', padding: '1px 5px', flexShrink: 0 }}>
+                                    🐷 Piggy Bank
+                                  </span>
+                                )
                               )}
                             </div>
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'var(--text-tertiary)' }}>
-                              <span>{cat.name}</span>
+                              <span>{isTopup ? 'Received' : cat.name}</span>
                               {tx.time && (
                                 <>
                                   <span>•</span>
@@ -306,11 +342,11 @@ export default function TransactionsList({
                             <span style={{
                               fontWeight: 700,
                               fontSize: '14px',
-                              color: 'var(--notion-red-text)',
+                              color: isTopup ? 'var(--notion-green-text)' : 'var(--notion-red-text)',
                               marginRight: '2px',
                               letterSpacing: '-0.2px'
                             }}>
-                              -{formatCurrencyAmount(currencySymbol, tx.amount)}
+                              {isTopup ? '+' : '-'}{formatCurrencyAmount(currencySymbol, tx.amount)}
                             </span>
 
                             {selectedCycleId === 'current' && (

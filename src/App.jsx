@@ -1,4 +1,4 @@
-// Pocket Budget v1.3.0 — In-App Auto-Update & Local Backup Release
+// Pocket Budget v1.7.0 — Loans Date Support, Modern UI & Polish Release
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -42,6 +42,7 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('daily');
   const [activeSettingPage, setActiveSettingPage] = useState(null);
   const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
+  const [quickAddTab, setQuickAddTab] = useState('expense');
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const init = getInitialData();
     return Boolean(init?.isDarkMode);
@@ -55,13 +56,33 @@ export default function App() {
   // 1-Time Welcome Onboarding Carousel State
   const [showOnboarding, setShowOnboarding] = useState(false);
 
+  // Advanced Navigation History Stack & Double Back To Exit
+  const [showExitToast, setShowExitToast] = useState(false);
+  const [isAppExited, setIsAppExited] = useState(false);
+  const lastBackPressRef = useRef(0);
+  const navHistoryStackRef = useRef([]);
+  const isNavigatingBackRef = useRef(false);
+
+  const handleNavigate = (tab = 'daily', settingPage = null) => {
+    if (!isNavigatingBackRef.current) {
+      const prev = navHistoryStackRef.current[navHistoryStackRef.current.length - 1];
+      if (!prev || prev.tab !== activeTab || prev.page !== activeSettingPage) {
+        navHistoryStackRef.current.push({ tab: activeTab, page: activeSettingPage });
+      }
+      try {
+        window.history.pushState({ tab, page: settingPage }, '');
+      } catch (e) {}
+    }
+    setActiveTab(tab);
+    setActiveSettingPage(settingPage);
+    setIsSidebarOpen(false);
+  };
+
   useEffect(() => {
     window.__POCKET_BUDGET_NAVIGATE__ = (tab = 'daily', settingPage = null) => {
-      setActiveTab(tab);
-      setActiveSettingPage(settingPage);
-      setIsSidebarOpen(false);
+      handleNavigate(tab, settingPage);
     };
-  }, []);
+  }, [activeTab, activeSettingPage]);
 
   useEffect(() => {
     try {
@@ -74,7 +95,7 @@ export default function App() {
 
   const handleStartOnboardingSetup = () => {
     setShowOnboarding(false);
-    setActiveSettingPage('settings_allowance');
+    handleNavigate(activeTab, 'settings_allowance');
   };
 
   // Auto-check GitHub Releases for latest APK version (2.5s after launch)
@@ -112,72 +133,91 @@ export default function App() {
     return { hasUpdate: false, currentVersion: CURRENT_APP_VERSION };
   };
 
-  // Double Back To Exit State
-  const [showExitToast, setShowExitToast] = useState(false);
-  const [isAppExited, setIsAppExited] = useState(false);
-  const lastBackPressRef = useRef(0);
+  const handleBack = () => {
+    // Priority 1: Top-level Modals & Overlays
+    if (showUpdateModal) {
+      setShowUpdateModal(false);
+      return;
+    }
+    if (showOnboarding) {
+      setShowOnboarding(false);
+      return;
+    }
+    if (isQuickAddOpen) {
+      setIsQuickAddOpen(false);
+      return;
+    }
+    if (isSidebarOpen) {
+      setIsSidebarOpen(false);
+      return;
+    }
+
+    // Priority 2: Unwind Navigation History Stack
+    if (navHistoryStackRef.current.length > 0) {
+      const prev = navHistoryStackRef.current.pop();
+      isNavigatingBackRef.current = true;
+      setActiveTab(prev.tab || 'daily');
+      setActiveSettingPage(prev.page || null);
+      setTimeout(() => {
+        isNavigatingBackRef.current = false;
+      }, 60);
+      return;
+    }
+
+    // Priority 3: Fallback Hierarchical Navigation
+    if (activeSettingPage) {
+      const subPages = ['settings_currency', 'settings_github', 'settings_reminder', 'settings_appearance', 'settings_reset'];
+      if (subPages.includes(activeSettingPage)) {
+        setActiveSettingPage('settings_main');
+      } else {
+        setActiveSettingPage(null);
+        setActiveTab('daily');
+      }
+      return;
+    }
+
+    if (activeTab !== 'daily') {
+      setActiveTab('daily');
+      return;
+    }
+
+    // Priority 4: Home Daily Tab - Double Back to Exit
+    const now = Date.now();
+    if (now - lastBackPressRef.current < 2000) {
+      setShowExitToast(false);
+      try {
+        CapApp.exitApp();
+      } catch (err) {
+        setIsAppExited(true);
+      }
+    } else {
+      lastBackPressRef.current = now;
+      setShowExitToast(true);
+      try {
+        window.history.pushState({ page: 'home' }, '');
+      } catch (e) {}
+      setTimeout(() => {
+        setShowExitToast(false);
+      }, 2000);
+    }
+  };
 
   // Native Capacitor APK & Web Hardware Back Button Handler
   useEffect(() => {
     let capListenerHandle = null;
 
-    const handleBackAction = () => {
-      if (isSidebarOpen) {
-        setIsSidebarOpen(false);
-        return;
-      }
-      if (isQuickAddOpen) {
-        setIsQuickAddOpen(false);
-        return;
-      }
-      if (activeSettingPage) {
-        if (['allowance_countdown', 'piggy_bank', 'settings_main', 'settings_allowance', 'settings_categories'].includes(activeSettingPage)) {
-          setActiveSettingPage(null);
-        } else {
-          setActiveSettingPage('settings_main');
-        }
-        return;
-      }
-      if (activeTab !== 'daily') {
-        setActiveTab('daily');
-        return;
-      }
-
-      // Home Daily Tab: Double Back to Exit
-      const now = Date.now();
-      if (now - lastBackPressRef.current < 2000) {
-        setShowExitToast(false);
-        try {
-          CapApp.exitApp();
-        } catch (err) {
-          setIsAppExited(true);
-        }
-      } else {
-        lastBackPressRef.current = now;
-        setShowExitToast(true);
-        try {
-          window.history.pushState({ page: 'home' }, '');
-        } catch (e) {}
-        setTimeout(() => {
-          setShowExitToast(false);
-        }, 2000);
-      }
-    };
-
-    // 1. Native Capacitor Hardware Back Button Listener (Android APK)
     const initCapacitorBackButton = async () => {
       try {
         capListenerHandle = await CapApp.addListener('backButton', () => {
-          handleBackAction();
+          handleBack();
         });
       } catch (e) {}
     };
 
     initCapacitorBackButton();
 
-    // 2. Web Browser Popstate Listener (Fallback for PWA & Web)
     const handlePopState = () => {
-      handleBackAction();
+      handleBack();
     };
     window.addEventListener('popstate', handlePopState);
 
@@ -187,16 +227,7 @@ export default function App() {
         capListenerHandle.remove();
       }
     };
-  }, [isSidebarOpen, isQuickAddOpen, activeSettingPage, activeTab]);
-
-  // Push state to history stack on sub-view open
-  useEffect(() => {
-    if (isSidebarOpen || isQuickAddOpen || activeSettingPage || activeTab !== 'daily') {
-      try {
-        window.history.pushState({ sidebar: isSidebarOpen, isModal: isQuickAddOpen, page: activeSettingPage, tab: activeTab }, '');
-      } catch (e) {}
-    }
-  }, [isSidebarOpen, isQuickAddOpen, activeSettingPage, activeTab]);
+  }, [showUpdateModal, showOnboarding, isQuickAddOpen, isSidebarOpen, activeSettingPage, activeTab]);
 
   // Cloudflare Worker 1-Click GitHub OAuth Hash Listener
   useEffect(() => {
@@ -420,14 +451,35 @@ export default function App() {
     }
   };
 
+  const handleOpenQuickAdd = (tab = 'expense') => {
+    setQuickAddTab(typeof tab === 'string' ? tab : 'expense');
+    setIsQuickAddOpen(true);
+  };
+
   const handleAddExpense = (newExpense) => {
-    const updated = {
-      ...data,
-      transactions: [
-        { id: 'tx-' + Date.now(), ...newExpense },
-        ...(data.transactions || [])
-      ]
-    };
+    let updated = { ...data };
+
+    if (newExpense.type === 'topup') {
+      if (newExpense.topupTarget === 'emergency') {
+        updated.emergencyReserve = Number(updated.emergencyReserve || 0) + Number(newExpense.amount || 0);
+      } else if (newExpense.topupTarget === 'piggy_bank') {
+        updated.piggyManualDeposits = [
+          ...(updated.piggyManualDeposits || []),
+          {
+            id: 'dep-' + Date.now(),
+            amount: Number(newExpense.amount || 0),
+            date: newExpense.date,
+            note: newExpense.note || 'Top-up Vault Deposit'
+          }
+        ];
+      }
+    }
+
+    updated.transactions = [
+      { id: 'tx-' + Date.now(), ...newExpense },
+      ...(updated.transactions || [])
+    ];
+
     setData(updated);
 
     // Trigger Smart Interstitial Ad
@@ -653,19 +705,18 @@ export default function App() {
         activeTab={activeTab}
         activeSettingPage={activeSettingPage}
         onNavigateTab={(tab) => {
-          setActiveSettingPage(null);
-          setActiveTab(tab);
+          handleNavigate(tab, null);
         }}
         onNavigateSettingPage={(page) => {
-          setActiveSettingPage(page);
+          handleNavigate(activeTab, page);
         }}
       />
 
       <Navbar 
         activeSettingPage={activeSettingPage}
-        onOpenSettings={setActiveSettingPage}
-        onOpenSettingsPage={setActiveSettingPage}
-        onBackToApp={handleBackToApp}
+        onOpenSettings={(page) => handleNavigate(activeTab, page)}
+        onOpenSettingsPage={(page) => handleNavigate(activeTab, page)}
+        onBackToApp={handleBack}
         onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
       />
 
@@ -675,8 +726,9 @@ export default function App() {
         {activeSettingPage === 'settings_main' && (
           <SettingsMainPage 
             budgetData={data}
-            onNavigateSubPage={setActiveSettingPage}
+            onNavigateSubPage={(page) => handleNavigate(activeTab, page)}
             onCheckForUpdates={handleManualCheckUpdates}
+            onBack={handleBack}
           />
         )}
 
@@ -685,10 +737,9 @@ export default function App() {
             data={data}
             onSaveSettings={(newData) => {
               saveAndSyncImmediately(newData);
-              setActiveSettingPage(null);
-              setActiveTab('daily');
+              handleBack();
             }}
-            onBack={() => setActiveSettingPage('settings_main')}
+            onBack={handleBack}
           />
         )}
 
@@ -698,7 +749,7 @@ export default function App() {
             onUpdateBudgetData={(newData) => {
               saveAndSyncImmediately(newData);
             }}
-            onBack={() => setActiveSettingPage('settings_main')}
+            onBack={handleBack}
           />
         )}
 
@@ -707,13 +758,9 @@ export default function App() {
             data={data}
             onSaveSettings={(newData) => {
               saveAndSyncImmediately(newData);
-              setActiveSettingPage(null);
-              setActiveTab('daily');
+              handleBack();
             }}
-            onBack={() => {
-              setActiveSettingPage(null);
-              setActiveTab('daily');
-            }}
+            onBack={handleBack}
           />
         )}
 
@@ -722,10 +769,9 @@ export default function App() {
             reminderSettings={data.reminderSettings || { enabled: true, time: '20:00' }}
             onSaveReminder={(reminderSettings) => {
               saveAndSyncImmediately({ ...data, reminderSettings });
-              setActiveSettingPage(null);
-              setActiveTab('daily');
+              handleBack();
             }}
-            onBack={() => setActiveSettingPage('settings_main')}
+            onBack={handleBack}
           />
         )}
 
@@ -734,13 +780,9 @@ export default function App() {
             data={data}
             onSaveSettings={(newData) => {
               saveAndSyncImmediately(newData);
-              setActiveSettingPage(null);
-              setActiveTab('daily');
+              handleBack();
             }}
-            onBack={() => {
-              setActiveSettingPage(null);
-              setActiveTab('daily');
-            }}
+            onBack={handleBack}
           />
         )}
 
@@ -748,7 +790,7 @@ export default function App() {
           <AppearanceSettingsPage 
             isDarkMode={isDarkMode}
             onToggleDarkMode={handleToggleDarkMode}
-            onBack={() => setActiveSettingPage('settings_main')}
+            onBack={handleBack}
           />
         )}
 
@@ -756,10 +798,9 @@ export default function App() {
           <DataResetSettingsPage 
             onResetDemo={() => {
               handleResetDemo();
-              setActiveSettingPage(null);
-              setActiveTab('daily');
+              handleBack();
             }}
-            onBack={() => setActiveSettingPage('settings_main')}
+            onBack={handleBack}
           />
         )}
 
@@ -767,14 +808,14 @@ export default function App() {
         {activeSettingPage === 'allowance_countdown' && (
           <AllowanceCountdownPage 
             stats={stats}
-            onBack={() => setActiveSettingPage(null)}
+            onBack={handleBack}
           />
         )}
 
         {activeSettingPage === 'piggy_bank' && (
           <PiggyBankVaultPage 
             budgetData={data}
-            onBack={() => setActiveSettingPage(null)}
+            onBack={handleBack}
           />
         )}
 
@@ -784,10 +825,11 @@ export default function App() {
             stats={stats} 
             transactions={stats.currentCycleTx || []}
             budgetData={data}
-            onNavigateToPage={setActiveSettingPage}
-            onOpenQuickAdd={() => setIsQuickAddOpen(true)} 
+            onNavigateToPage={(page) => handleNavigate(activeTab, page)}
+            onOpenQuickAdd={handleOpenQuickAdd} 
             onEditTransaction={handleEditTransaction}
             onDeleteTransaction={handleDeleteTransaction}
+            onSaveSettings={(newData) => saveAndSyncImmediately(newData)}
           />
         )}
 
@@ -798,7 +840,7 @@ export default function App() {
             currencySymbol={stats.currencySymbol}
             onDeleteTransaction={handleDeleteTransaction}
             onEditTransaction={handleEditTransaction}
-            onOpenQuickAdd={() => setIsQuickAddOpen(true)}
+            onOpenQuickAdd={handleOpenQuickAdd}
             onAddExpense={handleAddExpense}
             archivedCycles={data.archivedCycles || []}
             cyclePeriodLabel={stats.cyclePeriodLabel}
@@ -845,6 +887,7 @@ export default function App() {
         budgetData={data}
         onAddExpense={handleAddExpense}
         isOpen={isQuickAddOpen}
+        initialTab={quickAddTab}
         onClose={() => setIsQuickAddOpen(false)}
       />
 

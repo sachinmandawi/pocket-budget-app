@@ -161,15 +161,21 @@ export const calculateBudgetStats = (rawInput) => {
   const totalFixedDeductions = fixedDeductionsList.reduce((acc, curr) => acc + Number(curr?.amount || 0), 0);
   const effectiveReserve = data.isEmergencyUnlocked ? 0 : Number(data.emergencyReserve || 0);
 
-  const totalUsablePool = Math.max(0, Number(data.monthlyAllowance || 0) - totalFixedDeductions - effectiveReserve);
-  const baseDailyTarget = Math.round((totalUsablePool / totalDaysInCycle) * 10) / 10;
-
   const rawTxList = Array.isArray(data.transactions) ? data.transactions : [];
   const currentCycleTx = rawTxList.filter(tx => {
     return tx && tx.date && tx.date >= cycleStartStr && tx.date <= cycleEndStr;
   });
 
-  const allowanceTx = currentCycleTx.filter(tx => tx.spendSource !== 'piggy_bank');
+  // Top-ups in current cycle (allocated to general allowance / daily boost)
+  const currentCycleTopups = currentCycleTx.filter(tx => tx.type === 'topup' && (tx.topupTarget === 'allowance' || !tx.topupTarget));
+  const totalTopupsThisMonth = currentCycleTopups.reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
+  const allCurrentCycleTopups = currentCycleTx.filter(tx => tx.type === 'topup');
+  const allTopupsTotal = allCurrentCycleTopups.reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
+
+  const totalUsablePool = Math.max(0, Number(data.monthlyAllowance || 0) + totalTopupsThisMonth - totalFixedDeductions - effectiveReserve);
+  const baseDailyTarget = Math.round((totalUsablePool / totalDaysInCycle) * 10) / 10;
+
+  const allowanceTx = currentCycleTx.filter(tx => tx.type !== 'topup' && tx.spendSource !== 'piggy_bank');
 
   const spentToday = allowanceTx
     .filter(tx => tx.date === todayStr)
@@ -180,7 +186,7 @@ export const calculateBudgetStats = (rawInput) => {
     .reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
 
   const totalSpentThisMonth = allowanceTx.reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
-  const remainingTotalInHand = Number(data.monthlyAllowance || 0) - totalFixedDeductions - totalSpentThisMonth - effectiveReserve;
+  const remainingTotalInHand = Number(data.monthlyAllowance || 0) + totalTopupsThisMonth - totalFixedDeductions - totalSpentThisMonth - effectiveReserve;
 
   const remainingUsablePool = Math.max(0, totalUsablePool - spentPastDays);
   const todaysAllowedTotal = daysRemaining > 0 ? Math.round((remainingUsablePool / daysRemaining) * 10) / 10 : 0;
@@ -205,7 +211,7 @@ export const calculateBudgetStats = (rawInput) => {
   const categoryTotals = {};
   const activeCategories = Array.isArray(data.categories) ? data.categories : DEFAULT_CATEGORIES;
   activeCategories.forEach(cat => { if (cat && cat.id) categoryTotals[cat.id] = 0; });
-  currentCycleTx.forEach(tx => {
+  allowanceTx.forEach(tx => {
     const cat = tx.category || 'other';
     categoryTotals[cat] = (categoryTotals[cat] || 0) + Number(tx.amount || 0);
   });
@@ -227,6 +233,8 @@ export const calculateBudgetStats = (rawInput) => {
 
   return {
     monthlyAllowance: Number(data.monthlyAllowance || 0),
+    totalTopupsThisMonth,
+    allTopupsTotal,
     totalDaysInMonth: totalDaysInCycle,
     currentDayNumber,
     daysRemaining,
@@ -270,7 +278,7 @@ export const calculatePiggyBankSavings = (data) => {
 
   // Track all transactions across ALL time (Lifetime)
   transactions.forEach(tx => {
-    if (tx && tx.date) {
+    if (tx && tx.date && tx.type !== 'topup') {
       if (tx.spendSource === 'piggy_bank') {
         totalPiggySpent += Number(tx.amount || 0);
       } else if (tx.date < todayStr) {
@@ -310,14 +318,15 @@ export const calculatePiggyBankSavings = (data) => {
 
   // Add past archived cycles savings (Lifetime vault)
   (data.archivedCycles || []).forEach(cycle => {
-    if (cycle && cycle.savedAmount) {
-      accumulatedSaved += Number(cycle.savedAmount || 0);
+    const saved = Number(cycle?.savedAmount || cycle?.totalSaved || 0);
+    if (cycle && saved > 0) {
+      accumulatedSaved += saved;
       history.push({
         type: 'deposit',
         date: cycle.cycleEndStr || cycle.date || 'Past Cycle',
         spent: Number(cycle.totalSpent || 0),
         limit: Number(cycle.allowance || 0),
-        savedAmount: Math.round(Number(cycle.savedAmount || 0)),
+        savedAmount: Math.round(saved),
         isCycleClose: true
       });
     }

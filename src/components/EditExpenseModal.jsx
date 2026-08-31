@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle2, Calendar as CalendarIcon, Trash2 } from 'lucide-react';
+import { X, CheckCircle2, Calendar as CalendarIcon, Trash2, Zap, PiggyBank, Shield } from 'lucide-react';
 import { DEFAULT_CATEGORIES, formatDateReadable, formatLocalYMD } from '../utils/storage';
 import InteractiveCalendar from './InteractiveCalendar';
 
@@ -17,7 +17,10 @@ export default function EditExpenseModal({
   const [note, setNote] = useState('');
   const [date, setDate] = useState('');
   const [spendSource, setSpendSource] = useState('allowance');
+  const [topupTarget, setTopupTarget] = useState('allowance');
   const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const isTopup = transaction?.type === 'topup';
 
   useEffect(() => {
     if (transaction) {
@@ -26,6 +29,7 @@ export default function EditExpenseModal({
       setNote(transaction.note || '');
       setDate(transaction.date || formatLocalYMD(new Date()));
       setSpendSource(transaction.spendSource || 'allowance');
+      setTopupTarget(transaction.topupTarget || 'allowance');
       setShowDatePicker(false);
     }
   }, [transaction, categories]);
@@ -42,14 +46,25 @@ export default function EditExpenseModal({
     e.preventDefault();
     if (!amount || Number(amount) <= 0) return;
 
-    onSaveEdit({
-      ...transaction,
-      amount: Number(amount),
-      category,
-      note: note.trim() || categories.find(c => c.id === category)?.name || 'Expense',
-      date,
-      spendSource
-    });
+    if (isTopup) {
+      onSaveEdit({
+        ...transaction,
+        amount: Number(amount),
+        category: 'income',
+        note: note.trim() || 'Top-up / Extra Money',
+        date,
+        topupTarget
+      });
+    } else {
+      onSaveEdit({
+        ...transaction,
+        amount: Number(amount),
+        category,
+        note: note.trim() || categories.find(c => c.id === category)?.name || 'Expense',
+        date,
+        spendSource
+      });
+    }
 
     onClose();
   };
@@ -79,9 +94,9 @@ export default function EditExpenseModal({
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '18px' }}>✏️</span>
+            <span style={{ fontSize: '18px' }}>{isTopup ? '💵' : '✏️'}</span>
             <h3 style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
-              Edit Expense
+              {isTopup ? 'Edit Added Money' : 'Edit Expense'}
             </h3>
           </div>
           <button 
@@ -107,17 +122,17 @@ export default function EditExpenseModal({
         <form onSubmit={handleSubmit}>
           {/* Amount Input */}
           <div className="form-group" style={{ marginBottom: '14px' }}>
-            <label className="form-label">Amount ({currencySymbol})</label>
+            <label className="form-label">{isTopup ? 'Received Amount' : 'Amount'} ({currencySymbol})</label>
             <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
               <span style={{
                 position: 'absolute',
                 left: '12px',
                 fontSize: '18px',
                 fontWeight: 700,
-                color: 'var(--text-primary)',
+                color: isTopup ? 'var(--notion-green-text)' : 'var(--text-primary)',
                 pointerEvents: 'none'
               }}>
-                {currencySymbol}
+                {isTopup ? `+${currencySymbol}` : currencySymbol}
               </span>
               <input
                 type="number"
@@ -130,9 +145,9 @@ export default function EditExpenseModal({
                 style={{
                   fontSize: '22px',
                   fontWeight: 700,
-                  paddingLeft: '32px',
+                  paddingLeft: isTopup ? '38px' : '32px',
                   height: '48px',
-                  color: 'var(--text-primary)'
+                  color: isTopup ? 'var(--notion-green-text)' : 'var(--text-primary)'
                 }}
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
@@ -140,107 +155,189 @@ export default function EditExpenseModal({
             </div>
           </div>
 
-          {/* Spend Source Toggle */}
-          <div className="form-group" style={{ marginBottom: '14px' }}>
-            <label className="form-label">Deduct From</label>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-              <button
-                type="button"
-                onClick={() => setSpendSource('allowance')}
-                className="btn"
-                style={{
-                  padding: '8px 10px',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  borderRadius: 'var(--radius-sm)',
-                  border: spendSource === 'allowance' ? '2px solid var(--text-primary)' : '1px solid var(--border-medium)',
-                  background: spendSource === 'allowance' ? 'var(--bg-card-subtle)' : 'transparent',
-                  color: 'var(--text-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  cursor: 'pointer'
-                }}
-              >
-                👛 Pocket Money
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setSpendSource('piggy_bank')}
-                className="btn"
-                style={{
-                  padding: '8px 10px',
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  borderRadius: 'var(--radius-sm)',
-                  border: spendSource === 'piggy_bank' ? '2px solid var(--text-primary)' : '1px solid var(--border-medium)',
-                  background: spendSource === 'piggy_bank' ? 'var(--bg-card-subtle)' : 'transparent',
-                  color: 'var(--text-primary)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  cursor: 'pointer'
-                }}
-              >
-                🐷 Piggy Bank
-              </button>
-            </div>
-          </div>
-
-          {/* Category Picker */}
-          <div className="form-group" style={{ marginBottom: '14px' }}>
-            <label className="form-label">Category</label>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '6px',
-              maxHeight: '140px',
-              overflowY: 'auto',
-              padding: '2px'
-            }}>
-              {categories.map(cat => {
-                const isSelected = category === cat.id;
-                return (
+          {/* If Expense: Spend Source & Category */}
+          {!isTopup && (
+            <>
+              {/* Spend Source Toggle */}
+              <div className="form-group" style={{ marginBottom: '14px' }}>
+                <label className="form-label">Deduct From</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   <button
-                    key={cat.id}
                     type="button"
-                    onClick={() => setCategory(cat.id)}
+                    onClick={() => setSpendSource('allowance')}
+                    className="btn"
                     style={{
+                      padding: '8px 10px',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      borderRadius: 'var(--radius-sm)',
+                      border: spendSource === 'allowance' ? '2px solid var(--text-primary)' : '1px solid var(--border-medium)',
+                      background: spendSource === 'allowance' ? 'var(--bg-card-subtle)' : 'transparent',
+                      color: 'var(--text-primary)',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '5px',
-                      padding: '7px 8px',
-                      borderRadius: 'var(--radius-sm)',
-                      background: isSelected ? 'var(--text-primary)' : 'var(--bg-card-subtle)',
-                      color: isSelected ? 'var(--bg-app)' : 'var(--text-primary)',
-                      border: isSelected ? '1px solid var(--text-primary)' : '1px solid var(--border-subtle)',
-                      fontSize: '11px',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis'
+                      justifyContent: 'center',
+                      gap: '6px',
+                      cursor: 'pointer'
                     }}
                   >
-                    <span>{cat.icon}</span>
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{cat.name}</span>
+                    👛 Pocket Money
                   </button>
-                );
-              })}
+
+                  <button
+                    type="button"
+                    onClick={() => setSpendSource('piggy_bank')}
+                    className="btn"
+                    style={{
+                      padding: '8px 10px',
+                      fontSize: '12px',
+                      fontWeight: 600,
+                      borderRadius: 'var(--radius-sm)',
+                      border: spendSource === 'piggy_bank' ? '2px solid var(--text-primary)' : '1px solid var(--border-medium)',
+                      background: spendSource === 'piggy_bank' ? 'var(--bg-card-subtle)' : 'transparent',
+                      color: 'var(--text-primary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    🐷 Piggy Bank
+                  </button>
+                </div>
+              </div>
+
+              {/* Category Picker */}
+              <div className="form-group" style={{ marginBottom: '14px' }}>
+                <label className="form-label">Category</label>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: '6px',
+                  maxHeight: '140px',
+                  overflowY: 'auto',
+                  padding: '2px'
+                }}>
+                  {categories.map(cat => {
+                    const isSelected = category === cat.id;
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setCategory(cat.id)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                          padding: '7px 8px',
+                          borderRadius: 'var(--radius-sm)',
+                          background: isSelected ? 'var(--text-primary)' : 'var(--bg-card-subtle)',
+                          color: isSelected ? 'var(--bg-app)' : 'var(--text-primary)',
+                          border: isSelected ? '1px solid var(--text-primary)' : '1px solid var(--border-subtle)',
+                          fontSize: '11px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis'
+                        }}
+                      >
+                        <span>{cat.icon}</span>
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{cat.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* If Top-up: Destination Selector */}
+          {isTopup && (
+            <div className="form-group" style={{ marginBottom: '14px' }}>
+              <label className="form-label">Allocated To</label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '6px' }}>
+                <button
+                  type="button"
+                  onClick={() => setTopupTarget('allowance')}
+                  style={{
+                    padding: '8px 10px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: topupTarget === 'allowance' ? '1.5px solid var(--notion-green-text)' : '1px solid var(--border-subtle)',
+                    background: topupTarget === 'allowance' ? 'var(--notion-green-bg)' : 'var(--bg-card-subtle)',
+                    color: 'var(--text-primary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    fontWeight: 600
+                  }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Zap size={14} color="var(--notion-green-text)" /> Daily Budget Boost
+                  </span>
+                  {topupTarget === 'allowance' && <CheckCircle2 size={14} color="var(--notion-green-text)" />}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setTopupTarget('piggy_bank')}
+                  style={{
+                    padding: '8px 10px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: topupTarget === 'piggy_bank' ? '1.5px solid var(--notion-green-text)' : '1px solid var(--border-subtle)',
+                    background: topupTarget === 'piggy_bank' ? 'var(--notion-green-bg)' : 'var(--bg-card-subtle)',
+                    color: 'var(--text-primary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    fontWeight: 600
+                  }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <PiggyBank size={14} color="var(--notion-green-text)" /> Piggy Bank Vault
+                  </span>
+                  {topupTarget === 'piggy_bank' && <CheckCircle2 size={14} color="var(--notion-green-text)" />}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setTopupTarget('emergency')}
+                  style={{
+                    padding: '8px 10px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: topupTarget === 'emergency' ? '1.5px solid var(--notion-green-text)' : '1px solid var(--border-subtle)',
+                    background: topupTarget === 'emergency' ? 'var(--notion-green-bg)' : 'var(--bg-card-subtle)',
+                    color: 'var(--text-primary)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    fontWeight: 600
+                  }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Shield size={14} color="var(--notion-green-text)" /> Emergency Reserve
+                  </span>
+                  {topupTarget === 'emergency' && <CheckCircle2 size={14} color="var(--notion-green-text)" />}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Description / Note */}
           <div className="form-group" style={{ marginBottom: '14px' }}>
-            <label className="form-label">Description / Note</label>
+            <label className="form-label">{isTopup ? 'Sender / Note' : 'Description / Note'}</label>
             <input
               type="text"
               inputMode="text"
-              placeholder="e.g. Swiggy lunch, Tea & Samosa"
+              placeholder={isTopup ? 'e.g. Money from Papa' : 'e.g. Swiggy lunch, Tea & Samosa'}
               className="form-input"
               style={{ fontSize: '13px' }}
               value={note}
@@ -298,7 +395,10 @@ export default function EditExpenseModal({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '6px'
+                gap: '6px',
+                background: isTopup ? 'var(--notion-green-text)' : undefined,
+                borderColor: isTopup ? 'var(--notion-green-text)' : undefined,
+                color: isTopup ? '#ffffff' : undefined
               }}
             >
               <CheckCircle2 size={16} /> Save Changes

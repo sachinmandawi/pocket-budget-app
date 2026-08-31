@@ -1,6 +1,6 @@
 // Version Checker Utility for Pocket Budget GitHub Releases
 
-export const CURRENT_APP_VERSION = '1.6.0';
+export const CURRENT_APP_VERSION = '1.7.0';
 export const GITHUB_REPO_OWNER = 'sachinmandawi';
 export const GITHUB_REPO_NAME = 'pocket-budget-app';
 

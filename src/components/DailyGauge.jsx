@@ -1,8 +1,8 @@
 import React from 'react';
-import { Plus, Calendar, ShieldCheck } from 'lucide-react';
+import { Plus, Calendar, ArrowUpRight, Sparkles, Wallet } from 'lucide-react';
 import { formatCurrencyAmount } from '../utils/currencies';
 
-export default function DailyGauge({ stats, onOpenQuickAdd }) {
+export default function DailyGauge({ stats, onOpenQuickAdd, onNavigateToPage, onOpenSetPocket }) {
   const {
     todaysAllowedTotal,
     spentToday,
@@ -10,22 +10,12 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
     remainingTotalInHand,
     currentDayNumber,
     totalDaysInMonth,
-    cyclePeriodLabel
+    cyclePeriodLabel,
+    totalTopupsThisMonth = 0
   } = stats;
 
   const isOverspentToday = todaysSafeRemaining < 0;
   const spentPercent = todaysAllowedTotal > 0 ? Math.min(100, Math.max(0, (spentToday / todaysAllowedTotal) * 100)) : 0;
-
-  let themeTagClass = 'notion-tag-green';
-  let statusText = 'Safe to Spend';
-
-  if (isOverspentToday) {
-    themeTagClass = 'notion-tag-red';
-    statusText = 'Over Limit';
-  } else if (spentPercent > 75) {
-    themeTagClass = 'notion-tag-orange';
-    statusText = 'Near Cap';
-  }
 
   const currencySymbol = stats.currencySymbol || stats.currency?.symbol || '₹';
 
@@ -39,9 +29,16 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
         gap: '6px', 
         marginBottom: '12px' 
       }}>
-        <span className="notion-tag notion-tag-gray">
-          Day {currentDayNumber}/{totalDaysInMonth}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span className="notion-tag notion-tag-gray">
+            Day {currentDayNumber}/{totalDaysInMonth}
+          </span>
+          {totalTopupsThisMonth > 0 && (
+            <span className="notion-tag notion-tag-green" style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '10px' }}>
+              <ArrowUpRight size={10} /> +{formatCurrencyAmount(currencySymbol, totalTopupsThisMonth)} Added
+            </span>
+          )}
+        </div>
 
         <span 
           className="notion-tag notion-tag-gray" 
@@ -122,25 +119,72 @@ export default function DailyGauge({ stats, onOpenQuickAdd }) {
         </div>
       </div>
 
-      {/* Action Button */}
-      <button 
-        type="button"
-        onClick={onOpenQuickAdd}
-        className="btn btn-primary"
-        style={{
-          width: '100%',
-          padding: '8px 12px',
-          fontSize: '13px',
-          fontWeight: 600,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '6px',
-          borderRadius: 'var(--radius-sm)'
-        }}
-      >
-        <Plus size={15} /> Log Spend
-      </button>
+      {/* 3 Action Buttons Row: Log Spend | Set Pocket Money | + Add Money */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
+        <button 
+          type="button"
+          onClick={() => onOpenQuickAdd && onOpenQuickAdd('expense')}
+          className="btn btn-primary"
+          style={{
+            padding: '9px 4px',
+            fontSize: '12px',
+            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '4px',
+            borderRadius: 'var(--radius-sm)',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          <Plus size={14} /> Log Spend
+        </button>
+
+        <button 
+          type="button"
+          onClick={() => onOpenSetPocket ? onOpenSetPocket() : (onNavigateToPage && onNavigateToPage('settings_allowance'))}
+          className="btn btn-secondary"
+          style={{
+            padding: '9px 4px',
+            fontSize: '12px',
+            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '4px',
+            borderRadius: 'var(--radius-sm)',
+            border: '1px solid var(--border-medium)',
+            background: 'var(--bg-card-subtle)',
+            color: 'var(--text-primary)',
+            whiteSpace: 'nowrap'
+          }}
+          title="Set Monthly Pocket Money & Payday"
+        >
+          <Wallet size={14} color="var(--text-secondary)" /> Set Pocket
+        </button>
+
+        <button 
+          type="button"
+          onClick={() => onOpenQuickAdd && onOpenQuickAdd('topup')}
+          className="btn btn-secondary"
+          style={{
+            padding: '9px 4px',
+            fontSize: '12px',
+            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '4px',
+            borderRadius: 'var(--radius-sm)',
+            border: '1px solid var(--notion-green-text)',
+            color: 'var(--notion-green-text)',
+            background: 'var(--notion-green-bg)',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          <ArrowUpRight size={14} /> + Add Money
+        </button>
+      </div>
     </div>
   );
 }

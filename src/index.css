@@ -170,6 +170,13 @@ html.dark-theme body::before {
   mix-blend-mode: overlay;
 }
 
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
 .app-shell {
   width: 100%;
   max-width: 100%;
@@ -178,6 +185,7 @@ html.dark-theme body::before {
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow-x: hidden;
 }
 
 /* Header */
@@ -457,6 +465,18 @@ input, textarea, select {
   box-shadow: none;
 }
 
+/* Modern Numeric Inputs: Remove ugly native browser stepper arrows */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 /* Progress Bar */
 .progress-bar-bg {
   width: 100%;
@@ -483,6 +503,11 @@ input, textarea, select {
   to { transform: translateY(0); }
 }
 
+@keyframes slideInLeft {
+  from { transform: translate3d(-100%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
 .menu-item-hover:hover {
   background-color: var(--bg-card-subtle) !important;
 }
@@ -500,4 +525,11 @@ input, textarea, select {
 ::-webkit-scrollbar-thumb {
   background: rgba(140, 140, 140, 0.25);
   border-radius: 4px;
+}
+
+/* Ensure modal scrollbar thumb stays inside card padding and never overflows above rounded corners */
+.modal-content::-webkit-scrollbar-track,
+.modal-overlay ::-webkit-scrollbar-track {
+  margin-top: 22px;
+  margin-bottom: 22px;
 }

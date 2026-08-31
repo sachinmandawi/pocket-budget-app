@@ -4,9 +4,10 @@ import { DEFAULT_CATEGORIES } from '../utils/storage';
 import { formatCurrencyAmount } from '../utils/currencies';
 
 export default function AnalyticsCharts({ categories = DEFAULT_CATEGORIES, stats }) {
-  const { categoryTotals, totalSpentThisMonth, baseDailyTarget, currentDayNumber, totalDaysInMonth, monthlyAllowance = 1500 } = stats;
+  const { categoryTotals, totalSpentThisMonth, baseDailyTarget, currentDayNumber, totalDaysInMonth, monthlyAllowance = 1500, totalTopupsThisMonth = 0 } = stats;
   const currencySymbol = stats?.currencySymbol || '₹';
 
+  const effectiveBudget = Number(monthlyAllowance || 0) + Number(totalTopupsThisMonth || 0);
   const maxCatValue = Math.max(1, ...Object.values(categoryTotals));
   const avgDailySpend = currentDayNumber > 0 ? Math.round(totalSpentThisMonth / currentDayNumber) : 0;
   const projectedMonthSpend = Math.round(avgDailySpend * totalDaysInMonth);
@@ -67,8 +68,8 @@ export default function AnalyticsCharts({ categories = DEFAULT_CATEGORIES, stats
               Monthly Forecast
             </span>
           </div>
-          <span className={`notion-tag ${projectedMonthSpend > monthlyAllowance ? 'notion-tag-red' : 'notion-tag-green'}`}>
-            {projectedMonthSpend > monthlyAllowance ? 'Over Budget' : 'On Track'}
+          <span className={`notion-tag ${projectedMonthSpend > effectiveBudget ? 'notion-tag-red' : 'notion-tag-green'}`}>
+            {projectedMonthSpend > effectiveBudget ? 'Over Budget' : 'On Track'}
           </span>
         </div>
 
@@ -148,7 +149,7 @@ export default function AnalyticsCharts({ categories = DEFAULT_CATEGORIES, stats
             </div>
             <span style={{ 
               fontSize: '10px', 
-              color: projectedMonthSpend > monthlyAllowance ? 'var(--notion-red-text)' : 'var(--notion-green-text)', 
+              color: projectedMonthSpend > effectiveBudget ? 'var(--notion-red-text)' : 'var(--notion-green-text)', 
               display: 'block', 
               fontWeight: 600, 
               marginTop: '6px',
@@ -156,7 +157,7 @@ export default function AnalyticsCharts({ categories = DEFAULT_CATEGORIES, stats
               overflow: 'hidden',
               textOverflow: 'ellipsis'
             }}>
-              {projectedMonthSpend > monthlyAllowance ? `+${formatCurrencyAmount(currencySymbol, projectedMonthSpend - monthlyAllowance)} Overspend` : `${formatCurrencyAmount(currencySymbol, monthlyAllowance - projectedMonthSpend)} Savings`}
+              {projectedMonthSpend > effectiveBudget ? `+${formatCurrencyAmount(currencySymbol, projectedMonthSpend - effectiveBudget)} Overspend` : `${formatCurrencyAmount(currencySymbol, effectiveBudget - projectedMonthSpend)} Savings`}
             </span>
           </div>
         </div>
