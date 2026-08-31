@@ -1,0 +1,86 @@
+{
+  "monthlyAllowance": 2500,
+  "paydayAnchorDate": 5,
+  "emergencyReserve": 140,
+  "isEmergencyUnlocked": false,
+  "currency": {
+    "code": "INR",
+    "symbol": "₹"
+  },
+  "fixedDeductions": [
+    {
+      "id": "fixed-4",
+      "title": "Fixed Bill 4",
+      "amount": 70
+    }
+  ],
+  "transactions": [
+    {
+      "id": "tx-allowance-4",
+      "type": "expense",
+      "amount": 29,
+      "date": "2026-08-31",
+      "category": "food",
+      "note": "Lunch #4",
+      "spendSource": "allowance"
+    },
+    {
+      "id": "tx-piggy-4",
+      "type": "expense",
+      "amount": 19,
+      "date": "2026-08-31",
+      "category": "chai_snacks",
+      "note": "Tea & Snack #4",
+      "spendSource": "piggy_bank"
+    },
+    {
+      "id": "tx-topup-4",
+      "type": "topup",
+      "amount": 240,
+      "date": "2026-08-31",
+      "topupTarget": "allowance",
+      "note": "Mid-month Boost #4"
+    }
+  ],
+  "debts": [
+    {
+      "id": "debt-4",
+      "type": "lend",
+      "personName": "Ramesh #4",
+      "amount": 700,
+      "formDate": "2026-08-31",
+      "date": "2026-08-31",
+      "isSettled": false,
+      "history": [
+        {
+          "id": "h1-4",
+          "type": "initial",
+          "amount": 700,
+          "date": "2026-08-31",
+          "note": "Given in cash"
+        },
+        {
+          "id": "h2-4",
+          "type": "repayment",
+          "amount": 100,
+          "date": "2026-08-31",
+          "note": "Partial online return"
+        }
+      ]
+    }
+  ],
+  "archivedCycles": [
+    {
+      "cycleId": "arch-4",
+      "totalSaved": 160
+    }
+  ],
+  "piggyManualDeposits": [
+    {
+      "id": "dep-4",
+      "amount": 54,
+      "date": "2026-08-31",
+      "note": "Manual Deposit #4"
+    }
+  ]
+}
