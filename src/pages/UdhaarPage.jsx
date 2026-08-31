@@ -18,7 +18,8 @@ import {
   PiggyBank,
   Share2,
   Pencil,
-  MoreVertical
+  MoreVertical,
+  Filter
 } from 'lucide-react';
 import { formatLocalYMD, formatDateReadable } from '../utils/storage';
 import AddRepaymentModal from '../components/AddRepaymentModal';
@@ -66,15 +67,18 @@ export default function UdhaarPage({
   const [editNote, setEditNote] = useState('');
   const [editError, setEditError] = useState('');
 
-  // 3-Dot Popup Menu State
+  // 3-Dot Popup Menu & Filter Dropdown State
   const [openMenuDebtId, setOpenMenuDebtId] = useState(null);
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
 
-  // Close 3-dot popup menu when clicking outside
+  // Close menus and dropdowns when clicking outside
   useEffect(() => {
-    if (!openMenuDebtId) return;
     const handleOutsideClick = (e) => {
-      if (!e.target.closest('[data-debt-menu]')) {
+      if (openMenuDebtId && !e.target.closest('[data-debt-menu]')) {
         setOpenMenuDebtId(null);
+      }
+      if (isFilterDropdownOpen && !e.target.closest('[data-filter-dropdown]')) {
+        setIsFilterDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleOutsideClick);
@@ -83,7 +87,7 @@ export default function UdhaarPage({
       document.removeEventListener('mousedown', handleOutsideClick);
       document.removeEventListener('touchstart', handleOutsideClick);
     };
-  }, [openMenuDebtId]);
+  }, [openMenuDebtId, isFilterDropdownOpen]);
 
   // Helper to accurately compute real remaining and repaid amounts
   const getDebtRemainingAndRepaid = (debt) => {
@@ -390,63 +394,144 @@ export default function UdhaarPage({
         </div>
       </div>
 
-      {/* Filter Tabs & Search Bar */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
-        <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px' }}>
-          {[
-            { id: 'all', label: `Pending (${debts.filter(d => !d.isSettled).length})` },
-            { id: 'lent', label: `Lent (${debts.filter(d => d.type === 'lent' && !d.isSettled).length})` },
-            { id: 'borrowed', label: `Borrowed (${debts.filter(d => d.type === 'borrowed' && !d.isSettled).length})` },
-            { id: 'settled', label: `Settled (${debts.filter(d => d.isSettled).length})` }
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveFilter(tab.id)}
-              style={{
-                padding: '5px 12px',
-                borderRadius: 'var(--radius-full)',
-                fontSize: '11.5px',
-                fontWeight: activeFilter === tab.id ? 600 : 500,
-                background: activeFilter === tab.id ? 'var(--text-primary)' : 'var(--bg-card-subtle)',
-                color: activeFilter === tab.id ? 'var(--bg-app)' : 'var(--text-secondary)',
-                border: '1px solid var(--border-subtle)',
-                whiteSpace: 'nowrap',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
+      {/* Modern Filter Dropdown & Search Bar */}
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '12px' }}>
         {/* Search Input */}
-        <div style={{ position: 'relative' }}>
-          <Search size={13} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
+        <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
+          <Search size={14} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
           <input
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search name, purpose, or phone..."
+            placeholder="Search name, note, phone..."
             style={{
               width: '100%',
-              padding: '6px 10px 6px 30px',
-              fontSize: '12px',
+              padding: '8px 10px 8px 32px',
+              fontSize: '12.5px',
               borderRadius: 'var(--radius-md)',
               border: '1px solid var(--border-subtle)',
-              background: 'var(--bg-card-subtle)',
+              background: 'var(--bg-card)',
               color: 'var(--text-primary)',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              outline: 'none'
             }}
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer' }}
+              style={{ position: 'absolute', right: '8px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
             >
               <X size={13} />
             </button>
           )}
+        </div>
+
+        {/* Modern Filter Dropdown */}
+        <div style={{ position: 'relative' }} data-filter-dropdown>
+          {(() => {
+            const filterOptions = [
+              { id: 'all', name: 'Pending', icon: '⏳', count: debts.filter(d => !d.isSettled).length },
+              { id: 'lent', name: 'Lent', icon: '🟢', count: debts.filter(d => d.type === 'lent' && !d.isSettled).length },
+              { id: 'borrowed', name: 'Borrowed', icon: '🔴', count: debts.filter(d => d.type === 'borrowed' && !d.isSettled).length },
+              { id: 'settled', name: 'Settled', icon: '✓', count: debts.filter(d => d.isSettled).length }
+            ];
+            const currentFilter = filterOptions.find(f => f.id === activeFilter) || filterOptions[0];
+
+            return (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '8px 12px',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'var(--bg-card)',
+                    border: '1px solid var(--border-subtle)',
+                    color: 'var(--text-primary)',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    boxShadow: 'var(--shadow-sm)'
+                  }}
+                >
+                  <Filter size={13} color="var(--text-secondary)" />
+                  <span>{currentFilter.name} ({currentFilter.count})</span>
+                  <ChevronDown 
+                    size={13} 
+                    color="var(--text-tertiary)" 
+                    style={{ 
+                      transform: isFilterDropdownOpen ? 'rotate(180deg)' : 'none', 
+                      transition: 'transform 0.2s ease' 
+                    }} 
+                  />
+                </button>
+
+                {/* Dropdown Menu Popup */}
+                {isFilterDropdownOpen && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 4px)',
+                      right: 0,
+                      minWidth: '175px',
+                      background: 'var(--bg-card)',
+                      border: '1px solid var(--border-subtle)',
+                      borderRadius: 'var(--radius-md)',
+                      boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
+                      zIndex: 100,
+                      padding: '4px',
+                      animation: 'fadeIn 0.12s ease-out'
+                    }}
+                  >
+                    {filterOptions.map(option => (
+                      <button
+                        key={option.id}
+                        type="button"
+                        onClick={() => {
+                          setActiveFilter(option.id);
+                          setIsFilterDropdownOpen(false);
+                        }}
+                        style={{
+                          width: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '8px 10px',
+                          borderRadius: 'var(--radius-sm)',
+                          background: activeFilter === option.id ? 'var(--bg-card-subtle)' : 'transparent',
+                          border: 'none',
+                          color: activeFilter === option.id ? 'var(--text-primary)' : 'var(--text-secondary)',
+                          fontSize: '12px',
+                          fontWeight: activeFilter === option.id ? 700 : 500,
+                          cursor: 'pointer',
+                          textAlign: 'left'
+                        }}
+                      >
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span>{option.icon}</span>
+                          <span>{option.name}</span>
+                        </span>
+                        <span style={{
+                          fontSize: '11px',
+                          padding: '1px 6px',
+                          borderRadius: '999px',
+                          background: activeFilter === option.id ? 'var(--text-primary)' : 'var(--bg-card-subtle)',
+                          color: activeFilter === option.id ? 'var(--bg-app)' : 'var(--text-tertiary)',
+                          fontWeight: 700
+                        }}>
+                          {option.count}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
       </div>
 
