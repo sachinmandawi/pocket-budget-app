@@ -1,7 +1,7 @@
 {
-  "monthlyAllowance": 5000,
-  "paydayAnchorDate": 1,
-  "emergencyReserve": 500,
+  "monthlyAllowance": 2500,
+  "paydayAnchorDate": 5,
+  "emergencyReserve": 140,
   "isEmergencyUnlocked": false,
   "currency": {
     "code": "INR",
@@ -17,6 +17,11 @@
       "id": "fix-rent",
       "title": "Room Share",
       "amount": 1500
+    },
+    {
+      "id": "fixed-4",
+      "title": "Fixed Bill 4",
+      "amount": 70
     }
   ],
   "categories": [
@@ -75,6 +80,32 @@
       "category": "food",
       "note": "Special Dinner Treat",
       "spendSource": "piggy_bank"
+    },
+    {
+      "id": "tx-allowance-4",
+      "type": "expense",
+      "amount": 29,
+      "date": "2026-08-31",
+      "category": "food",
+      "note": "Lunch #4",
+      "spendSource": "allowance"
+    },
+    {
+      "id": "tx-piggy-4",
+      "type": "expense",
+      "amount": 19,
+      "date": "2026-08-31",
+      "category": "chai_snacks",
+      "note": "Tea & Snack #4",
+      "spendSource": "piggy_bank"
+    },
+    {
+      "id": "tx-topup-4",
+      "type": "topup",
+      "amount": 240,
+      "date": "2026-08-31",
+      "topupTarget": "allowance",
+      "note": "Mid-month Boost #4"
     }
   ],
   "debts": [
@@ -95,6 +126,31 @@
           "note": "Lent via UPI"
         }
       ]
+    },
+    {
+      "id": "debt-4",
+      "type": "lend",
+      "personName": "Ramesh #4",
+      "amount": 700,
+      "formDate": "2026-08-31",
+      "date": "2026-08-31",
+      "isSettled": false,
+      "history": [
+        {
+          "id": "h1-4",
+          "type": "initial",
+          "amount": 700,
+          "date": "2026-08-31",
+          "note": "Given in cash"
+        },
+        {
+          "id": "h2-4",
+          "type": "repayment",
+          "amount": 100,
+          "date": "2026-08-31",
+          "note": "Partial online return"
+        }
+      ]
     }
   ],
   "wishlist": [
@@ -109,5 +165,18 @@
     }
   ],
   "archivedCycles": [],
-  "piggyManualDeposits": []
+  "piggyManualDeposits": [
+    {
+      "id": "dep-4",
+      "amount": 54,
+      "date": "2026-08-31",
+      "note": "Manual Deposit #4"
+    }
+  ],
+  "isDarkMode": false,
+  "customCurrencies": [],
+  "reminderSettings": {
+    "enabled": true,
+    "time": "20:00"
+  }
 }
