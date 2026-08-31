@@ -1,13 +1,11 @@
 import React from 'react';
-import { Trophy, ArrowUpRight, Sparkles, History, ShieldCheck, Wallet, Lock } from 'lucide-react';
-import { calculatePiggyBankSavings, calculateBudgetStats, formatDateReadable } from '../utils/storage';
+import { Trophy, ArrowUpRight, Sparkles, History, ShieldCheck, Lock } from 'lucide-react';
+import { calculatePiggyBankSavings, formatDateReadable } from '../utils/storage';
 import { formatCurrencyAmount } from '../utils/currencies';
 
 export default function PiggyBankVaultPage({ budgetData }) {
   const { totalSaved, history } = calculatePiggyBankSavings(budgetData);
-  const stats = calculateBudgetStats(budgetData);
   const currencySymbol = budgetData?.currency?.symbol || '₹';
-  const pocketMoneyInHand = Math.max(0, stats?.remainingPocketMoney ?? stats?.remainingTotalInHand ?? 0);
 
   return (
     <div className="page-view" style={{ animation: 'fadeIn 0.2s ease-out', paddingBottom: '80px' }}>
@@ -44,35 +42,9 @@ export default function PiggyBankVaultPage({ budgetData }) {
         }}>
           +{formatCurrencyAmount(currencySymbol, totalSaved)}
         </div>
-        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '0 0 12px' }}>
+        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: 0 }}>
           Unspent daily money is automatically locked in this vault. Separate from daily pocket money!
         </p>
-
-        {/* Real Locker Wallet Breakdown */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '8px',
-          paddingTop: '10px',
-          borderTop: '1px solid var(--border-subtle)'
-        }}>
-          <div style={{ background: 'var(--bg-card-subtle)', padding: '8px 10px', borderRadius: 'var(--radius-sm)' }}>
-            <span style={{ fontSize: '10.5px', color: 'var(--text-tertiary)', display: 'block', fontWeight: 500 }}>
-              👛 Pocket Wallet
-            </span>
-            <strong style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 600 }}>
-              {formatCurrencyAmount(currencySymbol, pocketMoneyInHand)}
-            </strong>
-          </div>
-          <div style={{ background: 'var(--notion-green-bg)', padding: '8px 10px', borderRadius: 'var(--radius-sm)' }}>
-            <span style={{ fontSize: '10.5px', color: 'var(--notion-green-text)', display: 'block', fontWeight: 500 }}>
-              🐷 Vault Savings
-            </span>
-            <strong style={{ fontSize: '13px', color: 'var(--notion-green-text)', fontWeight: 600 }}>
-              +{formatCurrencyAmount(currencySymbol, totalSaved)}
-            </strong>
-          </div>
-        </div>
       </div>
 
       {/* Date-by-Date Timeline Log Header */}
