@@ -62,7 +62,7 @@
       "id": "tx-init-1",
       "type": "expense",
       "amount": 80,
-      "date": "2026-08-31",
+      "date": "2026-09-01",
       "category": "chai_snacks",
       "note": "Chai & Samosa",
       "spendSource": "allowance"
@@ -71,7 +71,7 @@
       "id": "tx-init-2",
       "type": "expense",
       "amount": 150,
-      "date": "2026-08-31",
+      "date": "2026-09-01",
       "category": "food",
       "note": "Special Dinner Treat",
       "spendSource": "piggy_bank"
@@ -83,15 +83,15 @@
       "type": "lend",
       "personName": "Amit Sharma",
       "amount": 1200,
-      "formDate": "2026-08-31",
-      "date": "2026-08-31",
+      "formDate": "2026-09-01",
+      "date": "2026-09-01",
       "isSettled": false,
       "history": [
         {
           "id": "h-1",
           "type": "initial",
           "amount": 1200,
-          "date": "2026-08-31",
+          "date": "2026-09-01",
           "note": "Lent via UPI"
         }
       ]
@@ -104,12 +104,10 @@
       "amount": 1499,
       "category": "shopping",
       "cooloffDays": 2,
-      "createdAt": "2026-08-31T12:24:31.294Z",
+      "createdAt": "2026-09-01T12:25:17.371Z",
       "status": "pending"
     }
   ],
   "archivedCycles": [],
-  "piggyManualDeposits": [],
-  "lastAuditTimestamp": "2026-09-01T12:25:14.997Z",
-  "auditVerificationPasses": 10
+  "piggyManualDeposits": []
 }
