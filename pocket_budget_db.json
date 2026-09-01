@@ -111,5 +111,7 @@
   "archivedCycles": [],
   "piggyManualDeposits": [],
   "lastDeepRecheckAt": "2026-09-01T12:30:45.238Z",
-  "deepRecheckVersion": "v2.0"
+  "deepRecheckVersion": "v2.0",
+  "reverseRecheckPass": 1,
+  "reverseRecheckAt": "2026-09-01T12:41:41.521Z"
 }
