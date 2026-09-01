@@ -1,5 +1,5 @@
-import React from 'react';
-import { Plus, Calendar, ArrowUpRight, Sparkles, Wallet } from 'lucide-react';
+﻿import React from 'react';
+import { Plus, ArrowUpRight, Wallet, Calendar } from 'lucide-react';
 import { formatCurrencyAmount } from '../utils/currencies';
 
 export default function DailyGauge({ stats, onOpenQuickAdd, onNavigateToPage, onOpenSetPocket }) {
@@ -17,166 +17,116 @@ export default function DailyGauge({ stats, onOpenQuickAdd, onNavigateToPage, on
   } = stats;
 
   const isOverspentToday = todaysSafeRemaining < 0;
-  const spentPercent = todaysAllowedTotal > 0 ? Math.min(100, Math.max(0, (spentTodayTotal / todaysAllowedTotal) * 100)) : 0;
-
+  const spentPercent = todaysAllowedTotal > 0
+    ? Math.min(100, Math.max(0, (spentTodayTotal / todaysAllowedTotal) * 100))
+    : 0;
   const currencySymbol = stats.currencySymbol || stats.currency?.symbol || '₹';
 
   return (
-    <div className="notion-card" style={{ padding: '16px', marginBottom: '14px' }}>
-      {/* Page Metadata / Status Row */}
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
-        gap: '6px', 
-        marginBottom: '12px' 
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span className="notion-tag notion-tag-gray">
-            Day {currentDayNumber}/{totalDaysInMonth}
-          </span>
-          {totalTopupsThisMonth > 0 && (
-            <span className="notion-tag notion-tag-green" style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '10px' }}>
-              <ArrowUpRight size={10} /> +{formatCurrencyAmount(currencySymbol, totalTopupsThisMonth)} Added
-            </span>
-          )}
-        </div>
+    <div className="notion-card" style={{ padding: '18px 18px 16px', marginBottom: '10px' }}>
 
-        <span 
-          className="notion-tag notion-tag-gray" 
-          style={{ 
-            color: 'var(--text-tertiary)',
-            whiteSpace: 'nowrap',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '4px',
-            flexShrink: 0
-          }}
-        >
-          <Calendar size={11} style={{ flexShrink: 0 }} /> 
-          <span>{cyclePeriodLabel}</span>
+      {/* Top meta row */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <span className="notion-tag notion-tag-gray">
+          Day {currentDayNumber} / {totalDaysInMonth}
+        </span>
+        <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <Calendar size={10} />
+          {cyclePeriodLabel}
         </span>
       </div>
 
-      {/* Main Remaining Daily Budget Number */}
-      <div style={{ padding: '8px 0 10px' }}>
-        <span style={{ 
-          fontSize: '11px', 
-          color: 'var(--text-secondary)', 
-          fontWeight: 600, 
-          display: 'block',
-          marginBottom: '2px'
-        }}>
-          {isOverspentToday ? "Today's Overspend" : "Today's Safe Daily Limit"}
-        </span>
-        <div style={{ 
-          fontSize: '32px', 
-          fontWeight: 700, 
-          color: isOverspentToday ? 'var(--notion-red-text)' : 'var(--text-primary)', 
-          letterSpacing: '-0.8px', 
-          lineHeight: 1.1 
+      {/* Big number */}
+      <div style={{ marginBottom: '14px' }}>
+        <p style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-tertiary)', marginBottom: '4px', letterSpacing: '0.3px', textTransform: 'uppercase' }}>
+          {isOverspentToday ? "Today's Overspend" : "Today's Remaining"}
+        </p>
+        <div style={{
+          fontSize: '36px',
+          fontWeight: 700,
+          color: isOverspentToday ? 'var(--notion-red-text)' : 'var(--text-primary)',
+          letterSpacing: '-1px',
+          lineHeight: 1
         }}>
           {isOverspentToday ? '-' : ''}{formatCurrencyAmount(currencySymbol, Math.abs(todaysSafeRemaining))}
         </div>
+        {totalTopupsThisMonth > 0 && (
+          <span className="notion-tag notion-tag-green" style={{ marginTop: '6px', fontSize: '10px' }}>
+            <ArrowUpRight size={9} />
+            +{formatCurrencyAmount(currencySymbol, totalTopupsThisMonth)} added
+          </span>
+        )}
       </div>
 
-      {/* Slim Progress Bar */}
-      <div style={{ marginBottom: '14px' }}>
-        <div className="progress-bar-bg" style={{ height: '5px', borderRadius: '3px' }}>
-          <div 
-            className="progress-bar-fill" 
-            style={{ 
-              width: `${spentPercent}%`, 
-              backgroundColor: isOverspentToday ? 'var(--notion-red-text)' : 'var(--text-primary)',
-              borderRadius: '3px'
-            }} 
-          />
-        </div>
+      {/* Thin progress bar */}
+      <div className="progress-bar-bg" style={{ marginBottom: '16px' }}>
+        <div
+          className="progress-bar-fill"
+          style={{
+            width: `${spentPercent}%`,
+            backgroundColor: isOverspentToday ? 'var(--notion-red-text)' : 'var(--text-primary)'
+          }}
+        />
       </div>
 
-      {/* Properties Grid */}
+      {/* 3-col stats strip */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '6px',
+        gap: '0',
         marginBottom: '14px',
         background: 'var(--bg-card-subtle)',
-        padding: '8px',
         borderRadius: 'var(--radius-sm)',
+        overflow: 'hidden',
         border: '1px solid var(--border-subtle)'
       }}>
-        <div style={{ padding: '4px 6px' }}>
-          <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 600, display: 'block', marginBottom: '2px' }}>Limit</span>
-          <strong style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{formatCurrencyAmount(currencySymbol, todaysAllowedTotal)}</strong>
-        </div>
-
-        <div style={{ padding: '4px 6px', borderLeft: '1px solid var(--border-subtle)' }}>
-          <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 600, display: 'block', marginBottom: '2px' }}>Spent</span>
-          <strong style={{ fontSize: '13px', fontWeight: 600, color: 'var(--notion-red-text)' }}>{formatCurrencyAmount(currencySymbol, spentTodayTotal)}</strong>
-        </div>
-
-        <div style={{ padding: '4px 6px', borderLeft: '1px solid var(--border-subtle)' }}>
-          <span style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 600, display: 'block', marginBottom: '2px' }}>Balance</span>
-          <strong style={{ fontSize: '13px', fontWeight: 600, color: 'var(--notion-blue-text)' }}>{formatCurrencyAmount(currencySymbol, remainingTotalInHand)}</strong>
-        </div>
+        {[
+          { label: 'Limit', value: formatCurrencyAmount(currencySymbol, todaysAllowedTotal), color: 'var(--text-primary)' },
+          { label: 'Spent', value: formatCurrencyAmount(currencySymbol, spentTodayTotal), color: 'var(--notion-red-text)' },
+          { label: 'Total Left', value: formatCurrencyAmount(currencySymbol, remainingTotalInHand), color: 'var(--notion-blue-text)' }
+        ].map((item, i) => (
+          <div key={item.label} style={{
+            padding: '8px 10px',
+            borderLeft: i > 0 ? '1px solid var(--border-subtle)' : 'none'
+          }}>
+            <p style={{ fontSize: '10px', color: 'var(--text-tertiary)', fontWeight: 600, marginBottom: '2px', textTransform: 'uppercase', letterSpacing: '0.3px' }}>
+              {item.label}
+            </p>
+            <p style={{ fontSize: '13px', fontWeight: 700, color: item.color, letterSpacing: '-0.2px' }}>
+              {item.value}
+            </p>
+          </div>
+        ))}
       </div>
 
-      {/* 3 Action Buttons Row: Log Spend | Set Pocket Money | + Add Money */}
+      {/* Action buttons */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
-        <button 
+        <button
           type="button"
           onClick={() => onOpenQuickAdd && onOpenQuickAdd('expense')}
           className="btn btn-primary"
-          style={{
-            padding: '9px 4px',
-            fontSize: '12px',
-            fontWeight: 600,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '4px',
-            borderRadius: 'var(--radius-sm)',
-            whiteSpace: 'nowrap'
-          }}
+          style={{ padding: '9px 4px', fontSize: '12px', borderRadius: 'var(--radius-sm)', whiteSpace: 'nowrap' }}
         >
-          <Plus size={14} /> Log Spend
+          <Plus size={13} /> Log Spend
         </button>
 
-        <button 
+        <button
           type="button"
           onClick={() => onOpenSetPocket ? onOpenSetPocket() : (onNavigateToPage && onNavigateToPage('settings_allowance'))}
           className="btn btn-secondary"
-          style={{
-            padding: '9px 4px',
-            fontSize: '12px',
-            fontWeight: 600,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '4px',
-            borderRadius: 'var(--radius-sm)',
-            border: '1px solid var(--border-medium)',
-            background: 'var(--bg-card-subtle)',
-            color: 'var(--text-primary)',
-            whiteSpace: 'nowrap'
-          }}
-          title="Set Monthly Pocket Money & Payday"
+          style={{ padding: '9px 4px', fontSize: '12px', borderRadius: 'var(--radius-sm)', whiteSpace: 'nowrap' }}
+          title="Set Monthly Pocket Money"
         >
-          <Wallet size={14} color="var(--text-secondary)" /> Set Pocket
+          <Wallet size={13} /> Set Pocket
         </button>
 
-        <button 
+        <button
           type="button"
           onClick={() => onOpenQuickAdd && onOpenQuickAdd('topup')}
           className="btn btn-secondary"
           style={{
             padding: '9px 4px',
             fontSize: '12px',
-            fontWeight: 600,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '4px',
             borderRadius: 'var(--radius-sm)',
             border: '1px solid var(--notion-green-text)',
             color: 'var(--notion-green-text)',
@@ -184,7 +134,7 @@ export default function DailyGauge({ stats, onOpenQuickAdd, onNavigateToPage, on
             whiteSpace: 'nowrap'
           }}
         >
-          <ArrowUpRight size={14} /> + Add Money
+          <ArrowUpRight size={13} /> + Money
         </button>
       </div>
     </div>
