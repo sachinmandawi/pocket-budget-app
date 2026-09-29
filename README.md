@@ -178,7 +178,7 @@ Have questions, feature requests, or feedback? Feel free to reach out directly:
 ## 👤 Author
 
 **Sachin Mandawi** — *Software & Android Developer*
-- 🌐 **Official Website & Portfolio:** [https://sachinmandawi.me](https://sachinmandawi.me)
+- 🌐 **Official Website & Portfolio:** [https://sachinmandawi.com](https://sachinmandawi.com)
 - 💻 **GitHub:** [@sachinmandawi](https://github.com/sachinmandawi)
 - 📷 **Instagram:** [@sachinmandawi](https://www.instagram.com/sachinmandawi)
 - 📌 **Pinterest:** [in.pinterest.com/sachinmandawi](https://in.pinterest.com/sachinmandawi/)
